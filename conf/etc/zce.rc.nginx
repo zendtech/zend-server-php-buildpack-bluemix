@@ -1,0 +1,13 @@
+export ZCE_PREFIX=/app/zend-server-6-php-5.4
+PRODUCT_NAME="Zend Server"
+PRODUCT_VERSION=6.1.0
+export INSTALLATION_UID=0210131552
+export ZEND_TMPDIR=/app/zend-server-6-php-5.4/tmp
+export ZEND_TEMP_DIR=/app/zend-server-6-php-5.4/tmp
+#WEB_USER=www-data
+WEB_USER=vcap
+APACHE_HTDOCS=/app/www
+export PHP_INI_SCAN_DIR=/app/zend-server-6-php-5.4/etc/conf.d
+export PHPRC=/app/zend-server-6-php-5.4/etc
+#LD_LIBRARY_PATH=/app/zend-server-6-php-5.4/lib
+

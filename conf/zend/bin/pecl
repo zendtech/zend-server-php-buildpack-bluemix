@@ -1,0 +1,29 @@
+#!/bin/sh
+. /app/etc/zce.rc
+
+# first find which PHP binary to use
+if test "x$PHP_PEAR_PHP_BIN" != "x"; then
+  PHP="$PHP_PEAR_PHP_BIN"
+else
+  if test "/app/zend-server-6-php-5.4/bin/php" = '@'php_bin'@'; then
+    PHP=php
+  else
+    PHP="/app/zend-server-6-php-5.4/bin/php"
+  fi
+fi
+
+# then look for the right pear include dir
+if test "x$PHP_PEAR_INSTALL_DIR" != "x"; then
+  INCDIR=$PHP_PEAR_INSTALL_DIR
+  INCARG="-d include_path=$PHP_PEAR_INSTALL_DIR"
+else
+  if test "/app/zend-server-6-php-5.4/share/pear" = '@'php_dir'@'; then
+    INCDIR=`dirname $0`
+    INCARG=""
+  else
+    INCDIR="/app/zend-server-6-php-5.4/share/pear"
+    INCARG="-d include_path=/app/zend-server-6-php-5.4/share/pear"
+  fi
+fi
+
+exec $PHP -C -n -q $INCARG -d date.timezone=UTC -d output_buffering=1 -d variables_order=EGPCS -d safe_mode=0 -d register_argc_argv="On" $INCDIR/peclcmd.php "$@"

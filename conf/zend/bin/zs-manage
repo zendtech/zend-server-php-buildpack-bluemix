@@ -1,0 +1,32 @@
+#!/bin/sh -e
+
+# zs-manage: Zend Server Management Tool
+# 
+# This is a shell wrapper around the main PHP CLI script that handles Zend 
+# Server CLI tools
+
+if [ -n "$DEBUG" ]; then
+    set -x 
+fi
+ 
+. /app/etc/zce.rc
+
+if [ ! -d "$ZCE_PREFIX" ]; then
+    echo "Error: ZCE_PREFIX does not point to a real directory"
+    exit 1
+fi
+
+CLI_TOOLS_DIR=$ZCE_PREFIX/share/zs-cli-tools
+INCLUDE_PATH=$CLI_TOOLS_DIR/library
+# Export some important environment variables
+export ZEND_SERVER_GUI_PATH=$ZCE_PREFIX/gui
+if [ "$WEB_USER" = "qtmhhttp" ]; then
+    PHP_INI=$ZCE_PREFIX/etc/php.ini
+else
+    PHP_INI=$ZCE_PREFIX/gui/lighttpd/etc/php-fcgi.ini
+fi
+$ZCE_PREFIX/bin/php -c "$PHP_INI" \
+    -d display_errors=stderr \
+    -d error_reporting=E_ALL \
+    -d include_path=$INCLUDE_PATH \
+    $CLI_TOOLS_DIR/bin/zs-cli-tool.php manage "$@"

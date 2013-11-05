@@ -1,0 +1,90 @@
+#! /bin/sh
+
+SED="/bin/sed"
+prefix="/app/zend-server-6-php-5.4"
+datarootdir="@datarootdir@"
+exec_prefix="${prefix}"
+version="5.4.16"
+vernum="50416"
+include_dir="${prefix}/include/php"
+includes="-I$include_dir -I$include_dir/main -I$include_dir/TSRM -I$include_dir/Zend -I$include_dir/ext -I$include_dir/ext/date/lib"
+ldflags=" -L/usr/local/libxml2-2.7.7/lib -L/usr/local/zlib-1.2.3/lib -L/usr/local/openssl-0.9.8o/lib -L/usr/local/readline-5.2/lib"
+libs="-lcrypt   -lresolv -lcrypt -lreadline -lncurses -lrt -lz -lcrypto -lssl -lcrypto -lrt -lm -ldl -lnsl  -lxml2 -lz -lm -lxml2 -lz -lm -lxml2 -lz -lm -lcrypt -lxml2 -lz -lm -lxml2 -lz -lm -lxml2 -lz -lm -lcrypt "
+extension_dir="//app/zend-server-6-php-5.4/lib/php_extensions"
+man_dir=`eval echo ${prefix}/man`
+program_prefix=""
+program_suffix=""
+exe_extension=""
+php_cli_binary=NONE
+php_cgi_binary=NONE
+configure_options=" '--prefix=/app/zend-server-6-php-5.4' '--with-config-file-path=/app/zend-server-6-php-5.4/etc' '--with-config-file-scan-dir=/app/zend-server-6-php-5.4/etc/conf.d' '--disable-debug' '--enable-inline-optimization' '--disable-all' '--enable-libxml' '--enable-session' '--enable-spl' '--enable-xml' '--enable-hash' '--enable-reflection' '--with-pear' '--with-apxs2=/app/zend-server-6-php-5.4/apache2/bin/apxs' '--with-layout=GNU' '--enable-filter' '--with-pcre-regex' '--with-zlib=/usr/local/zlib-1.2.3' '--enable-simplexml' '--enable-dom' '--with-libxml-dir=/usr/local/libxml2-2.7.7' '--with-openssl=/usr/local/openssl-0.9.8o' '--enable-pdo' '--with-pdo-sqlite' '--with-readline=/usr/local/readline-5.2' '--with-iconv' '--with-sqlite3' '--disable-phar' '--enable-xmlwriter' '--enable-xmlreader' '--enable-mysqlnd' '--enable-json'"
+php_sapis=" apache2handler cli cgi"
+
+# Set php_cli_binary and php_cgi_binary if available
+for sapi in $php_sapis; do
+  case $sapi in
+  cli)
+    php_cli_binary="${exec_prefix}/bin/${program_prefix}php${program_suffix}${exe_extension}"
+    ;;
+  cgi)
+    php_cgi_binary="${exec_prefix}/bin/${program_prefix}php-cgi${program_suffix}${exe_extension}"
+    ;;
+  esac
+done
+
+# Determine which (if any) php binary is available
+if test "$php_cli_binary" != "NONE"; then
+  php_binary="$php_cli_binary"
+else
+  php_binary="$php_cgi_binary"
+fi
+
+# Remove quotes
+configure_options=`echo $configure_options | $SED -e "s#'##g"`
+
+case "$1" in
+--prefix)
+  echo $prefix;;
+--includes)
+  echo $includes;;
+--ldflags)
+  echo $ldflags;;
+--libs)
+  echo $libs;;
+--extension-dir)
+  echo $extension_dir;;
+--include-dir)
+  echo $include_dir;;
+--php-binary)
+  echo $php_binary;;
+--php-sapis)
+  echo $php_sapis;;
+--configure-options)
+  echo $configure_options;;
+--man-dir)
+  echo $man_dir;;
+--version)
+  echo $version;;
+--vernum)
+  echo $vernum;;
+*)
+  cat << EOF
+Usage: $0 [OPTION]
+Options:
+  --prefix            [$prefix]
+  --includes          [$includes]
+  --ldflags           [$ldflags]
+  --libs              [$libs]
+  --extension-dir     [$extension_dir]
+  --include-dir       [$include_dir]
+  --man-dir           [$man_dir]
+  --php-binary        [$php_binary]
+  --php-sapis         [$php_sapis]
+  --configure-options [$configure_options]
+  --version           [$version]
+  --vernum            [$vernum]
+EOF
+  exit 1;;
+esac
+
+exit 0

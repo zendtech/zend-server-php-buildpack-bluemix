@@ -1,0 +1,121 @@
+#!/usr/bin/env bash
+# bin/compile <build-dir> <cache-dir>
+
+# fail fast
+set -e
+
+pwd
+
+BIN_DIR=$(dirname $0)
+BUILD_DIR=$1
+CACHE_DIR=$2
+LP_DIR=`cd $(dirname $0); cd ..; pwd`
+PHP_PATH=$BUILD_DIR/zend-server-6-php-5.4
+APACHE_PATH=$BUILD_DIR/apache
+NGINX_PATH=$BUILD_DIR/nginx
+
+# include .files when moving things around
+shopt -s dotglob
+
+cd $BUILD_DIR
+
+# move app things to www
+mkdir -p $CACHE_DIR/www
+mv * $CACHE_DIR/www
+mv $CACHE_DIR/www .
+
+# keep Procfile
+if [ -f www/Procfile ]; then
+  mv www/Procfile .
+fi
+
+#Download and install Zend Server
+tar xJf $LP_DIR/zend-server-6-php-5.4-nginx.tar.xz
+tar xzf $LP_DIR/nginx.tar.gz
+
+# update config files - only use this with DEA_NG+Warden!!!!!!!
+cp -r $LP_DIR/conf/nginx/* $NGINX_PATH
+mkdir -p etc
+cp $LP_DIR/conf/etc/zce.rc.nginx etc/zce.rc
+
+cp -r $LP_DIR/conf/zend/* $PHP_PATH
+# make php available on bin
+mkdir -p bin
+ln -s $PHP_PATH/bin/php bin/php
+
+#TODO - put most of the script into the build pack instead of generating on the fly (for better stability)
+cat >>boot.sh <<EOF
+#!/bin/bash 
+
+#Preserve Cloud Foundry information
+
+export LD_LIBRARY_PATH=/app/zend-server-6-php-5.4/lib
+export PHP_INI_SCAN_DIR=/app/zend-server-6-php-5.4/etc/conf.d
+export PHPRC=/app/zend-server-6-php-5.4/etc
+echo "VCAP_APPLICATION=\$VCAP_APPLICATION" >> /app/etc/zce.rc
+echo "env[VCAP_APPLICATION] = \\"\${VCAP_APPLICATION}\\""  >> /app/zend-server-6-php-5.4/etc/php-fpm.conf
+echo "Launching Zend Server..."
+export USER_UID=\`id -u\`
+#Change UID in Zend Server configuration to the one used in the gear
+#TODO: Make this change using erb templates/augeas instead of sed which are more elegant
+sed "s/vcap/\${USER_UID}/" \${PHP_INI_SCAN_DIR}/ZendGlobalDirectives.ini.erb > \${PHP_INI_SCAN_DIR}/ZendGlobalDirectives.ini
+sed "s/VCAP_PORT/\${PORT}/" /app/nginx/conf/sites-available/default.erb > /app/nginx/conf/sites-available/default
+ln -f -s /app/nginx/conf/sites-available/default /app/nginx/conf/sites-enabled
+
+echo "Creating/Upgrading Zend databases. This may take several minutes..."
+/app/zend-server-6-php-5.4/gui/lighttpd/sbin/php -c /app/zend-server-6-php-5.4/gui/lighttpd/etc/php-fcgi.ini /app/zend-server-6-php-5.4/share/scripts/zs_create_databases.php zsDir=/app/zend-server-6-php-5.4 toVersion=6.1.0
+
+#Generate 7 day trial license (Disabled for testing ZCLOUD-96)
+#/app/zend-server-6-php-5.4/bin/zsd /app/zend-server-6-php-5.4/etc/zsd.ini --generate-license
+
+#Start Zend Server
+echo "Starting Zend Server"
+/app/zend-server-6-php-5.4/bin/zendctl.sh start 
+
+#Start a binary that does nothing so that boot.sh never ends and warden does not kill the container
+#This allows apache to be safely restarted by Zend Server (during deploy etc...).
+echo "Keep Container alive..."
+
+#Bootstrap Zend Server and Join a cluster - for persistence purposes
+sleep 2
+#Bootstrap Zend Server if necessary
+/app/zend-server-6-php-5.4/bin/zs-manage bootstrap-single-server -p $ZS_PASSWORD -a TRUE> /app/zend-server-6-php-5.4/tmp/api_key
+
+#Get API key from bootstrap script output
+#example output: admin	23746a3f22c1413c8afad1f267809fa9b35c03306c85c811c30b15d9c03b54d9
+API_KEY_NAME=\`cut -s -f 1 /app/zend-server-6-php-5.4/tmp/api_key\`
+API_SECRET_KEY=\`cut -s -f 2 /app/zend-server-6-php-5.4/tmp/api_key\`
+
+#Join the server to a cluster
+HOSTNAME=\`hostname\`
+APP_UNIQUE_NAME=\$HOSTNAME
+
+
+set
+#Get host's IP (there probably is a better way. No cloud foundry provided environment variable is suitable.
+APP_IP=\`/sbin/ifconfig w-\${HOSTNAME}-1| grep 'inet addr:' | awk {'print \$2'}| cut -d ':' -f 2\`
+
+/app/zend-server-6-php-5.4/bin/zs-manage server-add-to-cluster -n \$APP_UNIQUE_NAME -i \$APP_IP -p $ZS_PASSWORD --key-name \$API_KEY_NAME --secret-key \$API_SECRET_KEY -o $ZS_ZS_DB_HOST -u $ZS_DB_USER -p $ZS_DB_PASSWORD -d $ZS_DB_NAME -s
+
+#Fix GID/UID until ZSRV-11165 is resolved.
+file=/app/zend-server-6-php-5.4/etc/conf.d/ZendGlobalDirectives.ini
+value=`id -u` 
+for option in zend.httpd_gid zend.httpd_uid
+do 
+ sed -e "s|^\($option[ \t]*=[ \t]*\).*$|\1$value|" -i "$file"
+done 
+
+#ZCLOUD-100 - configure session clustering to work in cloud mode
+/app/zend-server-6-php-5.4/bin/zs-manage store-directive -d 'zend_sc.ha.use_broadcast' -v '0' -N \$API_KEY_NAME -K \$API_SECRET_KEY
+/app/zend-server-6-php-5.4/bin/zs-manage store-directive -d 'session.save_handler' -v 'cluster' -N \$API_KEY_NAME -K \$API_SECRET_KEY
+
+/app/zend-server-6-php-5.4/bin/zendctl.sh restart 
+
+#Keep the app alive so that the health managager does not kill it
+exec /app/zend-server-6-php-5.4/bin/donothing
+
+EOF
+
+chmod +x boot.sh
+# clean the cache
+rm -rf $CACHE_DIR

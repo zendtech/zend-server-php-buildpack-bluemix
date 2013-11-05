@@ -1,0 +1,179 @@
+# this file includes general purpose Bourne shell functions for use of the installation shell wrappers
+
+if [ "$1" = "--debug" ]; then
+	shift
+	DEBUG=1
+fi
+# set the Apache user under which WD runs its daemons
+# if [ "OS400" != "`uname -s`" ]; then
+#	# force all daemons to run under "zend" user (except for IBMi)
+#	WEB_USER="zend"
+#fi
+WD_UID=`id -u $WEB_USER`
+WD_GID=`id -g $WEB_USER`
+
+# If we are using bash, we export the color ENV vars and set ECHO_CMD to be "echo -e" 
+ECHO_CMD="echo "
+if [ -n "$BASH" ]; then
+    OK_COLOR="\033[32m"
+    FAIL_COLOR="\033[31m"
+    T_RESET="\033[0m"
+    ECHO_CMD="echo -e "
+    export OK_COLOR FAIL_COLOR T_RESET ECHO_CMD
+fi
+# first off, set decent umask
+umask 0022
+# this we do because in Solaris, there are nice commands in /usr/xpg4/bin/ that behave like you'd expect :)
+if [ `uname` = "SunOS" ]; then
+    PATH="/usr/xpg4/bin/:/usr/ucb:$PATH"
+elif [ `uname` = 'Darwin' ];then
+    MD5BIN="md5"
+else
+    MD5BIN="md5sum"
+fi
+# checks terminal geometry and exits if it's unsuitable for running an Ncurses installation.
+detect_tty_size()
+{
+    LINES=`tput lines`
+    COLUMNS=`tput cols`
+    if [ "$LINES" -lt 24 -o "$COLUMNS" -lt 80 ];then
+        echo -e "Dialog based installations require a minimal terminal size [geometry] of 80x24 characters.\nIf you decide to run a dialog based installation increase your terminal size or alternatively, use the TTY (Text) based installation by running ./install-tty\n"
+	exit
+    fi
+}
+
+# ensures there's enough space in the TMPDIR and exits otherwise 
+verify_tmp_free_space()
+{
+    if [ ! -d "$TMPDIR" ]; then 
+        TMPDIR="/tmp"
+    fi
+    FREE_BYTES=`df -Pk "$TMPDIR"|tail -1|awk -F " " '{print $4}'`
+    if [ $FREE_BYTES -lt 10240 ];then
+        echo -e "Insufficient disk space.\nZend Platform requires a minimum of 10M available disk space in $TMPDIR.\nPlease clear space in $TMPDIR and re-run the installer.\n";
+        exit 
+    fi
+}
+# verifies the package arch is compatible with machine's arch and exits otherwise 
+test_arch ()
+{
+    machine=`uname -m 2> /dev/null`
+    M64=x86_64
+    if [ "$machine" = "$M64" ]; then
+        pack_arch=`egrep -m1 -o "os=.+\-(\w|_)+" Inventory.xml|cut -d "-" -f 3 2> /dev/null`
+        if [ $pack_arch != $machine ]; then
+                echo -e "You are attempting to install an i386 package on an $M64 machine.\n\nFor a list of supported configurations, please refer to the Zend Platform compatibility table."
+                exit
+        fi
+    fi
+}
+# exits if the UID is not 0 [root]
+check_root_privileges()
+{
+#	UNAME=`id -un 2>/dev/null`
+#	if [ ! -z "$UNAME" ]; then
+#		if [ "$UNAME" != "zend" -a "$UNAME" != "root"  -a "$UNAME" != "vcap" ]; then
+#		    echo "You need to be root or zend users to run this script!";
+#		    exit 1
+#		fi
+#	else
+#		echo "Could not detect UID";
+#		exit 1
+#	fi
+#David : Always return 0 for cloud implementations
+	return 0;
+}
+check_selinux()
+{
+    SELINUX_OPTS="httpd_disable_trans allow_execheap allow_execmem allow_execstack";
+    SELINUX_MOD_REQUIRED=0;
+    which setsebool 2> /dev/null
+    if [ $? -eq 0 ]; then
+        if which getenforce > /dev/null 2>&1;then
+	    IS_ENFORCE=`getenforce`
+        fi
+        if [ "$IS_ENFORCE" = 'Enforcing' ]; then
+            for opt in $SELINUX_OPTS
+            do
+                RES=`getsebool $opt 2>/dev/null|cut -d " " -f3`
+                if [ "$RES" = 'off' -o "$RES" = 'inactive' ];then
+                        OPTS="$OPTS"\ $opt;
+                        SELINUX_MOD_REQUIRED=1;
+                fi
+            done
+            if [ "$SELINUX_MOD_REQUIRED" -eq 1 ];then
+                echo -e "\nInstallation has detected that SELinux is enabled.\nIn order to work with SELinux, please issue the following command:\n";
+                for opt in $OPTS
+                do 
+                        SETSEBOOL_OPTS="$SETSEBOOL_OPTS"\ "$opt=1"
+                done
+                echo "setsebool -P $SETSEBOOL_OPTS";
+                echo -e "\nAfter executing this command, please rerun the installation.\n";
+                exit 11;
+            fi
+        fi
+    fi
+}                                                                                                                        
+
+is_disabled()
+{
+    if [ ! -z "${DISABLE}" ]; then
+        ${ECHO_CMD} "${NAME} is disabled! To enable it, use Zend Platform Setup Tool."
+        exit 1
+    fi
+}
+report()
+{
+    if [ $1 = 0 ];then
+        $ECHO_CMD "$2 $NAME ${OK_COLOR}[OK]${T_RESET}" 
+        return $1
+    else
+        ${ECHO_CMD} "$2 $NAME ${FAIL_COLOR}[FAILED]${T_RESET}"
+        return $1
+    fi
+}
+
+launch()
+{
+	if [ -z "$DEBUG" ]; then
+		exec 3>/dev/null 4>&3
+	else
+		exec 3>&1 4>&2	
+	fi
+    $WATCHDOG -i $BINARY -v3 1>&3 2>&4
+    RET=$?
+    if [ $RET -eq 0 ];then
+        $ECHO_CMD "$BINARY watchdog is up and running.. ${OK_COLOR}[OK]${T_RESET}"
+        return $RET 
+    else
+        $WATCHDOG -u $WD_UID -g $WD_GID -s $BINARY 1>&3 2>&4
+        report $? "Starting"
+    fi
+}
+
+_kill()
+{
+    $WATCHDOG -i $BINARY > /dev/null 2>&1
+    if [ $? -eq 1 ];then
+        $ECHO_CMD "$BINARY is not running"
+    else
+        $WATCHDOG -t $BINARY > /dev/null 2>&1
+        report $? "Stopping"
+    fi
+}
+apache_status()
+{
+    kill -0 `cat $1 /dev/null 2>&1` > /dev/null 2>&1
+    RET=$?
+    if [ $RET -eq 0 ];then
+        ${ECHO_CMD} "[ `date "+%d.%m.%Y %H:%M:%S"` SYSTEM] Apache is running."
+    else
+        ${ECHO_CMD} "[ `date "+%d.%m.%Y %H:%M:%S"` SYSTEM] Apache is not running."
+    fi
+    return $RET
+}
+
+usage()
+{
+		echo "Usage: $0 [--debug] {start|stop|status|restart}"
+}
