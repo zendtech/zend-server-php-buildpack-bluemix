@@ -112,7 +112,7 @@ done
 /app/zend-server-6-php-5.4/bin/zendctl.sh restart 
 
 #Keep the app alive so that the health managager does not kill it
-netstat
+netstat -lnpt
 exec /app/zend-server-6-php-5.4/bin/donothing
 
 EOF
