@@ -60,7 +60,7 @@ export USER_UID=\`id -u\`
 #TODO: Make this change using erb templates/augeas instead of sed which are more elegant
 sed "s/vcap/\${USER_UID}/" \${PHP_INI_SCAN_DIR}/ZendGlobalDirectives.ini.erb > \${PHP_INI_SCAN_DIR}/ZendGlobalDirectives.ini
 sed "s/VCAP_PORT/\${PORT}/" /app/nginx/conf/sites-available/default.erb > /app/nginx/conf/sites-available/default
-ln -f -s /app/nginx/conf/sites-available/default /app/nginx/conf/sites-enabled
+#ln -f -s /app/nginx/conf/sites-available/default /app/nginx/conf/sites-enabled
 
 echo "Creating/Upgrading Zend databases. This may take several minutes..."
 /app/zend-server-6-php-5.4/gui/lighttpd/sbin/php -c /app/zend-server-6-php-5.4/gui/lighttpd/etc/php-fcgi.ini /app/zend-server-6-php-5.4/share/scripts/zs_create_databases.php zsDir=/app/zend-server-6-php-5.4 toVersion=6.1.0
