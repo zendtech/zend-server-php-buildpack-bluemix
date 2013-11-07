@@ -1,5 +1,5 @@
 server {
-	listen   VCAP_APP_PORT default;
+	listen   VCAP_PORT default;
 	server_name  localhost;
 
 	access_log  /app/nginx/logs/localhost.access.log;
@@ -13,10 +13,6 @@ server {
 	location /ZendServer {
 		proxy_pass        http://localhost:10081/ZendServer;
 		proxy_set_header  X-Real-IP  $remote_addr;
-		if ($cookie_JSESSIONID){
-			add_header Set-Cookie JSESSIONID="test";
-			break;
-		}
 	}
 
 	#ZEND-{EAB6D9CE5B23B8A10D9C6C798DF9ECB0}
