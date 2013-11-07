@@ -52,15 +52,17 @@ cat >>boot.sh <<EOF
 export LD_LIBRARY_PATH=/app/zend-server-6-php-5.4/lib
 export PHP_INI_SCAN_DIR=/app/zend-server-6-php-5.4/etc/conf.d
 export PHPRC=/app/zend-server-6-php-5.4/etc
-echo "VCAP_APPLICATION=\$VCAP_APPLICATION" >> /app/etc/zce.rc
+#echo "VCAP_APPLICATION=\$VCAP_APPLICATION" >> /etc/zce.rc
 echo "env[VCAP_APPLICATION] = \\"\${VCAP_APPLICATION}\\""  >> /app/zend-server-6-php-5.4/etc/php-fpm.conf
 echo "Launching Zend Server..."
 export USER_UID=\`id -u\`
 #Change UID in Zend Server configuration to the one used in the gear
 #TODO: Make this change using erb templates/augeas instead of sed which are more elegant
 sed "s/vcap/\${USER_UID}/" \${PHP_INI_SCAN_DIR}/ZendGlobalDirectives.ini.erb > \${PHP_INI_SCAN_DIR}/ZendGlobalDirectives.ini
-sed "s/VCAP_APP_PORT/\${VCAP_APP_PORT}/" /app/nginx/conf/sites-available/default.erb > /app/nginx/conf/sites-available/default && rm /app/nginx/conf/sites-available/default.erb
-#ln -f -s /app/nginx/conf/sites-available/default /app/nginx/conf/sites-enabled
+sed "s/VCAP_PORT/\${PORT}/" /app/nginx/conf/sites-available/default.erb > /app/nginx/conf/sites-available/default
+rm -rf /app/nginx/conf/sites-enabled
+mkdir /app/nginx/conf/sites-enabled
+ln -f -s /app/nginx/conf/sites-available/default /app/nginx/conf/sites-enabled
 
 echo "Creating/Upgrading Zend databases. This may take several minutes..."
 /app/zend-server-6-php-5.4/gui/lighttpd/sbin/php -c /app/zend-server-6-php-5.4/gui/lighttpd/etc/php-fcgi.ini /app/zend-server-6-php-5.4/share/scripts/zs_create_databases.php zsDir=/app/zend-server-6-php-5.4 toVersion=6.1.0
