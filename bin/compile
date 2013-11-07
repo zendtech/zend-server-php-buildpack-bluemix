@@ -59,8 +59,8 @@ export USER_UID=\`id -u\`
 #Change UID in Zend Server configuration to the one used in the gear
 #TODO: Make this change using erb templates/augeas instead of sed which are more elegant
 sed "s/vcap/\${USER_UID}/" \${PHP_INI_SCAN_DIR}/ZendGlobalDirectives.ini.erb > \${PHP_INI_SCAN_DIR}/ZendGlobalDirectives.ini
-sed "s/VCAP_PORT/\${PORT}/" /app/nginx/conf/sites-available/default.erb > /app/nginx/conf/sites-available/default
-ln -f -s /app/nginx/conf/sites-available/default /app/nginx/conf/sites-enabled
+sed "s/VCAP_APP_PORT/\${VCAP_APP_PORT}/" /app/nginx/conf/sites-available/default.erb > /app/nginx/conf/sites-available/default && rm /app/nginx/conf/sites-available/default.erb
+#ln -f -s /app/nginx/conf/sites-available/default /app/nginx/conf/sites-enabled
 
 echo "Creating/Upgrading Zend databases. This may take several minutes..."
 /app/zend-server-6-php-5.4/gui/lighttpd/sbin/php -c /app/zend-server-6-php-5.4/gui/lighttpd/etc/php-fcgi.ini /app/zend-server-6-php-5.4/share/scripts/zs_create_databases.php zsDir=/app/zend-server-6-php-5.4 toVersion=6.1.0
@@ -79,7 +79,17 @@ echo "Keep Container alive..."
 #Bootstrap Zend Server and Join a cluster - for persistence purposes
 sleep 2
 #Bootstrap Zend Server if necessary
-/app/zend-server-6-php-5.4/bin/zs-manage bootstrap-single-server -p $ZS_PASSWORD -a TRUE> /app/zend-server-6-php-5.4/tmp/api_key
+
+sleep 1
+if [ -z \$ZS_ADMIN_PASSWORD ]; then
+   #Set the GUI admin password to "changeme" if a user did not 
+   ZS_ADMIN_PASSWORD="changeme"
+#Generate a Zend Server administrator password if one was not specificed in the manifest
+   # ZS_ADMIN_PASSWORD=`date +%s | sha256sum | base64 | head -c 8` 
+   # echo ZS_ADMIN_PASSWORD=$ZS_ADMIN_PASSWORD
+fi 
+
+/app/zend-server-6-php-5.4/bin/zs-manage bootstrap-single-server -p \$ZS_ADMIN_PASSWORD -a 'TRUE'> /app/zend-server-6-php-5.4/tmp/api_key
 
 #Get API key from bootstrap script output
 #example output: admin	23746a3f22c1413c8afad1f267809fa9b35c03306c85c811c30b15d9c03b54d9
@@ -112,6 +122,7 @@ done
 /app/zend-server-6-php-5.4/bin/zendctl.sh restart 
 
 #Keep the app alive so that the health managager does not kill it
+netstat -lnpt
 exec /app/zend-server-6-php-5.4/bin/donothing
 
 EOF
