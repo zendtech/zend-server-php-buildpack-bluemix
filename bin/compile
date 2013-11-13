@@ -41,7 +41,7 @@ cp $LP_DIR/conf/etc/zce.rc.nginx etc/zce.rc
 cp -r $LP_DIR/conf/zend/* $PHP_PATH
 # make php available on bin
 mkdir -p bin
-ln -s $PHP_PATH/bin/php bin/php
+ln -s /app/zend-server-6-php-5.4/bin/php bin/php
 
 # move json-env-extract.php into bin and make it executable
 mv $LP_DIR/json-env-extract.php bin/
