@@ -43,6 +43,10 @@ cp -r $LP_DIR/conf/zend/* $PHP_PATH
 mkdir -p bin
 ln -s $PHP_PATH/bin/php bin/php
 
+# move json-env-extract.php into bin and make it executable
+mv $LP_DIR/json-env-extract.php bin/
+chmod +x bin/json-env-extract.php
+
 #TODO - put most of the script into the build pack instead of generating on the fly (for better stability)
 cat >>boot.sh <<EOF
 #!/bin/bash 
@@ -102,12 +106,21 @@ API_SECRET_KEY=\`cut -s -f 2 /app/zend-server-6-php-5.4/tmp/api_key\`
 HOSTNAME=\`hostname\`
 APP_UNIQUE_NAME=\$HOSTNAME
 
+MYSQL_HOSTNAME=\`/app/bin/json-env-extract.php VCAP_SERVICES cleardb-n/a.0.credentials.hostname\`
+MYSQL_PORT=\`/app/bin/json-env-extract.php VCAP_SERVICES cleardb-n/a.0.credentials.port\`
+MYSQL_USERNAME=\`/app/bin/json-env-extract.php VCAP_SERVICES cleardb-n/a.0.credentials.username\`
+MYSQL_PASSWORD=\`/app/bin/json-env-extract.php VCAP_SERVICES cleardb-n/a.0.credentials.password\`
+
+echo MYSQL_HOSTNAME=\$MYSQL_HOSTNAME > /app/zend_mysql.sh
+echo MYSQL_PORT=\$MYSQL_PORT >> /app/zend_mysql.sh
+echo MYSQL_USERNAME=\$MYSQL_USERNAME >> /app/zend_mysql.sh
+echo MYSQL_PASSWORD=\'\$MYSQL_PASSWORD\' >> /app/zend_mysql.sh
 
 set
 #Get host's IP (there probably is a better way. No cloud foundry provided environment variable is suitable.
 APP_IP=\`/sbin/ifconfig w-\${HOSTNAME}-1| grep 'inet addr:' | awk {'print \$2'}| cut -d ':' -f 2\`
 
-/app/zend-server-6-php-5.4/bin/zs-manage server-add-to-cluster -n \$APP_UNIQUE_NAME -i \$APP_IP -p $ZS_PASSWORD --key-name \$API_KEY_NAME --secret-key \$API_SECRET_KEY -o $ZS_ZS_DB_HOST -u $ZS_DB_USER -p $ZS_DB_PASSWORD -d $ZS_DB_NAME -s
+/app/zend-server-6-php-5.4/bin/zs-manage server-add-to-cluster -n \$APP_UNIQUE_NAME -i \$APP_IP -p $ZS_PASSWORD --key-name \$API_KEY_NAME --secret-key \$API_SECRET_KEY -o \$MYSQL_HOSTNAME -u \$MYSQL_USERNAME -p \$MYSQL_PASSWORD -d \$MYSQL_PASSWORD -s > /app/zend_cluster.sh
 
 #Fix GID/UID until ZSRV-11165 is resolved.
 file=/app/zend-server-6-php-5.4/etc/conf.d/ZendGlobalDirectives.ini
