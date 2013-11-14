@@ -12,7 +12,7 @@ foreach($path as $key) {
     if(isset($result[$key])) {
         $result = $result[$key];
     } else {
-        fwrite(STDERR,"Failed locating subkey $key");
+        fwrite(STDERR,"Failed locating subkey $key\n");
         exit(1);
     }
 }
