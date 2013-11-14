@@ -52,11 +52,19 @@ HOSTNAME=`hostname`
 APP_UNIQUE_NAME=$HOSTNAME
 
 if [[ -z $MYSQL_HOSTNAME && -z $MYSQL_PORT && -z $MYSQL_USERNAME && -z $MYSQL_PASSWORD && -z $MYSQL_DBNAME ]]; then
-    MYSQL_HOSTNAME=`/app/bin/json-env-extract.php VCAP_SERVICES cleardb-n/a.0.credentials.hostname`
-    MYSQL_PORT=`/app/bin/json-env-extract.php VCAP_SERVICES cleardb-n/a.0.credentials.port`
-    MYSQL_USERNAME=`/app/bin/json-env-extract.php VCAP_SERVICES cleardb-n/a.0.credentials.username`
-    MYSQL_PASSWORD=`/app/bin/json-env-extract.php VCAP_SERVICES cleardb-n/a.0.credentials.password`
-    MYSQL_DBNAME=`/app/bin/json-env-extract.php VCAP_SERVICES cleardb-n/a.0.credentials.name`
+    MYSQL_HOSTNAME=`/app/bin/json-env-extract.php VCAP_SERVICES cleardb-n/a 0 credentials hostname`
+    MYSQL_PORT=`/app/bin/json-env-extract.php VCAP_SERVICES cleardb-n/a 0 credentials port`
+    MYSQL_USERNAME=`/app/bin/json-env-extract.php VCAP_SERVICES cleardb-n/a 0 credentials username`
+    MYSQL_PASSWORD=`/app/bin/json-env-extract.php VCAP_SERVICES cleardb-n/a 0 credentials password`
+    MYSQL_DBNAME=`/app/bin/json-env-extract.php VCAP_SERVICES cleardb-n/a 0 credentials name`
+fi
+
+if [[ -z $MYSQL_HOSTNAME && -z $MYSQL_PORT && -z $MYSQL_USERNAME && -z $MYSQL_PASSWORD && -z $MYSQL_DBNAME ]]; then
+    MYSQL_HOSTNAME=`/app/bin/json-env-extract.php VCAP_SERVICES mysql-5.5 0 credentials hostname`
+    MYSQL_PORT=`/app/bin/json-env-extract.php VCAP_SERVICES mysql-5.5 0 credentials port`
+    MYSQL_USERNAME=`/app/bin/json-env-extract.php VCAP_SERVICES mysql-5.5 0 credentials username`
+    MYSQL_PASSWORD=`/app/bin/json-env-extract.php VCAP_SERVICES mysql-5.5 0 credentials password`
+    MYSQL_DBNAME=`/app/bin/json-env-extract.php VCAP_SERVICES mysql-5.5 0 credentials name`
 fi
 
 echo MYSQL_HOSTNAME=$MYSQL_HOSTNAME > /app/zend_mysql.sh

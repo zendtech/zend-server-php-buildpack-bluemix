@@ -2,10 +2,9 @@
 <?php
 
 $var = $argv[1];
-$path_str = $argv[2];
 
 $arr = json_decode(getenv($var),true);
-$path = explode('.',$path_str);
+$path = array_slice($argv,2);
 $result = $arr;
 
 foreach($path as $key) {
