@@ -30,7 +30,10 @@ echo "Creating/Upgrading Zend databases. This may take several minutes..."
 
 #Start Zend Server
 echo "Starting Zend Server"
-/app/zend-server-6-php-5.4/bin/zendctl.sh start 
+# Fix GID/UID until ZSRV-11165 is resolved
+sed -e "s|^\(zend.httpd_uid[ \t]*=[ \t]*\).*$|\1$ZEND_UID|" -i /app/zend-server-6-php-5.4/etc/conf.d/ZendGlobalDirectives.ini
+sed -e "s|^\(zend.httpd_gid[ \t]*=[ \t]*\).*$|\1$ZEND_GID|" -i /app/zend-server-6-php-5.4/etc/conf.d/ZendGlobalDirectives.ini
+/app/zend-server-6-php-5.4/bin/zendctl.sh start
 
 # Bootstrap Zend Server
 echo "Bootstrap Zend Server"
@@ -78,19 +81,16 @@ if [[ -n $MYSQL_HOSTNAME && -n $MYSQL_PORT && -n $MYSQL_USERNAME && -n $MYSQL_PA
     APP_IP=`/sbin/ifconfig w-${HOSTNAME}-1| grep 'inet addr:' | awk {'print \$2'}| cut -d ':' -f 2`
 
     # Actually join cluster
+    echo "Joining cluster"
     $ZS_MANAGE server-add-to-cluster -n $APP_UNIQUE_NAME -i $APP_IP -o $MYSQL_HOSTNAME:$MYSQL_PORT -u $MYSQL_USERNAME -p $MYSQL_PASSWORD -d $MYSQL_DBNAME -N $WEB_API_KEY -K $WEB_API_KEY_HASH -s | sed 's/ //g' > /app/zend_cluster.sh
     eval `cat /app/zend_cluster.sh`
 
     # Configure session clustering
+    echo "Restarting Zend Server (using WebAPI)"
     $ZS_MANAGE store-directive -d 'zend_sc.ha.use_broadcast' -v '0' -N $WEB_API_KEY -K $WEB_API_KEY_HASH
     $ZS_MANAGE store-directive -d 'session.save_handler' -v 'cluster' -N $WEB_API_KEY -K $WEB_API_KEY_HASH
     $ZS_MANAGE restart-php -p -N $WEB_API_KEY -K $WEB_API_KEY_HASH
 fi
-
-# Fix GID/UID until ZSRV-11165 is resolved
-sed -e "s|^\(zend.httpd_uid[ \t]*=[ \t]*\).*$|\1$ZEND_UID|" -i /app/zend-server-6-php-5.4/etc/conf.d/ZendGlobalDirectives.ini
-sed -e "s|^\(zend.httpd_gid[ \t]*=[ \t]*\).*$|\1$ZEND_GID|" -i /app/zend-server-6-php-5.4/etc/conf.d/ZendGlobalDirectives.ini
-/app/zend-server-6-php-5.4/bin/zendctl.sh start
 
 # Debug output
 if [[ -n $DEBUG ]]; then
