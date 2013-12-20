@@ -11,6 +11,8 @@ This is a build pack provides Zend Server on Cloud Foundry. Current version is 6
 
 
 # Installation
+You can optionally install the cartridge in yout local cloud foundry installation if you want it to be available as a system build pack. This enables cartridge "detection" and adds it to the menu of cartridges presented by the cf utility. If you don't wish to install then skip this stage and go directly to the usage section.
+
 ## Requirements
 * Working cloud foundry v2 environment with dea_ng and gorouter
 * The lucid64 cloud foundry stack should be installed and enabled - check settings in /vagrant/dea_ng/config/dea.yml
