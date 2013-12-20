@@ -51,6 +51,7 @@ applications:
 5. Once the app is started you can access the Zend Server GUI at http://url-to-your-app/ZendServer, For example : http://dave2.vcap.me/ZendServer . If you forgot to perform step 4 then the password for the GUI will be "changeme".
 6. Enter a user name and password to use to authenticate with the GUI.
 7. If you saved your manifest in step 3 then you can issue the "cf push" command without specifying the --buildpack parameter to update your app.
+```"cf set-env dave1 ZS_ADMIN_PASSWORD 1234"```
 
 ## Known issues
 * Code tracing might not work properly in this version.
