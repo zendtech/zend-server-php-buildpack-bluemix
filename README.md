@@ -56,9 +56,9 @@ applications:
 ## Known issues
 * Code tracing might not work properly in this version.
 * Several issues might be encountered if you don't bind mysql providing service to the app (cleardb/mysql/MaraiaDB):
-** You can change settings using the gui and apply them - but they won't survive application pushes and restarts nor will they be propagated to new application instances.
+ * You can change settings using the gui and apply them - but they won't survive application pushes and restarts nor will they be propagated to new application instances.
 ** Application packages deployed using Zend Server's deployment mechanism (zpk packages) will not be propagated to new app instances.
-** Zend Server will not operate in cluster mode.
+ * Zend Server will not operate in cluster mode.
 * Application generated data is not persistent (this is a limitation of Cloud Foundry) unless saved to a third party storage provider (like S3). 
 * Mysql is not used automatically - If you require MySQL then you'll have to setup your own server and configure your app to use it.
 * Each container has their own full copy of Zend Server at the moment so droplet size is about 161MB for an empty app (this should not be an issue in public cloud foundry platforms).
