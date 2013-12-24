@@ -34,20 +34,20 @@ f.e  `cf push --buildpack=http://url-to-cloned-repo` or   (you can save this val
 4. You can optionally bind a mysql service (cleardb/mysql/MariaDB) to the app - this will cause Zend Server to operate in cluster mode (experimental). Operating in cluster mode enables: scaling, persistence of settings changed using the gui and persistence of apps deployed using Zend Server's deployment mechanism. Choose to save the manifest when prompted to.
 8. Issue the comand below to change the Zend Server GUI password (You can issue in the future in case you forget your password):
 `"cf set-env <app_name> ZS_ADMIN_PASSWORD <password>"`
-4. The previous steps should generate a "manifest.yml" that looks a like the example below. You can optionally add and push the generated manifest in future applications (in this case cf push will not ask you so many questions).
+4. The previous steps should generate a YAML file named "manifest.yml" that looks a like the example below. You can optionally add and push the generated manifest in future applications (in this case cf push will not ask you so many questions).
 
  ```
  ---
  env:
-   ZS_ACCEPT_EULA: 'TRUE'
-   ZS_ADMIN_PASSWORD: '<password_for_Zend_Server_GUI_console>'
+    ZS_ACCEPT_EULA: 'TRUE'
+    ZS_ADMIN_PASSWORD: '<password_for_Zend_Server_GUI_console>'
  applications:
  - name: <app_name>
-   instances: 1
-   memory: <at least 512M >
-   host: <app_name>
-   domain: <your_cloud_domain>
-   path: .
+    instances: 1
+    memory: <at least 512M >
+    host: <app_name>
+    domain: <your_cloud_domain>
+    path: .
  ```
 
 5. wait for the app to start.
