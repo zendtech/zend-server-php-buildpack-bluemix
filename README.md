@@ -33,7 +33,7 @@ f.e  `cf push --buildpack=http://url-to-cloned-repo` or   (you can save this val
 3. Issue the `cf push --buildpack=https://github.com/davidl-zend/zend-server-mysql-buildpack-dev` command (choose to save your manifest when asked to by the cf client). Allocate at least 512M of RAM for your app. 
 4. You can optionally bind a mysql service (cleardb/mysql/MariaDB) to the app - this will cause Zend Server to operate in cluster mode (experimental). Operating in cluster mode enables: scaling, persistence of settings changed using the gui and persistence of apps deployed using Zend Server's deployment mechanism. Choose to save the manifest when prompted to.
 8. Issue the comand below to change the Zend Server GUI password (You can issue in the future in case you forget your password):
-`"cf set-env <app_name> ZS_ADMIN_PASSWORD <password>"`
+`cf set-env <app_name> ZS_ADMIN_PASSWORD <password>`
 4. The previous steps should generate a YAML file named "manifest.yml" that looks a like the example below. You can optionally add and push the generated manifest in future applications (in this case cf push will not ask you so many questions).
 
  ```
@@ -52,7 +52,7 @@ f.e  `cf push --buildpack=http://url-to-cloned-repo` or   (you can save this val
 
 5. wait for the app to start.
 5. Once the app is started you can access the Zend Server GUI at http://url-to-your-app/ZendServer, For example : http://dave2.vcap.me/ZendServer . If you forgot to perform step 5 then the password for the GUI will be "changeme".
-7. If you chose to save the manifest in the previous steps then you can issue the 'cf push' to udpate your application code in the future.
+7. If you chose to save the manifest in the previous steps then you can issue the `cf push` to udpate your application code in the future.
 
 
 
