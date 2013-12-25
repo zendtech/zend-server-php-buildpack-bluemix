@@ -15,7 +15,7 @@ server {
 	}
 	
 	location @rewrite {
-		rewrite ^(.*/)/(.*)$ $1/index.php;
+		rewrite ^(.*)/(.*)$ $1/index.php;
 	}
 
 	location /ZendServer {
