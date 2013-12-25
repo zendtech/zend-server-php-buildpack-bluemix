@@ -4,17 +4,16 @@ server {
 
 	access_log  /app/nginx/logs/localhost.access.log;
 
-	root   /app/www;
-	index  index.html index.htm;
 
 	location / {
-	#	root   /app/www;
-	#	index  index.php index.html index.htm;
+		root   /app/www;
+		index  index.php index.html index.htm;
 		
 		try_files $uri $uri/ /index.html;
 		#index index.html index.htm;
 		#try_files $uri @rewrite;
 		#try_files $uri $uri/ /index.php?$args;
+		include "/app/zend-server-6-php-5.4/etc/sites.d/zend-default-vhost-80.conf";
 		include /app/nginx/conf/fastcgi.conf;
 		
 	}
@@ -30,7 +29,7 @@ server {
 	}
 
 	#ZEND-{EAB6D9CE5B23B8A10D9C6C798DF9ECB0}
-	include "/app/zend-server-6-php-5.4/etc/sites.d/zend-default-vhost-80.conf";
+	#include "/app/zend-server-6-php-5.4/etc/sites.d/zend-default-vhost-80.conf";
 	#ZEND-{EAB6D9CE5B23B8A10D9C6C798DF9ECB0}
 }
 
