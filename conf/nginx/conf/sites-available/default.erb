@@ -8,15 +8,15 @@ server {
 		root   /app/www;
 		index  index.php index.html index.htm;
 		
-		try_files $uri @rewrite;
-		
+		#try_files $uri @rewrite;
+		try_files $uri $uri/ /index.php?$args;
 		include /app/nginx/conf/fastcgi.conf;
 		
 	}
 	
-	location @rewrite {
-		rewrite ^(.*)/(.*)$ $1/index.php;
-	}
+	#location @rewrite {
+	#	rewrite ^(.*)/(.*)$ $1/index.php;
+	#}
 
 	location /ZendServer {
 		proxy_pass        http://localhost:10081/ZendServer;
