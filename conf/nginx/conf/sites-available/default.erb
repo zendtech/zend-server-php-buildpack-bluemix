@@ -8,14 +8,14 @@ server {
 		root   /app/www;
 		index  index.php index.html index.htm;
 		
-		#if (!-e $request_filename){
-		 #rewrite ^(.*)$ /index.php break;
-  		#}
-  		#try_files $uri $uri/ /index.php;
-  		try_files $uri $uri/ index.php$args;
-  		
+		try_files $uri @rewrite
+		
 		include /app/nginx/conf/fastcgi.conf;
 		
+	}
+	
+	location @rewrite {
+		rewrite ^/(.*)$ /index.php;
 	}
 
 	location /ZendServer {
