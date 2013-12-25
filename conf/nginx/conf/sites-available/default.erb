@@ -8,7 +8,7 @@ server {
 		root   /app/www;
 		index  index.php index.html index.htm;
 		if (-e $request_filename){
-		 rewrite ^(.*)$ /index.php break;
+		 rewrite ^(.*)$ index.php break;
   		}
 		include /app/nginx/conf/fastcgi.conf;
 		
