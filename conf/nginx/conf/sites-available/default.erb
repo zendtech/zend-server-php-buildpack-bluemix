@@ -8,6 +8,7 @@ server {
 		root   /app/www;
 		index  index.php index.html index.htm;
 		
+		index index.html index.htm;
 		#try_files $uri @rewrite;
 		#try_files $uri $uri/ /index.php?$args;
 		include /app/nginx/conf/fastcgi.conf;
