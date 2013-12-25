@@ -3,10 +3,6 @@ server {
 	server_name  localhost;
 
 	access_log  /app/nginx/logs/localhost.access.log;
-	include "/app/zend-server-6-php-5.4/etc/sites.d/zend-default-vhost-80.conf";
-	
-	root   /app/www;
-        index  index.php index.html index.htm;
 
 	location / {
 		root   /app/www;
@@ -28,6 +24,11 @@ server {
 	location /ZendServer {
 		proxy_pass        http://localhost:10081/ZendServer;
 		proxy_set_header  X-Real-IP  $remote_addr;
+	}
+	
+	location /demo-application {
+		try_files $uri $uri/ /demo-application/index.php?$args;
+		include /app/nginx/conf/fastcgi.conf;
 	}
 
 	#ZEND-{EAB6D9CE5B23B8A10D9C6C798DF9ECB0}
