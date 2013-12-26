@@ -3,6 +3,8 @@ server {
 	server_name  localhost;
 
 	access_log  /app/nginx/logs/localhost.access.log;
+	
+	port_in_redirect    off;
 
 	location / {
 		root   /app/www;
