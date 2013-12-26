@@ -27,7 +27,7 @@ server {
 	}
 	
 	location /demo-application {
-		root   /app/www;
+		root   /app/www/demo-application;
 		index index.html index.htm;
 		try_files $uri $uri/ /demo-application/index.php?$args;
 		include /app/nginx/conf/fastcgi.conf;
