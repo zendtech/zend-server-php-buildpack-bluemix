@@ -13,12 +13,12 @@ This is a build pack provides Zend Server on Cloud Foundry. Current version is 6
 1. Create a folder on your workstation and "cd" into it.
 2. Create an empty file named "zend_server_php_app" (if you don't do this then you'll have to manually specify which buildpack to use for the app). Also make sure your app contains an "index.php" file.
 3. Issue the `cf push --buildpack=https://github.com/davidl-zend/zend-server-mysql-buildpack-dev` command (choose to save your manifest when asked to by the cf client). Allocate at least 512M of RAM for your app. 
-4. You can optionally bind a mysql service (cleardb/mysql/MariaDB) to the app - this will cause Zend Server to operate in cluster mode (experimental). Operating in cluster mode enables: scaling, persistence of settings changed using the gui and persistence of apps deployed using Zend Server's deployment mechanism. Choose to save the manifest when prompted to.
+4. You can optionally bind a cleardb/mysql/MariaDB service to your app - this will cause Zend Server to operate in cluster mode (experimental). Operating in cluster mode enables: scaling, persistence of settings changed using the gui and persistence of apps deployed using Zend Server's deployment mechanism. Choose to save the manifest when prompted to.
 8. Issue the comand below to change the Zend Server GUI password (You can issue in the future in case you forget your password):
 `cf set-env <app_name> ZS_ADMIN_PASSWORD <password>`
-4. The previous steps should generate a YAML file named "manifest.yml" that looks a like the example below. You can optionally add and push the generated manifest in future applications (in this case cf push will not ask you so many questions).
-
+4. If you chose to save your configuration in the previous steps should a YAML file named "manifest.yml" will be generated that looks a like the example below. You can optionally add and push the generated manifest in future applications (in this case cf push will not ask you so many questions).
  ```
+#Example of manifest.yml
  ---
  env:
     ZS_ACCEPT_EULA: 'TRUE'
