@@ -8,6 +8,7 @@ This is a build pack provides Zend Server on Cloud Foundry. Current version is 6
 * Zend Server 6.1 configuration files
 * PHP 5.4
 * Nginx web server
+ 
 
 # Usage
 1. Create a folder on your workstation and "cd" into it.
