@@ -73,6 +73,14 @@ if [[ -z $MYSQL_HOSTNAME && -z $MYSQL_PORT && -z $MYSQL_USERNAME && -z $MYSQL_PA
     MYSQL_DBNAME=`/app/bin/json-env-extract.php VCAP_SERVICES mysql-5.5 0 credentials name`
 fi
 
+if [[ -z $MYSQL_HOSTNAME && -z $MYSQL_PORT && -z $MYSQL_USERNAME && -z $MYSQL_PASSWORD && -z $MYSQL_DBNAME ]]; then
+    MYSQL_HOSTNAME=`/app/bin/json-env-extract.php VCAP_SERVICES user-provided credentials hostname`
+    MYSQL_PORT=`/app/bin/json-env-extract.php VCAP_SERVICES user-provided credentials port`
+    MYSQL_USERNAME=`/app/bin/json-env-extract.php VCAP_SERVICES user-provided credentials username`
+    MYSQL_PASSWORD=`/app/bin/json-env-extract.php VCAP_SERVICES user-provided credentials password`
+    MYSQL_DBNAME=`/app/bin/json-env-extract.php VCAP_SERVICES user-provided credentials name`
+fi
+
 echo MYSQL_HOSTNAME=$MYSQL_HOSTNAME > /app/zend_mysql.sh
 echo MYSQL_PORT=$MYSQL_PORT >> /app/zend_mysql.sh
 echo MYSQL_USERNAME=$MYSQL_USERNAME >> /app/zend_mysql.sh
