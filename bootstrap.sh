@@ -74,13 +74,11 @@ if [[ -z $MYSQL_HOSTNAME && -z $MYSQL_PORT && -z $MYSQL_USERNAME && -z $MYSQL_PA
 fi
 
 if [[ -z $MYSQL_HOSTNAME && -z $MYSQL_PORT && -z $MYSQL_USERNAME && -z $MYSQL_PASSWORD && -z $MYSQL_DBNAME ]]; then
-    MYSQL_HOSTNAME=`/app/bin/json-env-extract.php VCAP_SERVICES user-provided credentials hostname`
-    MYSQL_PORT=`/app/bin/json-env-extract.php VCAP_SERVICES user-provided credentials port`
-    MYSQL_USERNAME=`/app/bin/json-env-extract.php VCAP_SERVICES user-provided credentials username`
-    MYSQL_PASSWORD=`/app/bin/json-env-extract.php VCAP_SERVICES user-provided credentials password`
-    MYSQL_DBNAME=`/app/bin/json-env-extract.php VCAP_SERVICES user-provided credentials name`
-    MYSQL_ALL=`/app/bin/json-env-extract.php VCAP_SERVICES user-provided`
-    MYSQL_CREDS=`/app/bin/json-env-extract.php VCAP_SERVICES user-provided credentials`
+    MYSQL_HOSTNAME=`/app/bin/json-env-extract.php VCAP_SERVICES user-provided 0 credentials hostname`
+    MYSQL_PORT=`/app/bin/json-env-extract.php VCAP_SERVICES user-provided 0 credentials port`
+    MYSQL_USERNAME=`/app/bin/json-env-extract.php VCAP_SERVICES user-provided 0 credentials username`
+    MYSQL_PASSWORD=`/app/bin/json-env-extract.php VCAP_SERVICES user-provided 0 credentials password`
+    MYSQL_DBNAME=`/app/bin/json-env-extract.php VCAP_SERVICES user-provided 0 credentials name`
 fi
 
 echo MYSQL_HOSTNAME=$MYSQL_HOSTNAME > /app/zend_mysql.sh
@@ -88,9 +86,6 @@ echo MYSQL_PORT=$MYSQL_PORT >> /app/zend_mysql.sh
 echo MYSQL_USERNAME=$MYSQL_USERNAME >> /app/zend_mysql.sh
 echo MYSQL_PASSWORD=$MYSQL_PASSWORD >> /app/zend_mysql.sh
 echo MYSQL_DBNAME=$MYSQL_DBNAME >> /app/zend_mysql.sh
-echo "-------------" >> /app/zend_mysql.sh
-echo MYSQL_ALL=$MYSQL_ALL >> /app/zend_mysql.sh
-echo MYSQL_CREDS=$MYSQL_CREDS >> /app/zend_mysql.sh
 
 if [[ -n $MYSQL_HOSTNAME && -n $MYSQL_PORT && -n $MYSQL_USERNAME && -n $MYSQL_PASSWORD && -n $MYSQL_DBNAME ]]; then
     # Get host's IP (there probably is a better way. No cloud foundry provided environment variable is suitable.
