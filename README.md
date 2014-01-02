@@ -57,7 +57,7 @@ f.e  `cf push --buildpack=http://url-to-cloned-repo` or   (you can save this val
 #Using an external database service
 It is possible to bind an external database to Zend Server app as a "user-provided" service.
 Doing so will enable persistence, session clustering and more.
-1. Run `cf create-service`.
+1. Run `cf create-service`.\n
 2. As a service type select "user-provided".
 3. Enter a friendly name for the service.
 4. Enter service paramaters. the required ones are `hostname, port, password, name`, where "name" is the database Zend Server will use for its internal functions.
