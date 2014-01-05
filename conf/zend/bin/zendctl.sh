@@ -62,6 +62,7 @@ case $1 in
                     $0 $1-lighttpd %
                     $0 $1-monitor %
                 fi
+                sleep 10
 		$ECHO_CMD "\n$PRODUCT_NAME started..."
 		;;
 
