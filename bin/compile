@@ -13,7 +13,7 @@ LP_DIR=`cd $(dirname $0); cd ..; pwd`
 PHP_PATH=$BUILD_DIR/zend-server-6-php-5.4
 APACHE_PATH=$BUILD_DIR/apache
 NGINX_PATH=$BUILD_DIR/nginx
-
+ZS_PATCHES="ZCLOUD-104"
 # include .files when moving things around
 shopt -s dotglob
 
@@ -36,21 +36,46 @@ if [[ ! -f $CACHE_DIR/zend-server-6.2-php-5.4-nginx.tar.xz ]]; then
     curl -s -O http://repos.zend.com/cloudfoundry/zend-server-6.2-php-5.4-nginx.tar.xz
 fi
 
+for P in $ZS_PATCHES; do
+    if [[ ! -f $CACHE_DIR/$P.tar.gz ]]; then
+        curl -s -O http://repos.zend.com/cloudfoundry/$P.tar.gz
+    fi
+done
+
 if [[ ! -f $CACHE_DIR/nginx.tar.gz ]]; then
     curl -s -O http://repos.zend.com/cloudfoundry/nginx.tar.gz
 fi
 cd $OLD_PWD
 
-#Download and install Zend Server
+# Unpack Zend Server, patches and nginx
 tar xJf $CACHE_DIR/zend-server-6.2-php-5.4-nginx.tar.xz
+for P in $ZS_PATCHES; do
+    tar xzf $CACHE_DIR/$P.tar.gz
+done
 tar xzf $CACHE_DIR/nginx.tar.gz
 
-# update config files - only use this with DEA_NG+Warden!!!!!!!
-cp -r $LP_DIR/conf/nginx/* $NGINX_PATH
+# Remove symlink to prevent errors when copying files
+rm -f $PHP_PATH/bin/nginxctl.sh
+
+# Remove DB files
+rm -f $PHP_PATH/var/db/codetracing.db
+rm -f $PHP_PATH/var/db/deployment.db
+rm -f $PHP_PATH/var/db/gui.db
+rm -f $PHP_PATH/var/db/jobqueue.db
+rm -f $PHP_PATH/var/db/monitor.db
+rm -f $PHP_PATH/var/db/statistics.db
+rm -f $PHP_PATH/var/db/zsd.db
+
+# Remove logs
+rm -f $PHP_PATH/var/log/*
+rm -f $PHP_PATH/gui/lighttpd/logs/*
+
+# update config files
+cp -rf $LP_DIR/conf/nginx/* $NGINX_PATH
 mkdir -p etc
 cp $LP_DIR/conf/etc/zce.rc.nginx etc/zce.rc
+cp -rf $LP_DIR/conf/zend/* $PHP_PATH
 
-cp -r $LP_DIR/conf/zend/* $PHP_PATH
 # make php available on bin
 mkdir -p bin
 ln -s /app/zend-server-6-php-5.4/bin/php bin/php
