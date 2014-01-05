@@ -32,8 +32,8 @@ fi
 # Populate cache if needed
 OLD_PWD=`pwd`
 cd $CACHE_DIR
-if [[ ! -f $CACHE_DIR/zend-server-6-php-5.4-nginx.tar.xz ]]; then
-    curl -s -O http://repos.zend.com/cloudfoundry/zend-server-6-php-5.4-nginx.tar.xz
+if [[ ! -f $CACHE_DIR/zend-server-6.2-php-5.4-nginx.tar.xz ]]; then
+    curl -s -O http://repos.zend.com/cloudfoundry/zend-server-6.2-php-5.4-nginx.tar.xz
 fi
 
 if [[ ! -f $CACHE_DIR/nginx.tar.gz ]]; then
@@ -42,7 +42,7 @@ fi
 cd $OLD_PWD
 
 #Download and install Zend Server
-tar xJf $CACHE_DIR/zend-server-6-php-5.4-nginx.tar.xz
+tar xJf $CACHE_DIR/zend-server-6.2-php-5.4-nginx.tar.xz
 tar xzf $CACHE_DIR/nginx.tar.gz
 
 # update config files - only use this with DEA_NG+Warden!!!!!!!
