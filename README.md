@@ -48,7 +48,7 @@ Doing so will enable persistence, session clustering, and more.
 4. Enter service paramaters. The required parameters are `hostname, port, password, name`, where 'name' is the database Zend Server will use for its internal functions.
 5. Enter the paramaters of your external database provider in order.
 6. Bind the service to your app `cf bind-service [service-name] [app-name]`.
-7. The service will be auto-detected upon push. Zend Server will create the schema and enable clustering features.]
+7. The service will be auto-detected upon push. Zend Server will create the schema and enable clustering features.
 
 
 # Known Issues
