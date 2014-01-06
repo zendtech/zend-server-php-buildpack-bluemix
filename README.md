@@ -42,8 +42,9 @@ If you bind more than one database service to an app, specify which service Zend
 12. If you chose to save the manifest in the previous steps, then you can issue the `cf push` command to udpate your application code in the future.
 
 # Using an External Database Service
-It is possible to bind an external database to the Zend Server app as a "user-provided" service.
-Doing so will enable persistence, session clustering, and more.
+It is possible to bind an external database to the Zend Server app as a "user-provided" service. Doing so will enable persistence, session clustering, and more. 
+To bind an external database:
+
 1. Run `cf create-service`.
 2. As a service type select "user-provided".
 3. Enter a friendly name for the service.
