@@ -49,6 +49,9 @@ if [ -z $ZS_ADMIN_PASSWORD ]; then
 fi 
 $ZS_MANAGE bootstrap-single-server -p $ZS_ADMIN_PASSWORD -a 'TRUE' > /app/zend-server-6-php-5.4/tmp/api_key
 
+#Remove ZS_ADMIN_PASSWORD from env.log
+sed '/ZS_ADMIN_PASSWORD/d' -i /home/vcap/logs/env.log 
+
 # Get API key from bootstrap script output
 WEB_API_KEY=`cut -s -f 1 /app/zend-server-6-php-5.4/tmp/api_key`
 WEB_API_KEY_HASH=`cut -s -f 2 /app/zend-server-6-php-5.4/tmp/api_key`
