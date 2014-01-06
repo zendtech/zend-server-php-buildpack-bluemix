@@ -49,6 +49,9 @@ if [ -z $ZS_ADMIN_PASSWORD ]; then
 fi 
 $ZS_MANAGE bootstrap-single-server -p $ZS_ADMIN_PASSWORD -a 'TRUE' > /app/zend-server-6-php-5.4/tmp/api_key
 
+#Remove ZS_ADMIN_PASSWORD from env.log
+sed '/ZS_ADMIN_PASSWORD/d' -i /home/vcap/logs/env.log 
+
 # Get API key from bootstrap script output
 WEB_API_KEY=`cut -s -f 1 /app/zend-server-6-php-5.4/tmp/api_key`
 WEB_API_KEY_HASH=`cut -s -f 2 /app/zend-server-6-php-5.4/tmp/api_key`
@@ -57,28 +60,33 @@ WEB_API_KEY_HASH=`cut -s -f 2 /app/zend-server-6-php-5.4/tmp/api_key`
 HOSTNAME=`hostname`
 APP_UNIQUE_NAME=$HOSTNAME
 
+# Detect attached DB service, use ENV var or first available. 
+if [ -z $ZS_DB ]; then
+for dbtype in "cleardb-n/a" "mysql-5.5" "user-provided" "mariadb"; do
+for dbnum in 0 1 2; do
 if [[ -z $MYSQL_HOSTNAME && -z $MYSQL_PORT && -z $MYSQL_USERNAME && -z $MYSQL_PASSWORD && -z $MYSQL_DBNAME ]]; then
-    MYSQL_HOSTNAME=`/app/bin/json-env-extract.php VCAP_SERVICES cleardb-n/a 0 credentials hostname`
-    MYSQL_PORT=`/app/bin/json-env-extract.php VCAP_SERVICES cleardb-n/a 0 credentials port`
-    MYSQL_USERNAME=`/app/bin/json-env-extract.php VCAP_SERVICES cleardb-n/a 0 credentials username`
-    MYSQL_PASSWORD=`/app/bin/json-env-extract.php VCAP_SERVICES cleardb-n/a 0 credentials password`
-    MYSQL_DBNAME=`/app/bin/json-env-extract.php VCAP_SERVICES cleardb-n/a 0 credentials name`
+    MYSQL_HOSTNAME=`/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum credentials hostname`
+    MYSQL_PORT=`/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum credentials port`
+    MYSQL_USERNAME=`/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum credentials username`
+    MYSQL_PASSWORD=`/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum credentials password`
+    MYSQL_DBNAME=`/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum credentials name`
 fi
-
+done
+done
+else
+for dbtype in "cleardb-n/a" "mysql-5.5" "user-provided" "mariadb"; do
+for dbnum in 0 1 2; do
+if [ `/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum name` == "$ZS_DB" ]; then
 if [[ -z $MYSQL_HOSTNAME && -z $MYSQL_PORT && -z $MYSQL_USERNAME && -z $MYSQL_PASSWORD && -z $MYSQL_DBNAME ]]; then
-    MYSQL_HOSTNAME=`/app/bin/json-env-extract.php VCAP_SERVICES mysql-5.5 0 credentials hostname`
-    MYSQL_PORT=`/app/bin/json-env-extract.php VCAP_SERVICES mysql-5.5 0 credentials port`
-    MYSQL_USERNAME=`/app/bin/json-env-extract.php VCAP_SERVICES mysql-5.5 0 credentials username`
-    MYSQL_PASSWORD=`/app/bin/json-env-extract.php VCAP_SERVICES mysql-5.5 0 credentials password`
-    MYSQL_DBNAME=`/app/bin/json-env-extract.php VCAP_SERVICES mysql-5.5 0 credentials name`
+    MYSQL_HOSTNAME=`/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum credentials hostname`
+    MYSQL_PORT=`/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum credentials port`
+    MYSQL_USERNAME=`/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum credentials username`
+    MYSQL_PASSWORD=`/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum credentials password`
+    MYSQL_DBNAME=`/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum credentials name`
 fi
-
-if [[ -z $MYSQL_HOSTNAME && -z $MYSQL_PORT && -z $MYSQL_USERNAME && -z $MYSQL_PASSWORD && -z $MYSQL_DBNAME ]]; then
-    MYSQL_HOSTNAME=`/app/bin/json-env-extract.php VCAP_SERVICES user-provided 0 credentials hostname`
-    MYSQL_PORT=`/app/bin/json-env-extract.php VCAP_SERVICES user-provided 0 credentials port`
-    MYSQL_USERNAME=`/app/bin/json-env-extract.php VCAP_SERVICES user-provided 0 credentials username`
-    MYSQL_PASSWORD=`/app/bin/json-env-extract.php VCAP_SERVICES user-provided 0 credentials password`
-    MYSQL_DBNAME=`/app/bin/json-env-extract.php VCAP_SERVICES user-provided 0 credentials name`
+fi
+done
+done
 fi
 
 echo MYSQL_HOSTNAME=$MYSQL_HOSTNAME > /app/zend_mysql.sh
