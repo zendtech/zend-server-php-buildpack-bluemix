@@ -26,7 +26,7 @@ mkdir -p /app/nginx/conf/sites-enabled
 ln -f -s /app/nginx/conf/sites-available/default /app/nginx/conf/sites-enabled
 
 echo "Creating/Upgrading Zend databases. This may take several minutes..."
-/app/zend-server-6-php-5.4/gui/lighttpd/sbin/php -c /app/zend-server-6-php-5.4/gui/lighttpd/etc/php-fcgi.ini /app/zend-server-6-php-5.4/share/scripts/zs_create_databases.php zsDir=/app/zend-server-6-php-5.4 toVersion=6.1.0
+/app/zend-server-6-php-5.4/gui/lighttpd/sbin/php -c /app/zend-server-6-php-5.4/gui/lighttpd/etc/php-fcgi.ini /app/zend-server-6-php-5.4/share/scripts/zs_create_databases.php zsDir=/app/zend-server-6-php-5.4 toVersion=6.2.0
 
 #Generate 7 day trial license
 #/app/zend-server-6-php-5.4/bin/zsd /app/zend-server-6-php-5.4/etc/zsd.ini --generate-license
@@ -100,8 +100,9 @@ if [[ -n $MYSQL_HOSTNAME && -n $MYSQL_PORT && -n $MYSQL_USERNAME && -n $MYSQL_PA
     echo "Restarting Zend Server (using WebAPI)"
     $ZS_MANAGE store-directive -d 'zend_sc.ha.use_broadcast' -v '0' -N $WEB_API_KEY -K $WEB_API_KEY_HASH
     $ZS_MANAGE store-directive -d 'session.save_handler' -v 'cluster' -N $WEB_API_KEY -K $WEB_API_KEY_HASH
-    $ZS_MANAGE restart-php -p -N $WEB_API_KEY -K $WEB_API_KEY_HASH
 fi
+
+$ZS_MANAGE restart-php -p -N $WEB_API_KEY -K $WEB_API_KEY_HASH
 
 # Debug output
 if [[ -n $DEBUG ]]; then
