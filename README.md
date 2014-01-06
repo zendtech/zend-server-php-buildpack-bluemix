@@ -78,3 +78,10 @@ Clone the git repo into the buildpack directory on your dea_ng node using the co
 
 Alternatively you can clone the repo into a Web server in your environment and specify the buildpack to the cf client. 
 i.e.  `cf push --buildpack=http://url-to-cloned-repo` or   (you can save this value in the app's manifest.yml).
+
+# Additional Resources
+The following resources will help you understand Cloud Foundry concepts and workflows:
+* For more info on getting started with Cloud Foundry: http://docs.cloudfoundry.com/docs/dotcom/getting-started.html
+* How to add a service in Cloud Foundry: http://docs.cloudfoundry.com/docs/dotcom/adding-a-service.html
+* How to design apps for the cloud: http://docs.cloudfoundry.com/docs/using/app-arch/index.html
+* Cloud Foundry documentation: http://docs.cloudfoundry.com/
