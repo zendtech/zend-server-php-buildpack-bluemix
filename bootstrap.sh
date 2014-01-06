@@ -59,7 +59,7 @@ APP_UNIQUE_NAME=$HOSTNAME
 
 # Detect attached DB service, use ENV var or first available. 
 if [ -z $ZS_DB ]; then
-for dbtype in "cleardb-n/a" "mysql-5.5" "user-provided"; do
+for dbtype in "cleardb-n/a" "mysql-5.5" "user-provided" "mariadb"; do
 for dbnum in 0 1 2; do
 if [[ -z $MYSQL_HOSTNAME && -z $MYSQL_PORT && -z $MYSQL_USERNAME && -z $MYSQL_PASSWORD && -z $MYSQL_DBNAME ]]; then
     MYSQL_HOSTNAME=`/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum credentials hostname`
@@ -71,7 +71,7 @@ fi
 done
 done
 else
-for dbtype in "cleardb-n/a" "mysql-5.5" "user-provided"; do
+for dbtype in "cleardb-n/a" "mysql-5.5" "user-provided" "mariadb"; do
 for dbnum in 0 1 2; do
 if [ `/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum name` == "$ZS_DB" ]; then
 if [[ -z $MYSQL_HOSTNAME && -z $MYSQL_PORT && -z $MYSQL_USERNAME && -z $MYSQL_PASSWORD && -z $MYSQL_DBNAME ]]; then
