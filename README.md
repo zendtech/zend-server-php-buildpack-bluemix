@@ -48,7 +48,7 @@ Doing so will enable persistence, session clustering, and more.
 4. Enter service paramaters. The required parameters are `hostname, port, password, name`, where 'name' is the database Zend Server will use for its internal functions.
 5. Enter the paramaters of your external database provider in order.
 6. Bind the service to your app `cf bind-service [service-name] [app-name]`.
-7. The service will be auto-detected upon push. Zend Server will create the schema and enable clustering features.
+7. The service will be auto-detected upon push. Zend Server will create the schema and enable clustering features.]
 
 
 # Known Issues
@@ -78,3 +78,10 @@ Clone the git repo into the buildpack directory on your dea_ng node using the co
 
 Alternatively you can clone the repo into a Web server in your environment and specify the buildpack to the cf client. 
 i.e.  `cf push --buildpack=http://url-to-cloned-repo` or   (you can save this value in the app's manifest.yml).
+
+# Additional Resources
+The following resources will help you understand Cloud Foundry concepts and workflows:
+* For more info on getting started with Cloud Foundry: http://docs.cloudfoundry.com/docs/dotcom/getting-started.html
+* How to add a service in Cloud Foundry: http://docs.cloudfoundry.com/docs/dotcom/adding-a-service.html
+* How to design apps for the cloud: http://docs.cloudfoundry.com/docs/using/app-arch/index.html
+* Cloud Foundry documentation: http://docs.cloudfoundry.com/
