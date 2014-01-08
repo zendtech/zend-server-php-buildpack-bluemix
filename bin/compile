@@ -49,7 +49,7 @@ fi
 
 for P in $ZS_PATCHES; do
     if [[ ! -f $CACHE_DIR/$P.tar.gz ]]; then
-        START_MSG 'Downloading $P patch'
+        START_MSG "Downloading $P patch"
         curl -s -O http://repos.zend.com/cloudfoundry/$P.tar.gz
         DONE_MSG
     fi
