@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
 # bin/compile <build-dir> <cache-dir>
 
+function START_MSG() {
+    echo -n "$1... "
+}
+
+function DONE_MSG {
+    echo "Done"
+}
+
 # fail fast
 set -e
 
@@ -31,6 +39,7 @@ fi
 OLD_PWD=`pwd`
 cd $CACHE_DIR
 if [[ ! -f $CACHE_DIR/zend-server-6.2-php-5.4-nginx.tar.xz ]]; then
+    START_MSG 'Downloading Zend Server tarball'
     curl -s -O http://repos.zend.com/cloudfoundry/zend-server-6.2-php-5.4-nginx.tar.xz
 fi
 
@@ -70,6 +79,10 @@ rm -f $PHP_PATH/gui/lighttpd/logs/*
 
 # Update file locations in SQL schema files
 sed -i -e 's|/usr/local/zend|/app/zend-server-6-php-5.4|' $PHP_PATH/share/*.sql
+
+# Update file locations in ini files
+sed -i -e 's|/usr/local/zend|/app/zend-server-6-php-5.4|' $PHP_PATH/etc/sites.d/zend-default-vhost-80.conf
+sed -i -e 's|/usr/share/nginx/html|/app/nginx/share/nginx/html|' $PHP_PATH/etc/sites.d/zend-default-vhost-80.conf
 
 # update config files
 cp -rf $LP_DIR/conf/nginx/* $NGINX_PATH
