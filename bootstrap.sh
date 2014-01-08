@@ -114,9 +114,9 @@ $ZS_MANAGE restart-php -p -N $WEB_API_KEY -K $WEB_API_KEY_HASH
 
 # Fix GID/UID until ZSRV-11165 is resolved.
 VALUE=`id -u`
-for option in zend.httpd_gid zend.httpd_uid; do 
-    sed -e "s|^\($option[ \t]*=[ \t]*\).*$|\1$VALUE|" -i /app/zend-server-6-php-5.4/etc/conf.d/ZendGlobalDirectives.ini
-done
+sed -e "s|^\(zend.httpd_uid[ \t]*=[ \t]*\).*$|\1$value|"  -i /app/zend-server-6-php-5.4/etc/conf.d/ZendGlobalDirectives.ini
+sed -e "s|^\(zend.httpd_gid[ \t]*=[ \t]*\).*$|\1$value|"  -i /app/zend-server-6-php-5.4/etc/conf.d/ZendGlobalDirectives.ini
+
 
 # Debug output
 if [[ -n $DEBUG ]]; then
