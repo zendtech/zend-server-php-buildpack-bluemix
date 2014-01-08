@@ -23,6 +23,7 @@ ZS_PATCHES="ZCLOUD-104 ZCLOUD-147 ZSRV-11471"
 # include .files when moving things around
 shopt -s dotglob
 
+START_MSG 'Initializing'
 cd $BUILD_DIR
 
 # move app things to www
@@ -35,31 +36,47 @@ if [ -f www/Procfile ]; then
   mv www/Procfile .
 fi
 
+DONE_MSG
+
 # Populate cache if needed
 OLD_PWD=`pwd`
 cd $CACHE_DIR
 if [[ ! -f $CACHE_DIR/zend-server-6.2-php-5.4-nginx.tar.xz ]]; then
     START_MSG 'Downloading Zend Server tarball'
     curl -s -O http://repos.zend.com/cloudfoundry/zend-server-6.2-php-5.4-nginx.tar.xz
+    DONE_MSG
 fi
 
 for P in $ZS_PATCHES; do
     if [[ ! -f $CACHE_DIR/$P.tar.gz ]]; then
+        START_MSG 'Downloading $P patch'
         curl -s -O http://repos.zend.com/cloudfoundry/$P.tar.gz
+        DONE_MSG
     fi
 done
 
 if [[ ! -f $CACHE_DIR/nginx.tar.gz ]]; then
+    START_MSG 'Downloading nginx tarball'
     curl -s -O http://repos.zend.com/cloudfoundry/nginx.tar.gz
+    DONE_MSG
 fi
 cd $OLD_PWD
 
 # Unpack Zend Server, patches and nginx
+START_MSG 'Unpacking Zend Server'
 tar xJf $CACHE_DIR/zend-server-6.2-php-5.4-nginx.tar.xz
+DONE_MSG
 for P in $ZS_PATCHES; do
+    START_MSG "Unpacking $P patch"
     tar xzf $CACHE_DIR/$P.tar.gz
+    DONE_MSG
 done
+START_MSG "Unpacking nginx"
 tar xzf $CACHE_DIR/nginx.tar.gz
+DONE_MSG
+
+# Start cleaning
+START_MSG 'Cleaning up some files'
 
 # Remove symlink to prevent errors when copying files
 rm -f $PHP_PATH/bin/nginxctl.sh
@@ -77,6 +94,11 @@ rm -f $PHP_PATH/var/db/zsd.db
 rm -f $PHP_PATH/var/log/*
 rm -f $PHP_PATH/gui/lighttpd/logs/*
 
+DONE_MSG
+
+# Update configuration files
+START_MSG 'Update configuration files'
+
 # Update file locations in SQL schema files
 sed -i -e 's|/usr/local/zend|/app/zend-server-6-php-5.4|' $PHP_PATH/share/*.sql
 
@@ -90,18 +112,22 @@ mkdir -p etc
 cp $LP_DIR/conf/etc/zce.rc.nginx etc/zce.rc
 cp -rf $LP_DIR/conf/zend/* $PHP_PATH
 
+DONE_MSG
+
 # make php available on bin
 mkdir -p bin
 ln -s /app/zend-server-6-php-5.4/bin/php bin/php
 
 # move json-env-extract.php into bin and make it executable
+START_MSG 'Installing json-env-extract.php'
 mv $LP_DIR/json-env-extract.php bin/
 chmod +x bin/json-env-extract.php
+DONE_MSG
 
+# install boot.sh and bootstrap.sh
+START_MSG 'Installing boot.sh and bootstrap.sh'
 mv $LP_DIR/boot.sh .
 mv $LP_DIR/bootstrap.sh .
 chmod +x boot.sh
 chmod +x bootstrap.sh
-
-# clean the cache
-#rm -rf $CACHE_DIR
+DONE_MSG
