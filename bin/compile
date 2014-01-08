@@ -4,8 +4,6 @@
 # fail fast
 set -e
 
-pwd
-
 BIN_DIR=$(dirname $0)
 BUILD_DIR=$1
 CACHE_DIR=$2
