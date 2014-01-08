@@ -47,7 +47,7 @@ if [ -z $ZS_ADMIN_PASSWORD ]; then
    # ZS_ADMIN_PASSWORD=`date +%s | sha256sum | base64 | head -c 8` 
    # echo ZS_ADMIN_PASSWORD=$ZS_ADMIN_PASSWORD
 fi 
-$ZS_MANAGE bootstrap-single-server -p $ZS_ADMIN_PASSWORD -a 'TRUE' > /app/zend-server-6-php-5.4/tmp/api_key
+$ZS_MANAGE bootstrap-single-server -p $ZS_ADMIN_PASSWORD -a 'TRUE' | head -1 > /app/zend-server-6-php-5.4/tmp/api_key
 
 #Remove ZS_ADMIN_PASSWORD from env.log
 sed '/ZS_ADMIN_PASSWORD/d' -i /home/vcap/logs/env.log 
@@ -100,6 +100,8 @@ if [[ -n $MYSQL_HOSTNAME && -n $MYSQL_PORT && -n $MYSQL_USERNAME && -n $MYSQL_PA
     APP_IP=`/sbin/ifconfig w-${HOSTNAME}-1| grep 'inet addr:' | awk {'print \$2'}| cut -d ':' -f 2`
 
     # Actually join cluster
+    echo "Delaying before joining cluster"
+    sleep 100
     echo "Joining cluster"
     $ZS_MANAGE server-add-to-cluster -n $APP_UNIQUE_NAME -i $APP_IP -o $MYSQL_HOSTNAME:$MYSQL_PORT -u $MYSQL_USERNAME -p $MYSQL_PASSWORD -d $MYSQL_DBNAME -N $WEB_API_KEY -K $WEB_API_KEY_HASH -s | sed -e 's/ //g' > /app/zend_cluster.sh
     eval `cat /app/zend_cluster.sh`
@@ -131,4 +133,6 @@ if [[ -n $ZEND_CF_DEBUG ]]; then
     DEBUG_PRINT_FILE /app/zend-server-6-php-5.4/tmp/api_key
     DEBUG_PRINT_FILE /app/zend_mysql.sh
     DEBUG_PRINT_FILE /app/zend_cluster.sh
+    echo WEB_API_KEY=$WEB_API_KEY
+    echo WEB_API_KEY_HASH=$WEB_API_KEY_HASH
 fi
