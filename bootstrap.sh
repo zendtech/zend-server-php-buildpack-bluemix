@@ -110,13 +110,13 @@ if [[ -n $MYSQL_HOSTNAME && -n $MYSQL_PORT && -n $MYSQL_USERNAME && -n $MYSQL_PA
     $ZS_MANAGE store-directive -d 'session.save_handler' -v 'cluster' -N $WEB_API_KEY -K $WEB_API_KEY_HASH
 fi
 
-$ZS_MANAGE restart-php -p -N $WEB_API_KEY -K $WEB_API_KEY_HASH
 
 # Fix GID/UID until ZSRV-11165 is resolved.
 VALUE=`id -u`
 sed -e "s|^\(zend.httpd_uid[ \t]*=[ \t]*\).*$|\1$value|"  -i /app/zend-server-6-php-5.4/etc/conf.d/ZendGlobalDirectives.ini
 sed -e "s|^\(zend.httpd_gid[ \t]*=[ \t]*\).*$|\1$value|"  -i /app/zend-server-6-php-5.4/etc/conf.d/ZendGlobalDirectives.ini
 
+$ZS_MANAGE restart-php -p -N $WEB_API_KEY -K $WEB_API_KEY_HASH
 
 # Debug output
 if [[ -n $DEBUG ]]; then
