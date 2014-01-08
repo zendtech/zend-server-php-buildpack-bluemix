@@ -62,31 +62,31 @@ APP_UNIQUE_NAME=$HOSTNAME
 
 # Detect attached DB service, use ENV var or first available. 
 if [ -z $ZS_DB ]; then
-for dbtype in "cleardb-n/a" "mysql-5.5" "user-provided" "mariadb"; do
-for dbnum in 0 1 2; do
-if [[ -z $MYSQL_HOSTNAME && -z $MYSQL_PORT && -z $MYSQL_USERNAME && -z $MYSQL_PASSWORD && -z $MYSQL_DBNAME ]]; then
-    MYSQL_HOSTNAME=`/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum credentials hostname`
-    MYSQL_PORT=`/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum credentials port`
-    MYSQL_USERNAME=`/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum credentials username`
-    MYSQL_PASSWORD=`/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum credentials password`
-    MYSQL_DBNAME=`/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum credentials name`
-fi
-done
-done
+    for dbtype in "cleardb-n/a" "mysql-5.5" "user-provided" "mariadb"; do
+        for dbnum in 0 1 2; do
+            if [[ -z $MYSQL_HOSTNAME && -z $MYSQL_PORT && -z $MYSQL_USERNAME && -z $MYSQL_PASSWORD && -z $MYSQL_DBNAME ]]; then
+                MYSQL_HOSTNAME=`/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum credentials hostname`
+                MYSQL_PORT=`/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum credentials port`
+                MYSQL_USERNAME=`/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum credentials username`
+                MYSQL_PASSWORD=`/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum credentials password`
+                MYSQL_DBNAME=`/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum credentials name`
+            fi
+        done
+    done
 else
-for dbtype in "cleardb-n/a" "mysql-5.5" "user-provided" "mariadb"; do
-for dbnum in 0 1 2; do
-if [ `/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum name` == "$ZS_DB" ]; then
-if [[ -z $MYSQL_HOSTNAME && -z $MYSQL_PORT && -z $MYSQL_USERNAME && -z $MYSQL_PASSWORD && -z $MYSQL_DBNAME ]]; then
-    MYSQL_HOSTNAME=`/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum credentials hostname`
-    MYSQL_PORT=`/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum credentials port`
-    MYSQL_USERNAME=`/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum credentials username`
-    MYSQL_PASSWORD=`/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum credentials password`
-    MYSQL_DBNAME=`/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum credentials name`
-fi
-fi
-done
-done
+    for dbtype in "cleardb-n/a" "mysql-5.5" "user-provided" "mariadb"; do
+        for dbnum in 0 1 2; do
+            if [ `/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum name` == "$ZS_DB" ]; then
+                if [[ -z $MYSQL_HOSTNAME && -z $MYSQL_PORT && -z $MYSQL_USERNAME && -z $MYSQL_PASSWORD && -z $MYSQL_DBNAME ]]; then
+                    MYSQL_HOSTNAME=`/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum credentials hostname`
+                    MYSQL_PORT=`/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum credentials port`
+                    MYSQL_USERNAME=`/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum credentials username`
+                    MYSQL_PASSWORD=`/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum credentials password`
+                    MYSQL_DBNAME=`/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum credentials name`
+                fi
+            fi
+        done
+    done
 fi
 
 echo MYSQL_HOSTNAME=$MYSQL_HOSTNAME > /app/zend_mysql.sh
@@ -105,22 +105,29 @@ if [[ -n $MYSQL_HOSTNAME && -n $MYSQL_PORT && -n $MYSQL_USERNAME && -n $MYSQL_PA
     eval `cat /app/zend_cluster.sh`
 
     # Configure session clustering
-    echo "Restarting Zend Server (using WebAPI)"
-    #$ZS_MANAGE store-directive -d 'zend_sc.ha.use_broadcast' -v '0' -N $WEB_API_KEY -K $WEB_API_KEY_HASH
-    #$ZS_MANAGE store-directive -d 'session.save_handler' -v 'cluster' -N $WEB_API_KEY -K $WEB_API_KEY_HASH
+    $ZS_MANAGE store-directive -d 'zend_sc.ha.use_broadcast' -v '0' -N $WEB_API_KEY -K $WEB_API_KEY_HASH
+    $ZS_MANAGE store-directive -d 'session.save_handler' -v 'cluster' -N $WEB_API_KEY -K $WEB_API_KEY_HASH
 fi
 
 
 # Fix GID/UID until ZSRV-11165 is resolved.
 VALUE=`id -u`
-sed -e "s|^\(zend.httpd_uid[ \t]*=[ \t]*\).*$|\1$value|"  -i /app/zend-server-6-php-5.4/etc/conf.d/ZendGlobalDirectives.ini
-sed -e "s|^\(zend.httpd_gid[ \t]*=[ \t]*\).*$|\1$value|"  -i /app/zend-server-6-php-5.4/etc/conf.d/ZendGlobalDirectives.ini
+sed -e "s|^\(zend.httpd_uid[ \t]*=[ \t]*\).*$|\1$VALUE|" -i /app/zend-server-6-php-5.4/etc/conf.d/ZendGlobalDirectives.ini
+sed -e "s|^\(zend.httpd_gid[ \t]*=[ \t]*\).*$|\1$VALUE|" -i /app/zend-server-6-php-5.4/etc/conf.d/ZendGlobalDirectives.ini
 
+echo "Restarting Zend Server (using WebAPI)"
 $ZS_MANAGE restart-php -p -N $WEB_API_KEY -K $WEB_API_KEY_HASH
+
+function DEBUG_PRINT_FILE() {
+    BASENAME=`basename $1`
+    echo "--- Start $BASENAME ---"
+    cat $1
+    echo "--- End $BASENAME ---"
+}
 
 # Debug output
 if [[ -n $DEBUG ]]; then
-    set
-    netstat -lnpt
-    bash --version
+    echo UID=$VALUE
+    grep 'zend\.httpd_[ug]id' /app/zend-server-6-php-5.4/etc/conf.d/ZendGlobalDirectives.ini
+    DEBUG_PRINT_FILE /app/zend_cluster.sh
 fi
