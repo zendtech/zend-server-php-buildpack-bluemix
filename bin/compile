@@ -93,4 +93,4 @@ chmod +x boot.sh
 chmod +x bootstrap.sh
 
 # clean the cache
-rm -rf $CACHE_DIR
+#rm -rf $CACHE_DIR
