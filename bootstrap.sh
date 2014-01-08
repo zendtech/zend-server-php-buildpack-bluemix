@@ -130,4 +130,5 @@ if [[ -n $DEBUG ]]; then
     echo UID=$VALUE
     grep 'zend\.httpd_[ug]id' /app/zend-server-6-php-5.4/etc/conf.d/ZendGlobalDirectives.ini
     DEBUG_PRINT_FILE /app/zend_cluster.sh
+    DEBUG_PRINT_FILE /app/zend_mysql.sh
 fi
