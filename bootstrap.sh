@@ -128,6 +128,7 @@ function DEBUG_PRINT_FILE() {
 if [[ -n $ZEND_CF_DEBUG ]]; then
     echo UID=$VALUE
     grep 'zend\.httpd_[ug]id' /app/zend-server-6-php-5.4/etc/conf.d/ZendGlobalDirectives.ini
-    DEBUG_PRINT_FILE /app/zend_cluster.sh
+    DEBUG_PRINT_FILE /app/zend-server-6-php-5.4/tmp/api_key
     DEBUG_PRINT_FILE /app/zend_mysql.sh
+    DEBUG_PRINT_FILE /app/zend_cluster.sh
 fi
