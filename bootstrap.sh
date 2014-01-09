@@ -31,6 +31,14 @@ echo "Creating/Upgrading Zend databases. This may take several minutes..."
 #Generate 7 day trial license
 #/app/zend-server-6-php-5.4/bin/zsd /app/zend-server-6-php-5.4/etc/zsd.ini --generate-license
 
+# Setup log verbosity if needed
+if [[ -n $ZEND_LOG_VERBOSITY ]]; then
+    sed -i -e '/zend_gui.logVerbosity = NOTICE/zend_gui.logVerbosity = DEBUG/m' /usr/local/zend/gui/config/zs_ui.ini
+    sed -i -e '/zend_gui.debugModeEnabled = false/zend_gui.debugModeEnabled = true/m' /usr/local/zend/gui/config/zs_ui.ini
+    sed -i -e "/zend_deployment.daemon.log_verbosity_level=2/zend_deployment.daemon.log_verbosity_level=$ZEND_LOG_VERBOSITY/m" /usr/local/zend/etc/zdd.ini
+    sed -i -e "/zend_server_daemon.log_verbosity_level=2/zend_server_daemon.log_verbosity_level=$ZEND_LOG_VERBOSITY/m" /usr/local/zend/etc/zsd.ini
+fi
+
 #Start Zend Server
 echo "Starting Zend Server"
 # Fix GID/UID until ZSRV-11165 is resolved
@@ -121,13 +129,6 @@ sed -e "s|^\(zend.httpd_gid[ \t]*=[ \t]*\).*$|\1$VALUE|" -i /app/zend-server-6-p
 
 echo "Restarting Zend Server (using WebAPI)"
 $ZS_MANAGE restart-php -p -N $WEB_API_KEY -K $WEB_API_KEY_HASH
-
-if [[ -n $ZEND_LOG_VERBOSITY ]]; then
-    sed -i -e '/zend_gui.logVerbosity = NOTICE/zend_gui.logVerbosity = DEBUG/m' /usr/local/zend/gui/config/zs_ui.ini
-    sed -i -e '/zend_gui.debugModeEnabled = false/zend_gui.debugModeEnabled = true/m' /usr/local/zend/gui/config/zs_ui.ini
-    sed -i -e "/zend_deployment.daemon.log_verbosity_level=2/zend_deployment.daemon.log_verbosity_level=$ZEND_LOG_VERBOSITY/m" /usr/local/zend/etc/zdd.ini
-    sed -i -e "/zend_server_daemon.log_verbosity_level=2/zend_server_daemon.log_verbosity_level=$ZEND_LOG_VERBOSITY/m" /usr/local/zend/etc/zsd.ini
-fi
 
 function DEBUG_PRINT_FILE() {
     BASENAME=`basename $1`
