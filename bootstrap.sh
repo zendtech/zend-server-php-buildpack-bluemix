@@ -119,6 +119,13 @@ sed -e "s|^\(zend.httpd_gid[ \t]*=[ \t]*\).*$|\1$VALUE|" -i /app/zend-server-6-p
 echo "Restarting Zend Server (using WebAPI)"
 $ZS_MANAGE restart-php -p -N $WEB_API_KEY -K $WEB_API_KEY_HASH
 
+if [[ -n $ZEND_LOG_VERBOSITY ]]; then
+    sed -i -e '/zend_gui.logVerbosity = NOTICE/zend_gui.logVerbosity = DEBUG/m' /usr/local/zend/gui/config/zs_ui.ini
+    sed -i -e '/zend_gui.debugModeEnabled = false/zend_gui.debugModeEnabled = true/m' /usr/local/zend/gui/config/zs_ui.ini
+    sed -i -e "/zend_deployment.daemon.log_verbosity_level=2/zend_deployment.daemon.log_verbosity_level=$ZEND_LOG_VERBOSITY/m" /usr/local/zend/etc/zdd.ini
+    sed -i -e "/zend_server_daemon.log_verbosity_level=2/zend_server_daemon.log_verbosity_level=$ZEND_LOG_VERBOSITY/m" /usr/local/zend/etc/zsd.ini
+fi
+
 function DEBUG_PRINT_FILE() {
     BASENAME=`basename $1`
     echo "--- Start $BASENAME ---"
@@ -133,6 +140,7 @@ if [[ -n $ZEND_CF_DEBUG ]]; then
     DEBUG_PRINT_FILE /app/zend-server-6-php-5.4/tmp/api_key
     DEBUG_PRINT_FILE /app/zend_mysql.sh
     DEBUG_PRINT_FILE /app/zend_cluster.sh
+    DEBUG_PRINT_FILE /app/zend-server-6-php-5.4/etc/zend_database.ini
     echo WEB_API_KEY=$WEB_API_KEY
     echo WEB_API_KEY_HASH=$WEB_API_KEY_HASH
 fi
