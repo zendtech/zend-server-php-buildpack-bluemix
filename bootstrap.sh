@@ -54,11 +54,8 @@ if [ -z $ZS_ADMIN_PASSWORD ]; then
    #Generate a Zend Server administrator password if one was not specificed in the manifest
    # ZS_ADMIN_PASSWORD=`date +%s | sha256sum | base64 | head -c 8` 
    # echo ZS_ADMIN_PASSWORD=$ZS_ADMIN_PASSWORD
-fi 
+fi
 $ZS_MANAGE bootstrap-single-server -p $ZS_ADMIN_PASSWORD -a 'TRUE' | head -1 > /app/zend-server-6-php-5.4/tmp/api_key
-
-echo "Restarting Zend Server (using WebAPI)"
-$ZS_MANAGE restart-php -p -N $WEB_API_KEY -K $WEB_API_KEY_HASH
 
 #Remove ZS_ADMIN_PASSWORD from env.log
 sed '/ZS_ADMIN_PASSWORD/d' -i /home/vcap/logs/env.log 
@@ -66,6 +63,9 @@ sed '/ZS_ADMIN_PASSWORD/d' -i /home/vcap/logs/env.log
 # Get API key from bootstrap script output
 WEB_API_KEY=`cut -s -f 1 /app/zend-server-6-php-5.4/tmp/api_key`
 WEB_API_KEY_HASH=`cut -s -f 2 /app/zend-server-6-php-5.4/tmp/api_key`
+
+echo "Restarting Zend Server (using WebAPI)"
+$ZS_MANAGE restart-php -p -N $WEB_API_KEY -K $WEB_API_KEY_HASH
 
 # Join the server to a cluster
 HOSTNAME=`hostname`
