@@ -144,6 +144,6 @@ if [[ -n $ZEND_CF_DEBUG ]]; then
     DEBUG_PRINT_FILE /app/zend_mysql.sh
     DEBUG_PRINT_FILE /app/zend_cluster.sh
     DEBUG_PRINT_FILE /app/zend-server-6-php-5.4/etc/zend_database.ini
-    echo WEB_API_KEY=$WEB_API_KEY
-    echo WEB_API_KEY_HASH=$WEB_API_KEY_HASH
+    echo WEB_API_KEY=\'$WEB_API_KEY\'
+    echo WEB_API_KEY_HASH=\'$WEB_API_KEY_HASH\'
 fi
