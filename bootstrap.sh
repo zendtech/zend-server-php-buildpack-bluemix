@@ -49,6 +49,9 @@ if [ -z $ZS_ADMIN_PASSWORD ]; then
 fi 
 $ZS_MANAGE bootstrap-single-server -p $ZS_ADMIN_PASSWORD -a 'TRUE' | head -1 > /app/zend-server-6-php-5.4/tmp/api_key
 
+echo "Restarting Zend Server (using WebAPI)"
+$ZS_MANAGE restart-php -p -N $WEB_API_KEY -K $WEB_API_KEY_HASH
+
 #Remove ZS_ADMIN_PASSWORD from env.log
 sed '/ZS_ADMIN_PASSWORD/d' -i /home/vcap/logs/env.log 
 
