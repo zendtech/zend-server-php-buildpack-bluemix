@@ -33,10 +33,10 @@ echo "Creating/Upgrading Zend databases. This may take several minutes..."
 
 # Setup log verbosity if needed
 if [[ -n $ZEND_LOG_VERBOSITY ]]; then
-    sed -i -e '/zend_gui.logVerbosity = NOTICE/zend_gui.logVerbosity = DEBUG/m' /app/zend-server-6-php-5.4/gui/config/zs_ui.ini
-    sed -i -e '/zend_gui.debugModeEnabled = false/zend_gui.debugModeEnabled = true/m' /app/zend-server-6-php-5.4/gui/config/zs_ui.ini
-    sed -i -e "/zend_deployment.daemon.log_verbosity_level=2/zend_deployment.daemon.log_verbosity_level=$ZEND_LOG_VERBOSITY/m" /app/zend-server-6-php-5.4/etc/zdd.ini
-    sed -i -e "/zend_server_daemon.log_verbosity_level=2/zend_server_daemon.log_verbosity_level=$ZEND_LOG_VERBOSITY/m" /app/zend-server-6-php-5.4/etc/zsd.ini
+    sed -i -e 's/zend_gui.logVerbosity = NOTICE/zend_gui.logVerbosity = DEBUG/' /app/zend-server-6-php-5.4/gui/config/zs_ui.ini
+    sed -i -e 's/zend_gui.debugModeEnabled = false/zend_gui.debugModeEnabled = true/' /app/zend-server-6-php-5.4/gui/config/zs_ui.ini
+    sed -i -e "s/zend_deployment.daemon.log_verbosity_level=2/zend_deployment.daemon.log_verbosity_level=$ZEND_LOG_VERBOSITY/" /app/zend-server-6-php-5.4/etc/zdd.ini
+    sed -i -e "s/zend_server_daemon.log_verbosity_level=2/zend_server_daemon.log_verbosity_level=$ZEND_LOG_VERBOSITY/" /app/zend-server-6-php-5.4/etc/zsd.ini
 fi
 
 #Start Zend Server
