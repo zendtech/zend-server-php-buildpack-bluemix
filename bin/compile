@@ -131,6 +131,10 @@ mv $LP_DIR/json-env-extract.php bin/
 chmod +x bin/json-env-extract.php
 DONE_MSG
 
+START_MSG 'Setting zs-manage timeout'
+sed -i -e "s/'timeout'[ \t]*=>[ \t]*60/'timeout' => 300/" $PHP_PATH/share/zs-cli-tools/library/ZendX/Service/ZendServer.php
+DONE_MSG
+
 # install boot.sh and bootstrap.sh
 START_MSG 'Installing boot.sh and bootstrap.sh'
 mv $LP_DIR/boot.sh .
@@ -138,3 +142,5 @@ mv $LP_DIR/bootstrap.sh .
 chmod +x boot.sh
 chmod +x bootstrap.sh
 DONE_MSG
+
+echo 'Zend Server compile is done.'
