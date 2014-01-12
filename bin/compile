@@ -119,6 +119,9 @@ mkdir -p etc
 cp $LP_DIR/conf/etc/zce.rc.nginx etc/zce.rc
 cp -rf $LP_DIR/conf/zend/* $PHP_PATH
 
+# Update document root
+sed -i -e "s|zend_deployment.webserver.nginx.docroot[ \t]*=[ \t]*/app/www|zend_deployment.webserver.nginx.docroot=$ZEND_DOCUMENT_ROOT|" $PHP_PATH/etc/zdd.ini
+
 DONE_MSG
 
 # make php available on bin
