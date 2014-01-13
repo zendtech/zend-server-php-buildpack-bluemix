@@ -47,10 +47,15 @@ if [[ ! -f $CACHE_DIR/zend-server-6.2-php-5.4-nginx.tar.xz ]]; then
     DONE_MSG
 fi
 
+REPOS_HOST=repos.zend.com
+if [[ $ZEND_DEVELOPMENT == 1 ]]; then
+    REPOS_HOST=repos-source.zend.com
+fi
+
 for P in $ZS_PATCHES; do
     if [[ ! -f $CACHE_DIR/$P.tar.gz ]]; then
         START_MSG "Downloading $P patch"
-        curl -s -O http://repos.zend.com/cloudfoundry/$P.tar.gz
+        curl -s -O http://$REPOS_HOST/cloudfoundry/$P.tar.gz
         DONE_MSG
     fi
 done
