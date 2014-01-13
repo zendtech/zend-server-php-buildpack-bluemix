@@ -19,7 +19,7 @@ LP_DIR=`cd $(dirname $0); cd ..; pwd`
 PHP_PATH=$BUILD_DIR/zend-server-6-php-5.4
 APACHE_PATH=$BUILD_DIR/apache
 NGINX_PATH=$BUILD_DIR/nginx
-ZS_PATCHES="ZCLOUD-104 ZCLOUD-147 ZSRV-11471"
+ZS_PATCHES="ZCLOUD-104 ZCLOUD-147 ZSRV-11471 ZSRV-11843"
 # include .files when moving things around
 shopt -s dotglob
 
