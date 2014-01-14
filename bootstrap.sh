@@ -7,7 +7,6 @@ shopt -s dotglob
 export LD_LIBRARY_PATH=/app/zend-server-6-php-5.4/lib
 export PHP_INI_SCAN_DIR=/app/zend-server-6-php-5.4/etc/conf.d
 export PHPRC=/app/zend-server-6-php-5.4/etc
-echo "env[VCAP_APPLICATION] = ${VCAP_APPLICATION}"  >> /app/zend-server-6-php-5.4/etc/php-fpm.conf
 echo "Launching Zend Server..."
 export ZEND_UID=`id -u`
 export ZEND_GID=`id -g`
