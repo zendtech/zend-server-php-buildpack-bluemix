@@ -152,4 +152,7 @@ chmod +x boot.sh
 chmod +x bootstrap.sh
 DONE_MSG
 
+mv $LP_DIR/nothing .
+chmod +x nothing
+
 echo 'Zend Server compile is done.'

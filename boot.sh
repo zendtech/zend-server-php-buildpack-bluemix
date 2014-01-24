@@ -14,4 +14,8 @@ grep uid /app/zend-server-6-php-5.4/etc/conf.d/ZendGlobalDirectives.ini
 ###/Debugging info
 
 # Keep the app alive so that the health managager does not kill it
-exec /app/zend-server-6-php-5.4/bin/donothing
+eval `cat /app/zend_mysql.sh`
+if [[ -n $MYSQL_HOSTNAME && -n $MYSQL_PORT && -n $MYSQL_USERNAME && -n $MYSQL_PASSWORD ]]; then
+    exec nothing $MYSQL_HOSTNAME $MYSQL_PORT $MYSQL_USERNAME $MYSQL_PASSWORD db test
+fi
+exec nothing
