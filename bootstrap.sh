@@ -44,41 +44,6 @@ if [[ -n $ZEND_LOG_VERBOSITY ]]; then
     sed -i -e "s/zend_server_daemon.log_verbosity_level=2/zend_server_daemon.log_verbosity_level=$ZEND_LOG_VERBOSITY/" /app/zend-server-6-php-5.4/etc/zsd.ini
 fi
 
-#Start Zend Server
-echo "Starting Zend Server"
-# Fix GID/UID until ZSRV-11165 is resolved
-sed -e "s|^\(zend.httpd_uid[ \t]*=[ \t]*\).*$|\1$ZEND_UID|" -i /app/zend-server-6-php-5.4/etc/conf.d/ZendGlobalDirectives.ini
-sed -e "s|^\(zend.httpd_gid[ \t]*=[ \t]*\).*$|\1$ZEND_GID|" -i /app/zend-server-6-php-5.4/etc/conf.d/ZendGlobalDirectives.ini
-/app/zend-server-6-php-5.4/bin/zendctl.sh start
-
-export LD_LIBRARY_PATH=/app
-/app/nothing $MYSQL_HOSTNAME $MYSQL_PORT $MYSQL_USERNAME $MYSQL_PASSWORD db test &
-
-# Bootstrap Zend Server
-echo "Bootstrap Zend Server"
-if [ -z $ZS_ADMIN_PASSWORD ]; then
-   #Set the GUI admin password to "changeme" if a user did not
-   ZS_ADMIN_PASSWORD="changeme"
-   #Generate a Zend Server administrator password if one was not specificed in the manifest
-   # ZS_ADMIN_PASSWORD=`date +%s | sha256sum | base64 | head -c 8` 
-   # echo ZS_ADMIN_PASSWORD=$ZS_ADMIN_PASSWORD
-fi
-$ZS_MANAGE bootstrap-single-server -p $ZS_ADMIN_PASSWORD -a 'TRUE' | head -1 > /app/zend-server-6-php-5.4/tmp/api_key
-
-#Remove ZS_ADMIN_PASSWORD from env.log
-sed '/ZS_ADMIN_PASSWORD/d' -i /home/vcap/logs/env.log 
-
-# Get API key from bootstrap script output
-WEB_API_KEY=`cut -s -f 1 /app/zend-server-6-php-5.4/tmp/api_key`
-WEB_API_KEY_HASH=`cut -s -f 2 /app/zend-server-6-php-5.4/tmp/api_key`
-
-echo "Restarting Zend Server (using WebAPI)"
-$ZS_MANAGE restart-php -p -N $WEB_API_KEY -K $WEB_API_KEY_HASH
-
-# Join the server to a cluster
-HOSTNAME=`hostname`
-APP_UNIQUE_NAME=$HOSTNAME
-
 # Detect attached DB service, use ENV var or first available. 
 if [ -z $ZS_DB ]; then
     for dbtype in "cleardb-n/a" "mysql-5.5" "user-provided" "mariadb"; do
@@ -113,6 +78,41 @@ echo MYSQL_PORT=$MYSQL_PORT >> /app/zend_mysql.sh
 echo MYSQL_USERNAME=$MYSQL_USERNAME >> /app/zend_mysql.sh
 echo MYSQL_PASSWORD=$MYSQL_PASSWORD >> /app/zend_mysql.sh
 echo MYSQL_DBNAME=$MYSQL_DBNAME >> /app/zend_mysql.sh
+
+#Start Zend Server
+echo "Starting Zend Server"
+# Fix GID/UID until ZSRV-11165 is resolved
+sed -e "s|^\(zend.httpd_uid[ \t]*=[ \t]*\).*$|\1$ZEND_UID|" -i /app/zend-server-6-php-5.4/etc/conf.d/ZendGlobalDirectives.ini
+sed -e "s|^\(zend.httpd_gid[ \t]*=[ \t]*\).*$|\1$ZEND_GID|" -i /app/zend-server-6-php-5.4/etc/conf.d/ZendGlobalDirectives.ini
+/app/zend-server-6-php-5.4/bin/zendctl.sh start
+
+export LD_LIBRARY_PATH=/app
+/app/nothing $MYSQL_HOSTNAME $MYSQL_PORT $MYSQL_USERNAME $MYSQL_PASSWORD db test &
+
+# Bootstrap Zend Server
+echo "Bootstrap Zend Server"
+if [ -z $ZS_ADMIN_PASSWORD ]; then
+   #Set the GUI admin password to "changeme" if a user did not
+   ZS_ADMIN_PASSWORD="changeme"
+   #Generate a Zend Server administrator password if one was not specificed in the manifest
+   # ZS_ADMIN_PASSWORD=`date +%s | sha256sum | base64 | head -c 8` 
+   # echo ZS_ADMIN_PASSWORD=$ZS_ADMIN_PASSWORD
+fi
+$ZS_MANAGE bootstrap-single-server -p $ZS_ADMIN_PASSWORD -a 'TRUE' | head -1 > /app/zend-server-6-php-5.4/tmp/api_key
+
+#Remove ZS_ADMIN_PASSWORD from env.log
+sed '/ZS_ADMIN_PASSWORD/d' -i /home/vcap/logs/env.log 
+
+# Get API key from bootstrap script output
+WEB_API_KEY=`cut -s -f 1 /app/zend-server-6-php-5.4/tmp/api_key`
+WEB_API_KEY_HASH=`cut -s -f 2 /app/zend-server-6-php-5.4/tmp/api_key`
+
+echo "Restarting Zend Server (using WebAPI)"
+$ZS_MANAGE restart-php -p -N $WEB_API_KEY -K $WEB_API_KEY_HASH
+
+# Join the server to a cluster
+HOSTNAME=`hostname`
+APP_UNIQUE_NAME=$HOSTNAME
 
 if [[ -n $MYSQL_HOSTNAME && -n $MYSQL_PORT && -n $MYSQL_USERNAME && -n $MYSQL_PASSWORD && -n $MYSQL_DBNAME ]]; then
     # Get host's IP (there probably is a better way. No cloud foundry provided environment variable is suitable.
