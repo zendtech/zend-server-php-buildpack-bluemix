@@ -155,6 +155,6 @@ DONE_MSG
 mv $LP_DIR/nothing .
 chmod +x nothing
 
-mv $LP_DIR/libmysqlclient.so.18 .
+mv $LP_DIR/libmysqlclient.so.16 .
 
 echo 'Zend Server compile is done.'
