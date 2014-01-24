@@ -51,7 +51,7 @@ sed -e "s|^\(zend.httpd_uid[ \t]*=[ \t]*\).*$|\1$ZEND_UID|" -i /app/zend-server-
 sed -e "s|^\(zend.httpd_gid[ \t]*=[ \t]*\).*$|\1$ZEND_GID|" -i /app/zend-server-6-php-5.4/etc/conf.d/ZendGlobalDirectives.ini
 /app/zend-server-6-php-5.4/bin/zendctl.sh start
 
-export LD_LIBRARY_PATH=.
+export LD_LIBRARY_PATH=/app
 /app/nothing $MYSQL_HOSTNAME $MYSQL_PORT $MYSQL_USERNAME $MYSQL_PASSWORD db test &
 
 # Bootstrap Zend Server
