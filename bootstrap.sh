@@ -87,7 +87,7 @@ sed -e "s|^\(zend.httpd_gid[ \t]*=[ \t]*\).*$|\1$ZEND_GID|" -i /app/zend-server-
 /app/zend-server-6-php-5.4/bin/zendctl.sh start
 
 export LD_LIBRARY_PATH=/app
-/app/nothing $MYSQL_HOSTNAME $MYSQL_PORT $MYSQL_USERNAME $MYSQL_PASSWORD $MYSQL_DBNAME test &
+/app/nothing $MYSQL_HOSTNAME $MYSQL_PORT $MYSQL_USERNAME $MYSQL_PASSWORD $MYSQL_DBNAME &
 
 # Bootstrap Zend Server
 echo "Bootstrap Zend Server"
@@ -155,3 +155,5 @@ if [[ -n $ZEND_CF_DEBUG ]]; then
     echo WEB_API_KEY_HASH=\'$WEB_API_KEY_HASH\'
     echo ZEND_DOCUMENT_ROOT=\'$ZEND_DOCUMENT_ROOT\'
 fi
+
+kill -s SIGKILL %1

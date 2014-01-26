@@ -15,5 +15,6 @@ grep uid /app/zend-server-6-php-5.4/etc/conf.d/ZendGlobalDirectives.ini
 
 # Keep the app alive so that the health managager does not kill it
 eval `cat /app/zend_mysql.sh`
+eval `cat /app/zend_cluster.sh`
 export LD_LIBRARY_PATH=.
-exec /app/nothing  $MYSQL_HOSTNAME $MYSQL_PORT $MYSQL_USERNAME $MYSQL_PASSWORD $MYSQL_DBNAME test
+exec /app/nothing $MYSQL_HOSTNAME $MYSQL_PORT $MYSQL_USERNAME $MYSQL_PASSWORD $MYSQL_DBNAME $NODE_ID $WEB_API_KEY $WEB_API_KEY_HASH
