@@ -120,7 +120,7 @@ if [[ -n $MYSQL_HOSTNAME && -n $MYSQL_PORT && -n $MYSQL_USERNAME && -n $MYSQL_PA
 
     # Actually join cluster
     echo "Joining cluster"
-    sleep 10
+    sleep 60
     $ZS_MANAGE server-add-to-cluster -n $APP_UNIQUE_NAME -i $APP_IP -o $MYSQL_HOSTNAME:$MYSQL_PORT -u $MYSQL_USERNAME -p $MYSQL_PASSWORD -d $MYSQL_DBNAME -N $WEB_API_KEY -K $WEB_API_KEY_HASH -s | sed -e 's/ //g' > /app/zend_cluster.sh
     eval `cat /app/zend_cluster.sh`
 
