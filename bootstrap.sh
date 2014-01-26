@@ -153,6 +153,7 @@ if [[ -n $ZEND_CF_DEBUG ]]; then
     DEBUG_PRINT_FILE /app/zend-server-6-php-5.4/etc/zend_database.ini
     echo WEB_API_KEY=\'$WEB_API_KEY\'
     echo WEB_API_KEY_HASH=\'$WEB_API_KEY_HASH\'
+    echo NODE_ID=\'$NODE_ID\'
     echo ZEND_DOCUMENT_ROOT=\'$ZEND_DOCUMENT_ROOT\'
 fi
 
