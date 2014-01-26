@@ -107,8 +107,8 @@ sed '/ZS_ADMIN_PASSWORD/d' -i /home/vcap/logs/env.log
 WEB_API_KEY=`cut -s -f 1 /app/zend-server-6-php-5.4/tmp/api_key`
 WEB_API_KEY_HASH=`cut -s -f 2 /app/zend-server-6-php-5.4/tmp/api_key`
 
-echo "Restarting Zend Server (using WebAPI)"
-$ZS_MANAGE restart-php -p -N $WEB_API_KEY -K $WEB_API_KEY_HASH
+# echo "Restarting Zend Server (using WebAPI)"
+# $ZS_MANAGE restart-php -p -N $WEB_API_KEY -K $WEB_API_KEY_HASH
 
 # Join the server to a cluster
 HOSTNAME=`hostname`
