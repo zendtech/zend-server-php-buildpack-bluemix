@@ -40,7 +40,9 @@ aptitude install libmysqlclient-dev build-essential
 After that copy all files in that directory to server. Enter the directory and
 run in it:
 
-```make ```
+```
+make
+```
 
 This will compile nothing binary. After compiling it, copy it into your git repo
 and commit changes.
@@ -49,7 +51,9 @@ and commit changes.
 
 nothing has following parameters:
 
-``` ./nothing <mysql-hostname> <mysql-port> <mysql-username> <mysql-password> <mysql-db-name> <server-id> <web-api-key-name> <web-api-key>```
+```
+./nothing <mysql-hostname> <mysql-port> <mysql-username> <mysql-password> <mysql-db-name> <server-id> <web-api-key-name> <web-api-key>
+```
 
 There are 3 options to run nothing:
 
