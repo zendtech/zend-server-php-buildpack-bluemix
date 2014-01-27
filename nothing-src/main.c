@@ -10,33 +10,67 @@
 #include <sys/wait.h>
 #include <mysql/mysql.h>
 
+/** How much time to wait between cycles */
 #define MY_SLEEP_SECONDS 1
+
+/** How much time MySQL connection can sleep before killing it */
 #define MAX_SLEEP_TIME 3
 
+/**
+ * \brief Program params
+ *
+ * Structure that holds parsed params of program.
+ */
 typedef struct Params_t {
-    const char *mysql_hostname;
-    unsigned int mysql_port;
-    const char *mysql_username;
-    const char *mysql_password;
-    const char *mysql_dbname;
-    int server_id;
-    const char *web_api_key_name;
-    const char *web_api_key;
+    const char *mysql_hostname; /**< MySQL hostname */
+    unsigned int mysql_port;    /**< MySQL port */
+    const char *mysql_username; /**< MySQL username */
+    const char *mysql_password; /**< MySQL password */
+    const char *mysql_dbname;   /**< MySQL database name */
+    int server_id;                /**< ZS node ID */
+    const char *web_api_key_name; /**< ZS WebAPI key name */
+    const char *web_api_key;      /**< ZS WebAPI key hash */
 } Params;
 
+/**
+ * \brief Signal handler
+ *
+ * Handler function for SIGTERM signal.
+ * \param sig signal that was received.
+ */
 void term_handler(int sig);
+
+/**
+ * \brief Print MySQL error and exit.
+ *
+ * Print MySQL error on stderr, close MySQL connection, free memory and exit.
+ */
 void finish_with_error();
+
+/**
+ * \brief Print MySQL error.
+ *
+ * Print MySQL error on stderr.
+ */
 void print_mysql_error();
+
+/**
+ * \brief Print usage information
+ *
+ * Print usage information.
+ */
 void usage(const char *program_name);
 
+/** MySQL connection */
 MYSQL mysql;
+/** Buffer for all sorts of MySQL queries */
 char *query;
+/** Parsed program parameters */
 Params params;
 
 int main(int argc, const char *argv[])
 {
-    signal(SIGTERM, term_handler);
-    
+    /* Initialize all query strings */
     const char *create_procedure =
         "CREATE PROCEDURE %s.kill_stale_procs (IN timeout INT, IN dbname VARCHAR(1024))\n"
         "BEGIN\n"
@@ -59,15 +93,23 @@ int main(int argc, const char *argv[])
     const char *call = "CALL %s.kill_stale_procs(%d,'%s');";
     const char *delete_server = "DELETE FROM %s.zend_cf_remove_servers WHERE id = %d;";
     
+    /* Check that number of parameters is correct */
+    if(argc == 1) {             /* No params = do nothing */
+        while(true) {
+            sleep(10);
+        }
+    }
     if(argc != 9 && argc != 6) {
         usage(argv[0]);
         exit(1);
     }
-    
+
+    /* Allocate memory for query buffer */
     if((query = malloc(sizeof(char) * 1024)) == NULL) {
         exit(3);
     }
-    
+
+    /* Parse prgram arguments */
     params.mysql_hostname = argv[1];
     params.mysql_port = atoi(argv[2]);
     params.mysql_username = argv[3];
@@ -76,20 +118,28 @@ int main(int argc, const char *argv[])
     params.server_id = (argc == 9 ? atoi(argv[6]) : -1);
     params.web_api_key_name = (argc == 9 ? argv[7] : NULL);
     params.web_api_key = (argc == 9 ? argv[8] : NULL);
-    
+
+    /* Setup signal handler */
+    signal(SIGTERM, term_handler);
+
+    /* Initialize MySQL connection */
     mysql_init(&mysql);
     my_bool recon = true;
-    mysql_options(&mysql,MYSQL_OPT_RECONNECT,&recon);
+    mysql_options(&mysql,MYSQL_OPT_RECONNECT,&recon); /* Set option to auto
+                                                       * restart mysql connection */
     if(mysql_real_connect(&mysql,params.mysql_hostname,params.mysql_username,params.mysql_password,NULL,params.mysql_port,NULL,CLIENT_REMEMBER_OPTIONS) == NULL) {
         finish_with_error();
     }
-    
+
+    /* Create schema if needed */
     sprintf(query,create_schema,params.mysql_dbname);
     if(mysql_query(&mysql,query))
         print_mysql_error();
+    /* Create procedure that checks connections and kills them */
     sprintf(query,create_procedure,params.mysql_dbname);
     if(mysql_query(&mysql,query))
         print_mysql_error();
+    /* Create table that will hold IDs of ZS nodes to remove */
     sprintf(query,create_table,params.mysql_dbname);
     if(mysql_query(&mysql,query))
         print_mysql_error();
@@ -98,24 +148,31 @@ int main(int argc, const char *argv[])
     MYSQL_ROW row;
     int status;
     int server_id;
-    while(true) {
+    while(true) {               /* Loop forever */
+        /* Kill stale connections */
         sprintf(query,call,params.mysql_dbname,MAX_SLEEP_TIME,params.mysql_dbname);
         if(mysql_query(&mysql,query)) {
             print_mysql_error();
         }
+        /* If WebAPI key was specified, then check if there servers to remove
+         * from Zend Server cluster. */
         if(params.web_api_key_name != NULL) {
+            /* Query server IDs that should be removed */
             sprintf(query,select_remove_servers,params.mysql_dbname);
             if(mysql_query(&mysql,query)) {
                 print_mysql_error();
             } else {
                 result = mysql_store_result(&mysql);
                 while((row = mysql_fetch_row(result))) {
+                    /* Delete server from Zend Server cluster by calling zs-manage */
                     server_id = atoi(row[0]);
                     sprintf(query,"/app/zend-server-6-php-5.4/bin/zs-manage cluster-remove-server %d -N %s -K %s -f",server_id,params.web_api_key_name,params.web_api_key);
                     fprintf(stderr,"%s\n",query);
+                    /* If call to zs-manage failed, print FAILED on stderr */
                     if(system(query) == -1) {
                         fprintf(stderr,"FAILED\n");
                     }
+                    /* Delete server ID from table */
                     sprintf(query,delete_server,params.mysql_dbname,server_id);
                     if(mysql_query(&mysql,query)) {
                         print_mysql_error();
@@ -123,6 +180,7 @@ int main(int argc, const char *argv[])
                 }
             }
         }
+        /* waitpid call to prevent zombie processes */
         waitpid(-1,&status,WNOHANG);
         sleep(MY_SLEEP_SECONDS);
     }
@@ -132,21 +190,27 @@ void finish_with_error()
 {
     fprintf(stderr, "%s\n", mysql_error(&mysql));
     mysql_close(&mysql);
+    free(query);
     exit(2);
 }
 
 void print_mysql_error()
 {
     fprintf(stderr, "%s\n", mysql_error(&mysql));
+    free(query);
 }
 
 void term_handler(int sig)
 {
+    /* Disable signal handlers if more signals come */
     signal(sig,SIG_IGN);
+    /* If ZS node ID was specified, then insert it into table of nodes that
+     * should be removed from cluster. */
     if(params.server_id != -1) {
         sprintf(query,"INSERT INTO %s.zend_cf_remove_servers(id) VALUES(%d);",params.mysql_dbname,params.server_id);
         mysql_query(&mysql,query);
     }
+    /* Clean up and exit */
     mysql_close(&mysql);
     free(query);
     exit(0);
@@ -155,5 +219,5 @@ void term_handler(int sig)
 void usage(const char *program_name)
 {
     printf("Usage:\n");
-    printf("%s <hostname> <port> <username> <password> <db-name> <server-id> <web-api-key-name> <web-api-key>\n",program_name);
+    printf("%s <mysql-hostname> <mysql-port> <mysql-username> <mysql-password> <mysql-db-name> <server-id> <web-api-key-name> <web-api-key>\n",program_name);
 }
