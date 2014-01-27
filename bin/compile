@@ -157,4 +157,9 @@ chmod +x nothing
 
 mv $LP_DIR/libmysqlclient.so.16 .
 
+START_MSG 'Compiling and installing nothing'
+make -C $LP_DIR/nothing-src/nothing .
+mv $LP_DIR/nothing-src/nothing .
+DONE_MSG
+
 echo 'Zend Server compile is done.'
