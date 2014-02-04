@@ -84,6 +84,7 @@ WEB_API_KEY_HASH=`cut -s -f 2 /app/zend-server-6-php-5.4/tmp/api_key`
 HOSTNAME=`hostname`
 APP_UNIQUE_NAME=$HOSTNAME
 
+touch /app/zend_cluster.sh
 if [[ -n $MYSQL_HOSTNAME && -n $MYSQL_PORT && -n $MYSQL_USERNAME && -n $MYSQL_PASSWORD && -n $MYSQL_DBNAME ]]; then
     # Get host's IP (there probably is a better way. No cloud foundry provided environment variable is suitable.
     APP_IP=`/sbin/ifconfig w-${HOSTNAME}-1| grep 'inet addr:' | awk {'print \$2'}| cut -d ':' -f 2`
@@ -104,7 +105,8 @@ sed -e "s|^\(zend.httpd_uid[ \t]*=[ \t]*\).*$|\1$VALUE|" -i /app/zend-server-6-p
 sed -e "s|^\(zend.httpd_gid[ \t]*=[ \t]*\).*$|\1$VALUE|" -i /app/zend-server-6-php-5.4/etc/conf.d/ZendGlobalDirectives.ini
 
 echo "Restarting Zend Server (using WebAPI)"
-$ZS_MANAGE restart-php -p -N $WEB_API_KEY -K $WEB_API_KEY_HASH
+/app/zend-server-6-php-5.4/bin/zendctl.sh restart
+# $ZS_MANAGE restart-php -p -N $WEB_API_KEY -K $WEB_API_KEY_HASH
 
 function DEBUG_PRINT_FILE() {
     BASENAME=`basename $1`
