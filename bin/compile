@@ -145,7 +145,7 @@ sed -i -e "s/'timeout'[ \t]*=>[ \t]*60/'timeout' => 600/" $PHP_PATH/share/zs-cli
 DONE_MSG
 
 # Install shell scripts and nothing
-for SCRIPT in "boot.sh bootstrap.sh mysql_detect.sh nothing"; do
+for SCRIPT in boot.sh bootstrap.sh mysql_detect.sh nothing; do
     START_MSG "Installing $SCRIPT"
     mv $LP_DIR/$SCRIPT .
     chmod +x $SCRIPT
