@@ -105,8 +105,7 @@ sed -e "s|^\(zend.httpd_uid[ \t]*=[ \t]*\).*$|\1$VALUE|" -i /app/zend-server-6-p
 sed -e "s|^\(zend.httpd_gid[ \t]*=[ \t]*\).*$|\1$VALUE|" -i /app/zend-server-6-php-5.4/etc/conf.d/ZendGlobalDirectives.ini
 
 echo "Restarting Zend Server (using WebAPI)"
-/app/zend-server-6-php-5.4/bin/zendctl.sh restart
-# $ZS_MANAGE restart-php -p -N $WEB_API_KEY -K $WEB_API_KEY_HASH
+$ZS_MANAGE restart-php -p -N $WEB_API_KEY -K $WEB_API_KEY_HASH
 
 function DEBUG_PRINT_FILE() {
     BASENAME=`basename $1`
