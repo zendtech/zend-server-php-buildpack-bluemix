@@ -33,8 +33,8 @@ ln -f -s /app/nginx/conf/sites-available/default /app/nginx/conf/sites-enabled
 echo "Creating/Upgrading Zend databases. This may take several minutes..."
 /app/zend-server-6-php-5.4/gui/lighttpd/sbin/php -c /app/zend-server-6-php-5.4/gui/lighttpd/etc/php-fcgi.ini /app/zend-server-6-php-5.4/share/scripts/zs_create_databases.php zsDir=/app/zend-server-6-php-5.4 toVersion=6.2.0
 
-# Generate 7 day trial license
-# /app/zend-server-6-php-5.4/bin/zsd /app/zend-server-6-php-5.4/etc/zsd.ini --generate-license
+# Generate default trial license
+/app/zend-server-6-php-5.4/bin/zsd /app/zend-server-6-php-5.4/etc/zsd.ini --generate-license
 
 # Setup log verbosity if needed
 if [[ -n $ZEND_LOG_VERBOSITY ]]; then
@@ -58,13 +58,17 @@ sed -e "s|^\(zend.httpd_gid[ \t]*=[ \t]*\).*$|\1$ZEND_GID|" -i /app/zend-server-
 # Bootstrap Zend Server
 echo "Bootstrap Zend Server"
 if [ -z $ZS_ADMIN_PASSWORD ]; then
-   #Set the GUI admin password to "changeme" if a user did not
-   ZS_ADMIN_PASSWORD="changeme"
-   #Generate a Zend Server administrator password if one was not specificed in the manifest
-   # ZS_ADMIN_PASSWORD=`date +%s | sha256sum | base64 | head -c 8` 
-   # echo ZS_ADMIN_PASSWORD=$ZS_ADMIN_PASSWORD
+    #Set the GUI admin password to "changeme" if a user did not
+    ZS_ADMIN_PASSWORD="changeme"
+    #Generate a Zend Server administrator password if one was not specificed in the manifest
+    # ZS_ADMIN_PASSWORD=`date +%s | sha256sum | base64 | head -c 8` 
+    # echo ZS_ADMIN_PASSWORD=$ZS_ADMIN_PASSWORD
 fi
-$ZS_MANAGE bootstrap-single-server -p $ZS_ADMIN_PASSWORD -a 'TRUE' | head -1 > /app/zend-server-6-php-5.4/tmp/api_key
+if [[ -z $ZEND_LICENSE_ORDER || -z $ZEND_LICENSE_KEY ]]; then
+    ZEND_LICENSE_ORDER=cloudfoundry
+    ZEND_LICENSE_KEY=AG12IG51401H51B08FD9C3A65E23D2CE
+fi
+$ZS_MANAGE bootstrap-single-server -p $ZS_ADMIN_PASSWORD -a 'TRUE' -o $ZEND_LICENSE_ORDER -l $ZEND_LICENSE_KEY | head -1 > /app/zend-server-6-php-5.4/tmp/api_key
 
 #Remove ZS_ADMIN_PASSWORD from env.log
 sed '/ZS_ADMIN_PASSWORD/d' -i /home/vcap/logs/env.log 
@@ -122,5 +126,3 @@ if [[ -n $ZEND_CF_DEBUG ]]; then
     echo NODE_ID=\'$NODE_ID\'
     echo ZEND_DOCUMENT_ROOT=\'$ZEND_DOCUMENT_ROOT\'
 fi
-
-kill -s SIGKILL %1
