@@ -18,3 +18,7 @@
 3. **ZS\_DB** - if set, indicates name of database that should be used for Zend
    Server. At bootstrap service with such database name will be searched and
    it's parameters used.
+
+## License related
+1. **ZEND\_LICENSE\_ORDER** - override Zend Server license order
+2. **ZEND\_LICENSE\_KEY** - override Zend Server license key
