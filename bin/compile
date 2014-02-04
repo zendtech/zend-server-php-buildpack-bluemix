@@ -144,16 +144,13 @@ START_MSG 'Setting zs-manage timeout'
 sed -i -e "s/'timeout'[ \t]*=>[ \t]*60/'timeout' => 600/" $PHP_PATH/share/zs-cli-tools/library/ZendX/Service/ZendServer.php
 DONE_MSG
 
-# install boot.sh and bootstrap.sh
-START_MSG 'Installing boot.sh and bootstrap.sh'
-mv $LP_DIR/boot.sh .
-mv $LP_DIR/bootstrap.sh .
-chmod +x boot.sh
-chmod +x bootstrap.sh
-DONE_MSG
-
-mv $LP_DIR/nothing .
-chmod +x nothing
+# Install shell scripts and nothing
+for SCRIPT in "boot.sh bootstrap.sh mysql_detect.sh nothing"; do
+    START_MSG "Installing $SCRIPT"
+    mv $LP_DIR/$SCRIPT .
+    chmod +x $SCRIPT
+    DONE_MSG
+done
 
 mv $LP_DIR/libmysqlclient.so.16 .
 

@@ -33,8 +33,8 @@ ln -f -s /app/nginx/conf/sites-available/default /app/nginx/conf/sites-enabled
 echo "Creating/Upgrading Zend databases. This may take several minutes..."
 /app/zend-server-6-php-5.4/gui/lighttpd/sbin/php -c /app/zend-server-6-php-5.4/gui/lighttpd/etc/php-fcgi.ini /app/zend-server-6-php-5.4/share/scripts/zs_create_databases.php zsDir=/app/zend-server-6-php-5.4 toVersion=6.2.0
 
-#Generate 7 day trial license
-#/app/zend-server-6-php-5.4/bin/zsd /app/zend-server-6-php-5.4/etc/zsd.ini --generate-license
+# Generate 7 day trial license
+# /app/zend-server-6-php-5.4/bin/zsd /app/zend-server-6-php-5.4/etc/zsd.ini --generate-license
 
 # Setup log verbosity if needed
 if [[ -n $ZEND_LOG_VERBOSITY ]]; then
@@ -44,42 +44,11 @@ if [[ -n $ZEND_LOG_VERBOSITY ]]; then
     sed -i -e "s/zend_server_daemon.log_verbosity_level=2/zend_server_daemon.log_verbosity_level=$ZEND_LOG_VERBOSITY/" /app/zend-server-6-php-5.4/etc/zsd.ini
 fi
 
-# Detect attached DB service, use ENV var or first available. 
-if [ -z $ZS_DB ]; then
-    for dbtype in "cleardb-n/a" "mysql-5.5" "user-provided" "mariadb"; do
-        for dbnum in 0 1 2; do
-            if [[ -z $MYSQL_HOSTNAME && -z $MYSQL_PORT && -z $MYSQL_USERNAME && -z $MYSQL_PASSWORD && -z $MYSQL_DBNAME ]]; then
-                MYSQL_HOSTNAME=`/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum credentials hostname`
-                MYSQL_PORT=`/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum credentials port`
-                MYSQL_USERNAME=`/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum credentials username`
-                MYSQL_PASSWORD=`/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum credentials password`
-                MYSQL_DBNAME=`/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum credentials name`
-            fi
-        done
-    done
-else
-    for dbtype in "cleardb-n/a" "mysql-5.5" "user-provided" "mariadb"; do
-        for dbnum in 0 1 2; do
-            if [[ `/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum name` == "$ZS_DB" ]]; then
-                if [[ -z $MYSQL_HOSTNAME && -z $MYSQL_PORT && -z $MYSQL_USERNAME && -z $MYSQL_PASSWORD && -z $MYSQL_DBNAME ]]; then
-                    MYSQL_HOSTNAME=`/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum credentials hostname`
-                    MYSQL_PORT=`/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum credentials port`
-                    MYSQL_USERNAME=`/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum credentials username`
-                    MYSQL_PASSWORD=`/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum credentials password`
-                    MYSQL_DBNAME=`/app/bin/json-env-extract.php VCAP_SERVICES $dbtype $dbnum credentials name`
-                fi
-            fi
-        done
-    done
-fi
+# Detect MySQL settings
+./mysql_detect.sh
+eval `cat /app/zend_mysql.sh`
 
-echo MYSQL_HOSTNAME=$MYSQL_HOSTNAME > /app/zend_mysql.sh
-echo MYSQL_PORT=$MYSQL_PORT >> /app/zend_mysql.sh
-echo MYSQL_USERNAME=$MYSQL_USERNAME >> /app/zend_mysql.sh
-echo MYSQL_PASSWORD=$MYSQL_PASSWORD >> /app/zend_mysql.sh
-echo MYSQL_DBNAME=$MYSQL_DBNAME >> /app/zend_mysql.sh
-
-#Start Zend Server
+# Start Zend Server
 echo "Starting Zend Server"
 # Fix GID/UID until ZSRV-11165 is resolved
 sed -e "s|^\(zend.httpd_uid[ \t]*=[ \t]*\).*$|\1$ZEND_UID|" -i /app/zend-server-6-php-5.4/etc/conf.d/ZendGlobalDirectives.ini
