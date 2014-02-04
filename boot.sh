@@ -22,7 +22,7 @@ if [ -n $ZEND_CF_DEBUG ]; then
 fi
 
 export LD_LIBRARY_PATH=.
-if [[ -z $MYSQL_HOSTNAME -o -z $MYSQL_PORT -o -z $MYSQL_USERNAME -o -z $MYSQL_PASSWORD -o -z $MYSQL_DBNAME -o -z $NODE_ID -o -z $WEB_API_KEY -o -z $WEB_API_KEY_HASH ]]; then
+if [ -z $MYSQL_HOSTNAME -o -z $MYSQL_PORT -o -z $MYSQL_USERNAME -o -z $MYSQL_PASSWORD -o -z $MYSQL_DBNAME -o -z $NODE_ID -o -z $WEB_API_KEY -o -z $WEB_API_KEY_HASH ]; then
     exec /app/nothing
 fi
 exec /app/nothing $MYSQL_HOSTNAME $MYSQL_PORT $MYSQL_USERNAME $MYSQL_PASSWORD $MYSQL_DBNAME $NODE_ID $WEB_API_KEY $WEB_API_KEY_HASH
