@@ -71,26 +71,9 @@ Params params;
 int main(int argc, const char *argv[])
 {
     /* Initialize all query strings */
-    const char *create_procedure =
-        "CREATE PROCEDURE %s.kill_stale_procs (IN timeout INT, IN dbname VARCHAR(1024))\n"
-        "BEGIN\n"
-        "  DECLARE finished INTEGER DEFAULT 0;\n"
-        "  DECLARE pid INTEGER;\n"
-        "  DECLARE cur CURSOR FOR SELECT id FROM information_schema.processlist WHERE command='Sleep' AND time >= timeout AND db = dbname;\n"
-        "  DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished = 1;\n"
-        "  OPEN cur;\n"
-        "  REPEAT\n"
-        "    FETCH cur INTO pid;\n"
-        "    IF NOT finished THEN\n"
-        "      KILL pid;\n"
-        "    END IF;\n"
-        "  UNTIL finished END REPEAT;\n"
-        "END";
-    
     const char *create_schema = "CREATE SCHEMA IF NOT EXISTS %s;";
     const char *create_table = "CREATE TABLE IF NOT EXISTS %s.zend_cf_remove_servers(id INTEGER);";
     const char *select_remove_servers = "SELECT id FROM %s.zend_cf_remove_servers;";
-    const char *call = "CALL %s.kill_stale_procs(%d,'%s');";
     const char *delete_server = "DELETE FROM %s.zend_cf_remove_servers WHERE id = %d;";
     
     /* Check that number of parameters is correct */
@@ -99,7 +82,7 @@ int main(int argc, const char *argv[])
             sleep(10);
         }
     }
-    if(argc != 9 && argc != 6) {
+    if(argc != 9) {
         usage(argv[0]);
         exit(1);
     }
@@ -115,9 +98,9 @@ int main(int argc, const char *argv[])
     params.mysql_username = argv[3];
     params.mysql_password = argv[4];
     params.mysql_dbname = argv[5];
-    params.server_id = (argc == 9 ? atoi(argv[6]) : -1);
-    params.web_api_key_name = (argc == 9 ? argv[7] : NULL);
-    params.web_api_key = (argc == 9 ? argv[8] : NULL);
+    params.server_id = atoi(argv[6]);
+    params.web_api_key_name = argv[7];
+    params.web_api_key = argv[8];
 
     /* Setup signal handler */
     signal(SIGTERM, term_handler);
@@ -135,10 +118,6 @@ int main(int argc, const char *argv[])
     sprintf(query,create_schema,params.mysql_dbname);
     if(mysql_query(&mysql,query))
         print_mysql_error();
-    /* Create procedure that checks connections and kills them */
-    sprintf(query,create_procedure,params.mysql_dbname);
-    if(mysql_query(&mysql,query))
-        print_mysql_error();
     /* Create table that will hold IDs of ZS nodes to remove */
     sprintf(query,create_table,params.mysql_dbname);
     if(mysql_query(&mysql,query))
@@ -149,34 +128,25 @@ int main(int argc, const char *argv[])
     int status;
     int server_id;
     while(true) {               /* Loop forever */
-        /* Kill stale connections */
-        sprintf(query,call,params.mysql_dbname,MAX_SLEEP_TIME,params.mysql_dbname);
+        /* Query server IDs that should be removed */
+        sprintf(query,select_remove_servers,params.mysql_dbname);
         if(mysql_query(&mysql,query)) {
             print_mysql_error();
-        }
-        /* If WebAPI key was specified, then check if there servers to remove
-         * from Zend Server cluster. */
-        if(params.web_api_key_name != NULL) {
-            /* Query server IDs that should be removed */
-            sprintf(query,select_remove_servers,params.mysql_dbname);
-            if(mysql_query(&mysql,query)) {
-                print_mysql_error();
-            } else {
-                result = mysql_store_result(&mysql);
-                while((row = mysql_fetch_row(result))) {
-                    /* Delete server from Zend Server cluster by calling zs-manage */
-                    server_id = atoi(row[0]);
-                    sprintf(query,"/app/zend-server-6-php-5.4/bin/zs-manage cluster-remove-server %d -N %s -K %s -f",server_id,params.web_api_key_name,params.web_api_key);
-                    fprintf(stderr,"%s\n",query);
-                    /* If call to zs-manage failed, print FAILED on stderr */
-                    if(system(query) == -1) {
-                        fprintf(stderr,"FAILED\n");
-                    }
-                    /* Delete server ID from table */
-                    sprintf(query,delete_server,params.mysql_dbname,server_id);
-                    if(mysql_query(&mysql,query)) {
-                        print_mysql_error();
-                    }
+        } else {
+            result = mysql_store_result(&mysql);
+            while((row = mysql_fetch_row(result))) {
+                /* Delete server from Zend Server cluster by calling zs-manage */
+                server_id = atoi(row[0]);
+                sprintf(query,"/app/zend-server-6-php-5.4/bin/zs-manage cluster-remove-server %d -N %s -K %s -f",server_id,params.web_api_key_name,params.web_api_key);
+                fprintf(stderr,"%s\n",query);
+                /* If call to zs-manage failed, print FAILED on stderr */
+                if(system(query) == -1) {
+                    fprintf(stderr,"FAILED\n");
+                }
+                /* Delete server ID from table */
+                sprintf(query,delete_server,params.mysql_dbname,server_id);
+                if(mysql_query(&mysql,query)) {
+                    print_mysql_error();
                 }
             }
         }
@@ -197,19 +167,15 @@ void finish_with_error()
 void print_mysql_error()
 {
     fprintf(stderr, "%s\n", mysql_error(&mysql));
-    free(query);
 }
 
 void term_handler(int sig)
 {
     /* Disable signal handlers if more signals come */
     signal(sig,SIG_IGN);
-    /* If ZS node ID was specified, then insert it into table of nodes that
-     * should be removed from cluster. */
-    if(params.server_id != -1) {
-        sprintf(query,"INSERT INTO %s.zend_cf_remove_servers(id) VALUES(%d);",params.mysql_dbname,params.server_id);
-        mysql_query(&mysql,query);
-    }
+    /* Insert ZS node ID into table of nodes that should be removed from cluster */
+    sprintf(query,"INSERT INTO %s.zend_cf_remove_servers(id) VALUES(%d);",params.mysql_dbname,params.server_id);
+    mysql_query(&mysql,query);
     /* Clean up and exit */
     mysql_close(&mysql);
     free(query);
