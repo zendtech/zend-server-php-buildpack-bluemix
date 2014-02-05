@@ -10,7 +10,7 @@ export PHPRC=/app/zend-server-6-php-5.4/etc
 echo "Launching Zend Server..."
 export ZEND_UID=`id -u`
 export ZEND_GID=`id -g`
-
+export ZS_EDITION=TRIAL
 ZS_MANAGE=/app/zend-server-6-php-5.4/bin/zs-manage
 
 # Change UID in Zend Server configuration to the one used in the gear
@@ -67,6 +67,7 @@ fi
 if [[ -z $ZEND_LICENSE_ORDER || -z $ZEND_LICENSE_KEY ]]; then
     ZEND_LICENSE_ORDER=cloudfoundry
     ZEND_LICENSE_KEY=AG12IG51401H51B08FD9C3A65E23D2CE
+    export ZS_EDITION=FREE
 fi
 $ZS_MANAGE bootstrap-single-server -p $ZS_ADMIN_PASSWORD -a 'TRUE' -o $ZEND_LICENSE_ORDER -l $ZEND_LICENSE_KEY | head -1 > /app/zend-server-6-php-5.4/tmp/api_key
 
@@ -108,6 +109,8 @@ touch /app/zend-server-6-php-5.4/var/log/error.log
 VALUE=`id -u`
 sed -e "s|^\(zend.httpd_uid[ \t]*=[ \t]*\).*$|\1$VALUE|" -i /app/zend-server-6-php-5.4/etc/conf.d/ZendGlobalDirectives.ini
 sed -e "s|^\(zend.httpd_gid[ \t]*=[ \t]*\).*$|\1$VALUE|" -i /app/zend-server-6-php-5.4/etc/conf.d/ZendGlobalDirectives.ini
+
+#
 
 echo "Restarting Zend Server (using WebAPI)"
 $ZS_MANAGE restart-php -p -N $WEB_API_KEY -K $WEB_API_KEY_HASH
