@@ -17,11 +17,11 @@ Zend Server's integration with Cloud Foundry allows you to quickly get your PHP 
 3. In the new folder, create an empty file called `zend_server_php_app`. 
 4. If you have additional application files and resources you would like to deploy, copy them to the new folder.
 5. Create a new 'index.php' file, and paste the following code (if you already have an 'index.php' file, skip to the next step):
-```
+ ```
 <?php
 echo "Hello world!;
 ?>
-```
+ ```
 6. Enter the following command:
 `cf push --buildpack=https://github.com/zendtech/zend-server-php-buildpack.git` 
 7. Name your application.
