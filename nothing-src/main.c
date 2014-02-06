@@ -79,7 +79,9 @@ int main(int argc, const char *argv[])
     /* Check that number of parameters is correct */
     if(argc == 1) {             /* No params = do nothing */
         while(true) {
-            sleep(10);
+            int status;
+            sleep(10 * MY_SLEEP_SECONDS);
+            waitpid(-1,&status,WNOHANG);
         }
     }
     if(argc != 9) {
