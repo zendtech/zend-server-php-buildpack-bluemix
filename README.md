@@ -37,6 +37,19 @@ echo "Hello world!;
 17. To change the Zend Server UI password, or in case you misplace your password, enter the following command:
 `cf set-env <application name> ZS_ADMIN_PASSWORD <new password>`
 
+## Automatically Importing PHP Configurations
+The Zend Server buildpack can optionally import PHP configurations from backup files. This allows you to easily deploy applications which require a change of directives.
+It also allows you to retain changes you made using the Zend Server GUI. To do so, follow these instructions:
+
+1. In your application's code (on your workstation) create a folder named .zend_config .
+2. Browse to: `http://<application URL>/ZendServer/ImportExport/` .
+3. Click on the "Export Configuration" button.
+4. Move the saved file to the .zend_config folder in your app.
+5. Change directory into your app source code directory: `cd <app_source_directory_on_your_workstation>`
+6. Enter the following command to apply the changes: `cf push` 
+
+``` Tip: you can reuse this backup files for other applications that might require similar settings. ```
+
 # Known Issues
 * Zend Server Code Tracing may not work properly in this version.
 * Several issues might be encountered if you do not bind MySQL providing service to the app (mysql/MaraiaDB):
