@@ -12,6 +12,11 @@ server {
 		include /app/nginx/conf/fastcgi.conf;
 	}
 
+  #ZCLOUD-131 - deny access to Zend Server configuration exports
+  location /.zend_config {
+    deny all;
+  }
+
 	location /ZendServer {
 		proxy_pass        http://localhost:10081/ZendServer;
 		proxy_set_header  X-Real-IP  $remote_addr;
