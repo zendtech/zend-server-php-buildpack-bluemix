@@ -12,11 +12,11 @@ Zend Server's integration with Cloud Foundry allows you to quickly get your PHP 
  
 
 # Usage
-1. Download and install Cloud Foundry's 'cf' CLI.
+1. Download and install Cloud Foundry's 'cf v6' CLI.
 2. Create a new folder on your workstation, and access it
 3. In the new folder, create an empty file called `zend_server_php_app`. 
 4. If you have additional application files and resources you would like to deploy, copy them to the new folder.
-5. Create a new 'index.php' file, and paste the following code (if you already have an 'index.php' file, skip to the next step):
+5. Create a new 'index.php' file in the root folder of your application, and paste the following code (if you already have an 'index.php' file, skip to the next step):
  ```
 <?php
 echo "Hello world!;
