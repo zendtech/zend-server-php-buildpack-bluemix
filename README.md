@@ -12,7 +12,7 @@ Zend Server's integration with Cloud Foundry allows you to quickly get your PHP 
  
 
 # Usage
-1. Download and install Cloud Foundry's 'cf v6' CLI.
+1. Download and install Cloud Foundry's 'cf v6' CLI. For installation instructions, see http://docs.run.pivotal.io/devguide/installcf/install-go-cli.html.
 2. Create a new folder on your workstation, and access it
 3. In the new folder, create an empty file called `zend_server_php_app`. 
 4. If you have additional application files and resources you would like to deploy, copy them to the new folder.
