@@ -58,11 +58,10 @@ sed -e "s|^\(zend.httpd_gid[ \t]*=[ \t]*\).*$|\1$ZEND_GID|" -i /app/zend-server-
 # Bootstrap Zend Server
 echo "Bootstrap Zend Server"
 if [ -z $ZS_ADMIN_PASSWORD ]; then
-    #Set the GUI admin password to "changeme" if a user did not
-    ZS_ADMIN_PASSWORD="changeme"
-    #Generate a Zend Server administrator password if one was not specificed in the manifest
-    # ZS_ADMIN_PASSWORD=`date +%s | sha256sum | base64 | head -c 8` 
-    # echo ZS_ADMIN_PASSWORD=$ZS_ADMIN_PASSWORD
+    # Generate a Zend Server admin password if one was not specificed in the manifest
+    ZS_ADMIN_PASSWORD=`date +%s | sha256sum | base64 | head -c 8`
+    echo ZS_ADMIN_PASSWORD=$ZS_ADMIN_PASSWORD
+    echo $ZS_ADMIN_PASSWORD > /app/zend-password
 fi
 if [[ -z $ZEND_LICENSE_ORDER || -z $ZEND_LICENSE_KEY ]]; then
     ZEND_LICENSE_ORDER=cloudfoundry
