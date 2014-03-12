@@ -11,11 +11,18 @@ server {
 		index  index.php index.html index.htm;
 		include /app/nginx/conf/fastcgi.conf;
 	}
+    
+        # ZCLOUD-173 - display custom error page in case no files uploaded
+        error_page 403 /403.html;
+        location /403.html {
+                 alias /app/nginx/conf/403.html;
+                 internal;
+        }
 
-  #ZCLOUD-131 - deny access to Zend Server configuration exports
-  location /.zend_config {
-    deny all;
-  }
+        #ZCLOUD-131 - deny access to Zend Server configuration exports
+        location /.zend_config {
+                 deny all;
+        }
 
 	location /ZendServer {
 		proxy_pass        http://localhost:10081/ZendServer;
