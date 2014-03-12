@@ -13,7 +13,7 @@ Zend Server's integration with Cloud Foundry allows you to quickly get your PHP 
 
 # Usage
 1. Download and install Cloud Foundry's 'cf v6' CLI. For installation instructions, see http://docs.run.pivotal.io/devguide/installcf/install-go-cli.html.
-2. Create a new folder on your workstation, and access it
+2. Create a new folder on your workstation, and access it.
 3. In the new folder, create an empty file called `zend_server_php_app`. 
 4. If you have additional application files and resources you would like to deploy, copy them to the new folder.
 5. Create a new 'index.php' file in the root folder of your application, and paste the following code (if you already have an 'index.php' file, skip to the next step):
@@ -23,18 +23,13 @@ echo "Hello world!;
 ?>
  ```
 6. Enter the following command:
-`cf push --buildpack=https://github.com/zendtech/zend-server-php-buildpack.git` 
-7. Name your application.
-8. Select the number of instances you would like to use for your application.
-9. Allocate memory for you application (at least 512M).
-10. Enter a sub-domain for your application.
-11. Enter a domain for your application.
-12. To save the configuration, enter 'y'. Your configurations area saved in a 'manifest.yml' file, and your application is deployed using the Zend Server buildpack. This may take a few minutes.
-13. Once successfully initialized and deployed, a success message with the URL at which your application is available at is displayed.
-14. To access the application, enter the supplied URL in your Web browser.
-15. To access Zend Server, enter add 'ZendServer' to the supplied URL. For example:`http://<application URL>/ZendServer` The Zend Server Login page is displayed.
-16. To access the Zend Server UI, enter the following credentials: Username - admin, Password - changeme.
-17. To change the Zend Server UI password, or in case you misplace your password, enter the following command:
+`cf push <application name> -m 512M -b https://github.com/zendtech/zend-server-php-buildpack.git` 
+Your application is deployed using the Zend Server buildpack. This may take a few minutes.
+7. Once successfully initialized and deployed, a success message with the URL at which your application is available at is displayed.
+8. To access the application, enter the supplied URL in your Web browser.
+9. To access Zend Server, add 'ZendServer' to the supplied URL. For example:`http://<application URL>/ZendServer` The Zend Server Login page is displayed.
+10. Log in using the following credentials: Username - admin, Password - enter the following command in your CLI to retrieve an initial password: `cf file <application name> /app/zend-password` 
+11. To change the Zend Server UI password, or in case you misplace your password, enter the following command:
 `cf set-env <application name> ZS_ADMIN_PASSWORD <new password>`
 
 ## Automatically Importing PHP Configurations
