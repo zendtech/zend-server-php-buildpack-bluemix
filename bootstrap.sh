@@ -13,6 +13,12 @@ export ZEND_GID=`id -g`
 export ZS_EDITION=TRIAL
 ZS_MANAGE=/app/zend-server-6-php-5.4/bin/zs-manage
 
+# Set env. variables for DB2 if needed
+if [[ $ZEND_DB2_DRIVER == 1 ]]; then
+    export LD_LIBRARY_PATH=/app/clidriver/lib:$LD_LIBRARY_PATH
+    export IBM_DB_HOME=/app/clidriver
+fi
+
 # Change UID in Zend Server configuration to the one used in the gear
 sed "s/vcap/${ZEND_UID}/" ${PHP_INI_SCAN_DIR}/ZendGlobalDirectives.ini.erb > ${PHP_INI_SCAN_DIR}/ZendGlobalDirectives.ini
 sed "s/VCAP_PORT/${PORT}/" /app/nginx/conf/sites-available/default.erb > /app/nginx/conf/sites-available/default
@@ -149,4 +155,6 @@ if [[ -n $ZEND_CF_DEBUG ]]; then
     echo WEB_API_KEY_HASH=\'$WEB_API_KEY_HASH\'
     echo NODE_ID=\'$NODE_ID\'
     echo ZEND_DOCUMENT_ROOT=\'$ZEND_DOCUMENT_ROOT\'
+    echo LD_LIBRARY_PATH=\'$LD_LIBRARY_PATH\'
+    echo IBM_DB_HOME=\'$IBM_DB_HOME\'
 fi
