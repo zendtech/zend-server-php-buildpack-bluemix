@@ -24,6 +24,13 @@ ZS_PATCHES="ZCLOUD-147 ZSRV-11471 ZSRV-11843 ZCLOUD-131 ZCLOUD-168"
 # include .files when moving things around
 shopt -s dotglob
 
+# If ZEND_DB2_DRIVER is not set to 0, then look for services which use db2 driver
+if [[ $ZEND_DB2_DRIVER != 0 ]]; then
+   if [[ "${VCAP_SERVICES}" == *BLUAcceleration* ]] || [[ "${VCAP_SERVICES}" == *SQLDB* ]]; then
+      ZEND_DB2_DRIVER=1
+   fi 
+fi
+
 if [[ $ZEND_DB2_DRIVER == 1 ]]; then
     ZS_PATCHES="$ZS_PATCHES ZCLOUD-181"
 fi
