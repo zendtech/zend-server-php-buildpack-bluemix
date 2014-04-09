@@ -13,6 +13,13 @@ export ZEND_GID=`id -g`
 export ZS_EDITION=TRIAL
 ZS_MANAGE=/app/zend-server-6-php-5.4/bin/zs-manage
 
+# If ZEND_DB2_DRIVER is not set to 0, then look for services which use db2 driver
+if [[ $ZEND_DB2_DRIVER != 0 ]]; then
+   if [[ "${VCAP_SERVICES}" == *BLUAcceleration* ]] || [[ "${VCAP_SERVICES}" == *SQLDB* ]]; then
+      ZEND_DB2_DRIVER=1
+   fi 
+fi
+
 # Set env. variables for DB2 if needed
 if [[ $ZEND_DB2_DRIVER == 1 ]]; then
     export LD_LIBRARY_PATH=/app/clidriver/lib:$LD_LIBRARY_PATH
