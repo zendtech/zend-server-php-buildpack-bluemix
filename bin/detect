@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if [ -f $1/zend_server_php_app ]; then
+if [ -f $1/zend_server_php_app ] || [ -f $1/index.php ] || [ -f $1/public/index.php ] || [ -f $1/*.zpk ] || [ -f $1/$ZEND_DOCUMENT_ROOT/zend_server_php_app ] || [ -f $1/$ZEND_DOCUMENT_ROOT/index.php ] || [ -f $1/$ZEND_DOCUMENT_ROOT/public/index.php ] || [ -f $1/$ZEND_DOCUMENT_ROOT/*.zpk ]; then
   echo "PHP" && exit 0
 else
   echo "no" && exit 1
