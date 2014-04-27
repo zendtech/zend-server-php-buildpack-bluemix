@@ -18,6 +18,8 @@
 3. **ZS\_DB** - if set, indicates name of database that should be used for Zend
    Server. At bootstrap service with such database name will be searched and
    it's parameters used.
+4. **ZEND\_WEB\_SERVER** - allows choosing between nginx and apache. By default
+   apache is used. If this variable is set to "nginx", then nginx is used instead.
 
 ## License related
 1. **ZEND\_LICENSE\_ORDER** - override Zend Server license order

@@ -24,14 +24,12 @@ NAME="$PRODUCT_NAME GUI [Lighttpd]"
 export PATH=/app/zend-server-6-php-5.4/bin:/app/zend-server-6-php-5.4/gui/lighttpd/sbin:$PATH
 
 export PHP_INI_SCAN_DIR=/app/zend-server-6-php-5.4/gui/lighttpd/etc/conf.d/
-#unset PHP_INI_SCAN_DIR
 unset PHPRC
-
-#export PHPRC=/app/zend-server-6-php-5.4/gui/lighttpd/etc/php-fcgi.ini
 
 start()
 {
     start_php_fcgi
+    sleep 1
     launch
 }
 start_php_fcgi()
@@ -41,7 +39,7 @@ start_php_fcgi()
         killall -9  $ZCE_PREFIX/gui/lighttpd/sbin/php 2>/dev/null
         rm $ZCE_PREFIX/gui/lighttpd/tmp/php-fcgi.pid 2>/dev/null
     fi
-  $ZCE_PREFIX/gui/lighttpd/bin/spawn-fcgi -s $ZCE_PREFIX/gui/lighttpd/tmp/php-fastcgi.socket -f "$ZCE_PREFIX/gui/lighttpd/sbin/php -c $ZCE_PREFIX/gui/lighttpd/etc/php-fcgi.ini" -C 5 -P $ZCE_PREFIX/gui/lighttpd/tmp/php-fcgi.pid
+    $ZCE_PREFIX/gui/lighttpd/bin/spawn-fcgi -s $ZCE_PREFIX/gui/lighttpd/tmp/php-fastcgi.socket -f "$ZCE_PREFIX/gui/lighttpd/sbin/php -c $ZCE_PREFIX/gui/lighttpd/etc/php-fcgi.ini" -C 5 -P $ZCE_PREFIX/gui/lighttpd/tmp/php-fcgi.pid
 #    chmod 660 $ZCE_PREFIX/gui/lighttpd/tmp/php-fastcgi.socket
 }
 kill_php_fcgi()
@@ -69,6 +67,7 @@ status()
 case "$1" in
 	start)
 		start
+		sleep 1
                 status
 		;;
 	stop)
@@ -78,6 +77,7 @@ case "$1" in
 	restart)
 		stop
 		rm -f ${ZCE_PREFIX}/tmp/lighttpd.{app,wd}
+		sleep 1
 		start
 		;;
 	status)

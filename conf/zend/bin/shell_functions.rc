@@ -6,9 +6,9 @@ if [ "$1" = "--debug" ]; then
 fi
 # set the Apache user under which WD runs its daemons
 # if [ "OS400" != "`uname -s`" ]; then
-#	# force all daemons to run under "zend" user (except for IBMi)
-#	WEB_USER="zend"
-#fi
+# 	# force all daemons to run under "zend" user (except for IBMi)
+# 	WEB_USER="zend"
+# fi
 WD_UID=`id -u $WEB_USER`
 WD_GID=`id -g $WEB_USER`
 
@@ -70,17 +70,16 @@ test_arch ()
 # exits if the UID is not 0 [root]
 check_root_privileges()
 {
-#	UNAME=`id -un 2>/dev/null`
-#	if [ ! -z "$UNAME" ]; then
-#		if [ "$UNAME" != "zend" -a "$UNAME" != "root"  -a "$UNAME" != "vcap" ]; then
-#		    echo "You need to be root or zend users to run this script!";
-#		    exit 1
-#		fi
-#	else
-#		echo "Could not detect UID";
-#		exit 1
-#	fi
-#David : Always return 0 for cloud implementations
+	# UNAME=`id -un 2>/dev/null`
+	# if [ ! -z "$UNAME" ]; then
+	# 	if [ "$UNAME" != "zend" -a "$UNAME" != "root" ]; then
+	# 	    echo "You need to be root or zend users to run this script!";
+	# 	    exit 1
+	# 	fi
+	# else
+	# 	echo "Could not detect UID";
+	# 	exit 1
+	# fi
 	return 0;
 }
 check_selinux()

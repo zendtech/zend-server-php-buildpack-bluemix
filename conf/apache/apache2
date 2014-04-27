@@ -1,0 +1,148 @@
+#!/bin/sh -e
+### BEGIN INIT INFO
+# Provides:          apache2
+# Required-Start:    $local_fs $remote_fs $network $syslog
+# Required-Stop:     $local_fs $remote_fs $network $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# X-Interactive:     true
+# Short-Description: Start/stop apache2 web server
+### END INIT INFO
+#
+# apache2		This init.d script is used to start apache2.
+#			It basically just calls apache2ctl.
+
+set -e
+APACHE2CTL="/app/apache/sbin/apache2ctl"
+
+PIDFILE=$(. /app/apache/etc/apache2/envvars && echo $APACHE_PID_FILE)
+if [ -z "$PIDFILE" ] ; then
+	echo ERROR: APACHE_PID_FILE needs to be defined in /app/apache/etc/apache2/envvars >&2
+	exit 2
+fi
+
+pidof_apache() {
+	# if there is actually an apache2 process whose pid is in PIDFILE,
+	# print it and return 0.
+	if [ -e "$PIDFILE" ]; then
+		if pidof apache2 | tr ' ' '\n' | grep $(cat $PIDFILE); then
+			return 0
+		fi
+	fi
+	return 1
+}
+
+apache_stop() {
+	if $APACHE2CTL configtest > /dev/null 2>&1; then
+		# if the config is ok than we just stop normaly
+                $APACHE2CTL stop 2>&1 | grep -v 'not running' >&2 || true
+	else
+		# if we are here something is broken and we need to try
+		# to exit as nice and clean as possible
+		PID=$(pidof_apache) || true
+
+		if [ "${PID}" ]; then
+			# in this case it is everything nice and dandy
+			# and we kill apache2
+			echo "We failed to correctly shutdown apache, so we're now killing all running apache processes. This is almost certainly suboptimal, so please make sure your system is working as you'd expect now!"
+                        kill $PID
+		elif [ "$(pidof apache2)" ]; then
+			if [ "$VERBOSE" != no ]; then
+                                echo " ... failed!"
+			        echo "You may still have some apache2 processes running.  There are"
+ 			        echo "processes named 'apache2' which do not match your pid file,"
+			        echo "and in the name of safety, we've left them alone.  Please review"
+			        echo "the situation by hand."
+                        fi
+                        return 1
+		fi
+	fi
+}
+
+apache_wait_stop() {
+	# running ?
+	PIDTMP=$(pidof_apache) || true
+	if kill -0 "${PIDTMP:-}" 2> /dev/null; then
+	    PID=$PIDTMP
+	fi
+
+	apache_stop
+
+	# wait until really stopped
+	if [ -n "${PID:-}" ]; then
+		i=0
+		while kill -0 "${PID:-}" 2> /dev/null;  do
+        		if [ $i = '60' ]; then
+        			break;
+        	 	else
+        			if [ $i = '0' ]; then
+                			echo -n " ... waiting "
+        			else
+                	      		echo -n "."
+        		 	fi
+        			i=$(($i+1))
+        			sleep 1
+        	      fi
+		 done
+	fi
+}
+
+case $1 in
+	start)
+		echo "Starting web server apache2"
+		if $APACHE2CTL start; then
+                        echo Done
+                else
+                        echo Failed
+                fi
+	;;
+	stop)
+		echo "Stopping web server apache2"
+		if apache_wait_stop; then
+                        echo Done
+                else
+                        echo Failed
+                fi
+	;;
+	graceful | reload | force-reload)
+		if ! $APACHE2CTL configtest > /dev/null 2>&1; then
+                    $APACHE2CTL configtest || true
+                    echo Failed
+                    exit 1
+                fi
+                echo "Reloading web server config apache2"
+		if pidof_apache > /dev/null ; then
+                    if $APACHE2CTL graceful $2 ; then
+                        echo Done
+                    else
+                        echo Failed
+                    fi
+                fi
+	;;
+	restart)
+		echo "Restarting web server apache2"
+		PID=$(pidof_apache) || true
+		if ! apache_wait_stop; then
+                        echo Failed
+                fi
+		if $APACHE2CTL start; then
+                        echo Done
+                else
+                        echo Failed
+                fi
+	;;
+	status)
+		PID=$(pidof_apache) || true
+		if [ -n "$PID" ]; then
+			echo "Apache is running (pid $PID)."
+			exit 0
+		else
+			echo "Apache is NOT running."
+			exit 1
+		fi
+	;;
+	*)
+		echo "Usage: /app/apache/etc/init.d/apache2 {start|stop|restart|reload|force-reload|start-htcacheclean|stop-htcacheclean|status}"
+		exit 1
+	;;
+esac
