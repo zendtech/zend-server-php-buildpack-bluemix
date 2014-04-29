@@ -114,6 +114,12 @@ VALUE=`id -u`
 sed -e "s|^\(zend.httpd_uid[ \t]*=[ \t]*\).*$|\1$VALUE|" -i /app/zend-server-6-php-5.4/etc/conf.d/ZendGlobalDirectives.ini
 sed -e "s|^\(zend.httpd_gid[ \t]*=[ \t]*\).*$|\1$VALUE|" -i /app/zend-server-6-php-5.4/etc/conf.d/ZendGlobalDirectives.ini
 
+#ZCLOUD-160 - disable unsupported extensions in Free Edition
+if [ $ZS_EDITION = "FREE" ] ; then
+  $ZS_MANAGE extension-off -e 'Zend Page Cache' -N $WEB_API_KEY -K $WEB_API_KEY_HASH
+  $ZS_MANAGE extension-off -e 'Zend Session Clustering' -N $WEB_API_KEY -K $WEB_API_KEY_HASH
+fi
+
 # ZCLOUD-160 - disable unsupported extensions in Free Edition
 if [ $ZS_EDITION = "FREE" ] ; then
   $ZS_MANAGE extension-off -e 'Zend Page Cache' -N $WEB_API_KEY -K $WEB_API_KEY_HASH
