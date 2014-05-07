@@ -5,10 +5,10 @@ Zend Server's integration with Cloud Foundry allows you to quickly get your PHP 
 
 # Buildpack Components
 
-* Zend Server 6.2 Free edition
-* Zend Server 6.2 configuration files
+* Zend Server 6.3 Free edition
+* Zend Server 6.3 configuration files
 * PHP 5.4
-* Nginx web server
+* Apache web server
  
 
 # Usage
@@ -63,4 +63,3 @@ The following resources will help you understand Cloud Foundry concepts and work
 * Zend Server edition comparison: http://www.zend.com/en/products/server/editions.
 * Local installation instructions for cloud providers: [localinstallation.md](localinstallation.md)
 * Cloud foundry environment variables that affect the buildpack: [environment.md](environment.md)
-
