@@ -195,6 +195,7 @@ if [[ $ZEND_WEB_SERVER == "apache" ]]; then
     ln -sf ../mods-available/proxy.load $APACHE_PATH/etc/apache2/mods-enabled/proxy.load
     ln -sf ../mods-available/proxy_http.load $APACHE_PATH/etc/apache2/mods-enabled/proxy_http.load
     cp $LP_DIR/conf/nginx/conf/403.html $APACHE_PATH
+    cp $LP_DIR/conf/nginx/conf/wait.html $APACHE_PATH
     DONE_MSG
 fi
 

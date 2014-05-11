@@ -17,3 +17,7 @@ sed -i -e "s/APACHE_RUN_GROUP=www-data/APACHE_RUN_GROUP=${GROUP}/" /app/apache/e
 if [[ -n $ZEND_DOCUMENT_ROOT ]]; then
     sed -i -e "s|/var/www|$ZEND_DOCUMENT_ROOT|" /app/apache/etc/apache2/sites-available/default
 fi
+
+# Change ServerName
+SERVER_NAME=`/app/zend-server-6-php-5.4/gui/lighttpd/sbin/php /app/bin/json-env-extract.php VCAP_APPLICATION application_uris 0`
+sed -i -e "s/localhost.localdomain/$SERVER_NAME/g" /app/apache/etc/apache2/sites-available/default

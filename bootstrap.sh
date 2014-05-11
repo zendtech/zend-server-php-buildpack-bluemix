@@ -15,12 +15,6 @@ export ZS_EDITION=TRIAL
 export APACHE_ENVVARS=/app/apache/etc/apache2/envvars
 ZS_MANAGE=/app/zend-server-6-php-5.4/bin/zs-manage
 
-if [[ -z $ZEND_WEB_SERVER ]]; then
-    ZEND_WEB_SERVER="apache"
-fi
-
-. customize-$ZEND_WEB_SERVER.sh
-
 # Change UID in Zend Server configuration to the one used in the instance
 sed "s/vcap/${ZEND_UID}/" ${PHP_INI_SCAN_DIR}/ZendGlobalDirectives.ini.erb > ${PHP_INI_SCAN_DIR}/ZendGlobalDirectives.ini
 
@@ -41,6 +35,13 @@ fi
 # Detect MySQL settings
 ./mysql_detect.sh
 eval `cat /app/zend_mysql.sh`
+
+# Run web server customization script
+if [[ -z $ZEND_WEB_SERVER ]]; then
+    ZEND_WEB_SERVER="apache"
+fi
+
+. customize-$ZEND_WEB_SERVER.sh
 
 # Start Zend Server
 echo "Starting Zend Server"
@@ -129,6 +130,17 @@ fi
 echo "Restarting Zend Server (using WebAPI)"
 $ZS_MANAGE restart-php -p -N $WEB_API_KEY -K $WEB_API_KEY_HASH
 
+# Enable ZS UI
+if [ $ZEND_WEB_SERVER == "apache" ]; then
+    sed -i -e "s|Alias /ZendServer /app/apache/wait.html||g" /app/apache/etc/apache2/sites-available/default
+    sed -i -e "s|#Proxy|Proxy|g" /app/apache/etc/apache2/sites-available/default
+    /app/apache/sbin/apache2ctl reload
+elif [ $ZEND_WEB_SERVER == "nginx" ]; then
+    sed -i -e "s|alias /app/nginx/conf/wait.html||g" /app/nginx/conf/sites-available/default
+    sed -i -e "s|#proxy|proxy|g" /app/nginx/conf/sites-available/default
+    /app/zend-server-6-php-5.4/bin/nginxctl.sh restart
+fi
+
 function DEBUG_PRINT_FILE() {
     BASENAME=`basename $1`
     echo "--- Start $BASENAME ---"
@@ -145,6 +157,7 @@ if [[ -n $ZEND_CF_DEBUG ]]; then
     DEBUG_PRINT_FILE /app/zend_cluster.sh
     DEBUG_PRINT_FILE /app/zend-server-6-php-5.4/etc/zend_database.ini
     DEBUG_PRINT_FILE /app/apache/etc/apache2/envvars
+    DEBUG_PRINT_FILE /app/apache/etc/apache2/sites-available/default
     echo WEB_API_KEY=\'$WEB_API_KEY\'
     echo WEB_API_KEY_HASH=\'$WEB_API_KEY_HASH\'
     echo NODE_ID=\'$NODE_ID\'

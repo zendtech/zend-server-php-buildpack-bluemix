@@ -25,12 +25,12 @@ server {
         }
 
 	location /ZendServer {
-		proxy_pass        http://localhost:10081/ZendServer;
-		proxy_set_header  X-Real-IP  $remote_addr;
+                alias /app/nginx/conf/wait.html
+		#proxy_pass        http://localhost:10081/ZendServer;
+		#proxy_set_header  X-Real-IP  $remote_addr;
 	}
 
 	#ZEND-{EAB6D9CE5B23B8A10D9C6C798DF9ECB0}
 	include "/app/zend-server-6-php-5.4/etc/sites.d/zend-default-vhost-80.conf";
 	#ZEND-{EAB6D9CE5B23B8A10D9C6C798DF9ECB0}
 }
-
