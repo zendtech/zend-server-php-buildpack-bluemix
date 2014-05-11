@@ -19,5 +19,5 @@ if [[ -n $ZEND_DOCUMENT_ROOT ]]; then
 fi
 
 # Change ServerName
-SERVER_NAME=`/app/zend-server-6-php-5.4/gui/lighttpd/sbin/php /app/bin/json-env-extract.php VCAP_APPLICATION application_uris 0`
+SERVER_NAME=`/app/bin/json-env-extract.php VCAP_APPLICATION application_uris 0`
 sed -i -e "s/localhost.localdomain/$SERVER_NAME/g" /app/apache/etc/apache2/sites-available/default
