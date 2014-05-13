@@ -16,7 +16,4 @@ foreach($path as $key) {
     }
 }
 
-echo var_export($arr,true);
-echo var_export($path,true);
-echo var_export($result,true);
 echo $result;
