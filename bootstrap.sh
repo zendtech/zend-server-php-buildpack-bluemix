@@ -65,7 +65,6 @@ if [[ -z $ZEND_LICENSE_ORDER || -z $ZEND_LICENSE_KEY ]]; then
     export ZS_EDITION=FREE
 fi
 
-echo $ZS_MANAGE bootstrap-single-server -p $ZS_ADMIN_PASSWORD -a 'TRUE' -o $ZEND_LICENSE_ORDER -l $ZEND_LICENSE_KEY | head -1 > /app/zend-server-6-php-5.4/tmp/api_key
 $ZS_MANAGE bootstrap-single-server -p $ZS_ADMIN_PASSWORD -a 'TRUE' -o $ZEND_LICENSE_ORDER -l $ZEND_LICENSE_KEY | head -1 > /app/zend-server-6-php-5.4/tmp/api_key
 
 # Remove ZS_ADMIN_PASSWORD from env.log
@@ -156,4 +155,5 @@ if [[ -n $ZEND_CF_DEBUG ]]; then
     echo WEB_API_KEY_HASH=\'$WEB_API_KEY_HASH\'
     echo NODE_ID=\'$NODE_ID\'
     echo ZEND_DOCUMENT_ROOT=\'$ZEND_DOCUMENT_ROOT\'
+    echo $ZS_MANAGE server-add-to-cluster -n $APP_UNIQUE_NAME -i $APP_IP -o $MYSQL_HOSTNAME:$MYSQL_PORT -u $MYSQL_USERNAME -p $MYSQL_PASSWORD -d $MYSQL_DBNAME -N $WEB_API_KEY -K $WEB_API_KEY_HASH -s
 fi
