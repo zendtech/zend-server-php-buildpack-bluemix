@@ -121,12 +121,6 @@ if [ $ZS_EDITION = "FREE" ] ; then
   $ZS_MANAGE extension-off -e 'Zend Session Clustering' -N $WEB_API_KEY -K $WEB_API_KEY_HASH
 fi
 
-# ZCLOUD-160 - disable unsupported extensions in Free Edition
-if [ $ZS_EDITION = "FREE" ] ; then
-  $ZS_MANAGE extension-off -e 'Zend Page Cache' -N $WEB_API_KEY -K $WEB_API_KEY_HASH
-  $ZS_MANAGE extension-off -e 'Zend Session Clustering' -N $WEB_API_KEY -K $WEB_API_KEY_HASH
-fi
-
 echo "Restarting Zend Server (using WebAPI)"
 $ZS_MANAGE restart-php -p -N $WEB_API_KEY -K $WEB_API_KEY_HASH
 
@@ -134,7 +128,7 @@ $ZS_MANAGE restart-php -p -N $WEB_API_KEY -K $WEB_API_KEY_HASH
 if [ $ZEND_WEB_SERVER == "apache" ]; then
     sed -i -e "s|Alias /ZendServer /app/apache/wait.html||g" /app/apache/etc/apache2/sites-available/default
     sed -i -e "s|#Proxy|Proxy|g" /app/apache/etc/apache2/sites-available/default
-    /app/apache/sbin/apache2ctl reload
+    /app/apache/sbin/apache2ctl restart
 elif [ $ZEND_WEB_SERVER == "nginx" ]; then
     sed -i -e "s|alias /app/nginx/conf/wait.html||g" /app/nginx/conf/sites-available/default
     sed -i -e "s|#proxy|proxy|g" /app/nginx/conf/sites-available/default
