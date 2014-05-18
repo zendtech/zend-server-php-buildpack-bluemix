@@ -24,7 +24,7 @@ echo "Hello world!;
 `cf push <application name> -m 512M -b https://github.com/zendtech/zend-server-php-buildpack.git` 
 Your application is deployed using the Zend Server buildpack. This may take a few minutes.
 7. Once successfully initialized and deployed, a success message with the URL at which your application is available at is displayed.
-8. To access the application, enter the supplied URL in your Web browser. Deployed .zpk can be accessed at: http://<app name>.pivotal.io/<.zpk name>
+8. To access the application, enter the supplied URL in your Web browser. Deployed .zpks can be accessed at: http://<app name>.pivotal.io/<.zpk name>
 9. To access Zend Server, add 'ZendServer' to the supplied URL. For example:`http://<application URL>/ZendServer` The Zend Server Login page is displayed.
 10. Log in using the following credentials: Username - admin, Password - enter the following command in your CLI to retrieve an initial password: `cf file <application name> /app/zend-password` 
 11. To change the Zend Server UI password, or in case you misplace your password, enter the following command:
