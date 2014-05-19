@@ -128,6 +128,9 @@ sed -i -e "s|/etc/apache2|/app/apache/etc/apache2|g" $PHP_PATH/etc/zsd.ini
 sed -i -e "s|/usr/local|/app/zend-server-6-php-5.4|g" $PHP_PATH/etc/zsd.ini
 sed -i -e "s|/usr/sbin|/app/apache/sbin|g" $PHP_PATH/etc/zsd.ini
 
+# Update hard coded path in zs-manage
+sed -i -e "s|/etc/zce.rc|/app/etc/zce.rc|" $PHP_PATH/share/zs-cli-tools/library/ZServer/Cli/Tool/Command/Manage/Abstract.php
+
 # Fix default library symlinks
 ln -sf /app/zend-server-6-php-5.4/var/libraries/Symfony_2.3/2.3.9 $PHP_PATH/var/libraries/Symfony_2.3/default
 ln -sf /app/zend-server-6-php-5.4/var/libraries/Zend_Framework_1/1.12.3 $PHP_PATH/var/libraries/Zend_Framework_1/default
