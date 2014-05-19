@@ -120,6 +120,10 @@ if [ $ZS_EDITION = "FREE" ] ; then
   $ZS_MANAGE extension-off -e 'Zend Session Clustering' -N $WEB_API_KEY -K $WEB_API_KEY_HASH
 fi
 
+# Setup default server name
+SERVER_NAME=`/app/bin/json-env-extract.php VCAP_APPLICATION application_uris 0`
+$ZS_MANAGE store-directive -d zend_gui.defaultServer -v $SERVER_NAME -N $WEB_API_KEY -K $WEB_API_KEY_HASH
+
 echo "Restarting Zend Server (using WebAPI)"
 $ZS_MANAGE restart-php -p -N $WEB_API_KEY -K $WEB_API_KEY_HASH
 
