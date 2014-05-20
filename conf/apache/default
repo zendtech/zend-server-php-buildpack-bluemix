@@ -1,0 +1,43 @@
+<VirtualHost *:80>
+
+#ZEND-{5A304F33C8EE314959F26F24EFE91AE0}
+Include "/usr/local/zend/etc/sites.d/zend-default-vhost-80.conf"
+#ZEND-{5A304F33C8EE314959F26F24EFE91AE0}
+        ServerName localhost.localdomain
+        ServerAdmin webmaster@localhost
+
+        DocumentRoot /var/www
+        <Directory />
+                Options FollowSymLinks
+                AllowOverride None
+        </Directory>
+        <Directory /var/www/>
+                Options -Indexes FollowSymLinks MultiViews
+                AllowOverride None
+                Order allow,deny
+                allow from all
+        </Directory>
+
+        ErrorLog /var/log/apache2/error.log
+
+        # Possible values include: debug, info, notice, warn, error, crit,
+        # alert, emerg.
+        LogLevel warn
+
+        CustomLog /var/log/apache2/access.log combined
+
+        Alias /zend-custom-403.html /app/apache/403.html
+        ErrorDocument 403 /zend-custom-403.html
+
+        AliasMatch /ZendServer.*$ /app/apache/wait.html
+        #ProxyPass /ZendServer http://localhost:10081/ZendServer
+        #ProxyPassReverse / http://localhost:10081/
+
+        UseCanonicalName Off
+        UseCanonicalPhysicalPort Off
+</VirtualHost>
+
+#ZEND-{BCAE5414EA2076A86D31E274E1C8AE27}
+Include "/usr/local/zend/etc/sites.d/globals-*.conf"
+Include "/usr/local/zend/etc/sites.d/vhost_*.conf"
+#ZEND-{BCAE5414EA2076A86D31E274E1C8AE27}

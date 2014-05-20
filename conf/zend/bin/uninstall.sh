@@ -33,7 +33,11 @@ Running this script will perform the following:
 EOF
 
 if [ "$1" = "--automatic" ]; then
-	AUTOMATIC="-y"
+	if which zypper > /dev/null 2>&1; then
+		AUTOMATIC="-n"
+	else
+		AUTOMATIC="-y"
+	fi
 else
 	AUTOMATIC=""
 fi
@@ -52,10 +56,10 @@ if which yum > /dev/null; then
 elif which zypper > /dev/null; then
 	COMMAND="zypper ${AUTOMATIC} remove '*zend*'"
 elif which aptitude > /dev/null; then
-	COMMAND="aptitude ${AUTOMATIC} remove '~nzend'"
+	COMMAND="aptitude ${AUTOMATIC} purge '~nzend'"
 elif which apt-get > /dev/null; then
 	# Fallback if aptitude isn't present (can happen in Ubuntu)
-        COMMAND="apt-get ${AUTOMATIC} remove `dpkg -l | grep zend | awk '{print $2}' | xargs echo`"
+        COMMAND="apt-get ${AUTOMATIC} purge `dpkg -l | grep zend | awk '{print $2}' | xargs echo`"
 fi
 
 if [ -n "$COMMAND" ]; then

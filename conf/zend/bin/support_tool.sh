@@ -19,12 +19,14 @@ ZEND_DATA_TMPDIR=${TMPDIR}/${ZEND_DATA_DIR}
 ZEND_ERROR_LOG=${ZEND_DATA_TMPDIR}/support_tool_error.log
 ZEND_COMPRESSED_REPORT=zend-support-tool_${PRODUCT_VERSION}_${STAMP}.tar.gz
 ZSST_ACTION="none"
+WEB_SRV=$(grep "zend.webserver_type" $ZCE_PREFIX/etc/conf.d/ZendGlobalDirectives.ini | cut -d'=' -f2 | tr -d [:space:])
 
 export ZCE_PREFIX
 export ZEND_DATA_DIR
 export ZEND_DATA_TMPDIR
 export ZEND_ERROR_LOG
 export WEB_USER
+export WEB_SRV
 
 
 if [ ! -w /etc/passwd ]; then
