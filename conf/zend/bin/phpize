@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Variable declaration
-prefix='/app/zend-server-6-php-5.4'
+prefix='/app/zend'
 datarootdir='@datarootdir@'
 exec_prefix="`eval echo ${prefix}`"
 phpdir="`eval echo ${exec_prefix}/lib/php`/build"
@@ -152,7 +152,7 @@ phpize_copy_files()
 phpize_replace_prefix()
 {
   $SED \
-  -e "s#/app/zend-server-6-php-5.4#$prefix#" \
+  -e "s#/app/zend#$prefix#" \
   < "$phpdir/phpize.m4" > configure.in
 }
 

@@ -139,7 +139,7 @@ int main(int argc, const char *argv[])
             while((row = mysql_fetch_row(result))) {
                 /* Delete server from Zend Server cluster by calling zs-manage */
                 server_id = atoi(row[0]);
-                sprintf(query,"/app/zend-server-6-php-5.4/bin/zs-manage cluster-remove-server %d -N %s -K %s -f",server_id,params.web_api_key_name,params.web_api_key);
+                sprintf(query,"/app/zend/bin/zs-manage cluster-remove-server %d -N %s -K %s -f",server_id,params.web_api_key_name,params.web_api_key);
                 fprintf(stderr,"%s\n",query);
                 /* If call to zs-manage failed, print FAILED on stderr */
                 if(system(query) == -1) {

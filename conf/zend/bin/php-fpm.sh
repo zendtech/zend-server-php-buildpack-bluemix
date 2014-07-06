@@ -10,10 +10,10 @@
 # Description:       starts the PHP FastCGI Process Manager daemon
 ### END INIT INFO
 
-prefix=/app/zend-server-6-php-5.4
+prefix=/app/zend
 exec_prefix=${prefix}
 
-php_fpm_BIN=/app/zend-server-6-php-5.4/bin/php-fpm
+php_fpm_BIN=/app/zend/bin/php-fpm
 php_fpm_CONF=${prefix}/etc/php-fpm.conf
 php_fpm_PID=${prefix}/tmp/php-fpm.pid
 

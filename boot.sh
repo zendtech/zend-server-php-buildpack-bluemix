@@ -16,10 +16,10 @@ if [ -n $ZEND_CF_DEBUG ]; then
     # Debug info print
     hostname
     /usr/bin/id
-    grep uid /app/zend-server-6-php-5.4/etc/conf.d/ZendGlobalDirectives.ini
+    grep uid /app/zend/etc/conf.d/ZendGlobalDirectives.ini
 
     # Debug info
-   echo /app/nothing $MYSQL_HOSTNAME $MYSQL_PORT $MYSQL_USERNAME $MYSQL_PASSWORD $MYSQL_DBNAME $NODE_ID $WEB_API_KEY $WEB_API_KEY_HASH
+    echo /app/nothing $MYSQL_HOSTNAME $MYSQL_PORT $MYSQL_USERNAME $MYSQL_PASSWORD $MYSQL_DBNAME $NODE_ID $WEB_API_KEY $WEB_API_KEY_HASH
 fi
 
 export LD_LIBRARY_PATH=.

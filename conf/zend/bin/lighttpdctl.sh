@@ -21,9 +21,9 @@ WD_INI=${ZCE_PREFIX}/etc/watchdog-lighttpd.ini
 WATCHDOG="${ZCE_PREFIX}/bin/watchdog -c $WD_INI"
 BINARY=lighttpd
 NAME="$PRODUCT_NAME GUI [Lighttpd]"
-export PATH=/app/zend-server-6-php-5.4/bin:/app/zend-server-6-php-5.4/gui/lighttpd/sbin:$PATH
+export PATH=/app/zend/bin:/app/zend/gui/lighttpd/sbin:$PATH
 
-export PHP_INI_SCAN_DIR=/app/zend-server-6-php-5.4/gui/lighttpd/etc/conf.d/
+export PHP_INI_SCAN_DIR=/app/zend/gui/lighttpd/etc/conf.d/
 unset PHPRC
 
 start()
