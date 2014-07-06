@@ -8,6 +8,8 @@
 2. **ZEND\_CF\_DEBUG** - after finishing start up print some debug information.
 3. **ZEND\_LOG\_VERBOSITY** - if set, then log verbosity of ZS daemons is set to it's
    value. Additionally enables debug mode in ZS UI.
+4. **ZEND\_CLEAR\_CACHE** - if set, in compile stage cache is cleared before
+   downloading tarballs. This is useful mainly for debug purposes.
 
 ## Zend Server customization
 

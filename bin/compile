@@ -47,6 +47,13 @@ fi
 
 DONE_MSG
 
+# clear cache if needed
+if [[ -n $ZEND_CLEAR_CACHE ]]; then
+    START_MSG 'Clearing cache'
+    rm -rf $CACHE_DIR/*.tar.gz
+    DONE_MSG
+fi
+
 # Populate cache if needed
 OLD_PWD=`pwd`
 cd $CACHE_DIR
