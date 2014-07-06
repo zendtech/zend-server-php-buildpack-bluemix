@@ -21,7 +21,8 @@ APACHE_PATH=$BUILD_DIR/apache
 NGINX_PATH=$BUILD_DIR/nginx
 # ZCLOUD-168 solves both ZCLOUD-104,ZCLOUD-164"
 # ZCLOUD-147 an ZSRV-11471 should not be needed with Zend Server 6.3 and higher
-ZS_PATCHES="ZSRV-11843 ZCLOUD-131 ZCLOUD-168 ZCLOUD-194"
+#ZS_PATCHES="ZSRV-11843 ZCLOUD-131 ZCLOUD-168 ZCLOUD-194"
+ZS_PATCHES=""
 
 # include .files when moving things around
 shopt -s dotglob
