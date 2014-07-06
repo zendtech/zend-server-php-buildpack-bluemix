@@ -20,6 +20,9 @@ if [ -n $ZEND_CF_DEBUG ]; then
 
     # Debug info
     echo /app/nothing $MYSQL_HOSTNAME $MYSQL_PORT $MYSQL_USERNAME $MYSQL_PASSWORD $MYSQL_DBNAME $NODE_ID $WEB_API_KEY $WEB_API_KEY_HASH
+
+    # uname system information
+    uname -a
 fi
 
 export LD_LIBRARY_PATH=.
