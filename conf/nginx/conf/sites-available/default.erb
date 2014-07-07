@@ -19,6 +19,16 @@ server {
                  internal;
         }
 
+        location /ZendServer6-Wait-page-block-image02.png {
+                 alias /app/nginx/conf/ZendServer6-Wait-page-block-image02.png;
+                 internal;
+        }
+
+        location /ZendServer6-Wait-page-Zend-Server-logo.png {
+                 alias /app/apache/ZendServer6-Wait-page-Zend-Server-logo.png;
+                 internal;
+        }
+
         #ZCLOUD-131 - deny access to Zend Server configuration exports
         location /.zend_config {
                  deny all;

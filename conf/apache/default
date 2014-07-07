@@ -29,6 +29,9 @@ Include "/usr/local/zend/etc/sites.d/zend-default-vhost-80.conf"
         Alias /zend-custom-403.html /app/apache/403.html
         ErrorDocument 403 /zend-custom-403.html
 
+        Alias /ZendServer6-Wait-page-block-image02.png /app/apache/ZendServer6-Wait-page-block-image02.png
+        Alias /ZendServer6-Wait-page-Zend-Server-logo.png /app/apache/ZendServer6-Wait-page-Zend-Server-logo.png
+
         AliasMatch /ZendServer.*$ /app/apache/wait.html
         #ProxyPass /ZendServer http://localhost:10081/ZendServer
         #ProxyPassReverse / http://localhost:10081/
