@@ -57,9 +57,9 @@ fi
 # Populate cache if needed
 OLD_PWD=`pwd`
 cd $CACHE_DIR
-if [[ ! -f $CACHE_DIR/zend-server-7.0-php-5.4.tar.gz ]]; then
+if [[ ! -f $CACHE_DIR/zs-7.0-php-5.4.tar.gz ]]; then
     START_MSG 'Downloading Zend Server tarball'
-    curl -s -O http://repos.zend.com/cloudfoundry/zend-server-7.0-php-5.4.tar.gz
+    curl -s -O http://repos.zend.com/cloudfoundry/zs-7.0-php-5.4.tar.gz
     DONE_MSG
 fi
 
@@ -86,7 +86,7 @@ cd $OLD_PWD
 
 # Unpack Zend Server, patches and apache
 START_MSG 'Unpacking Zend Server'
-tar xzf $CACHE_DIR/zend-server-7.0-php-5.4.tar.gz
+tar xzf $CACHE_DIR/zs-7.0-php-5.4.tar.gz
 DONE_MSG
 for P in $ZS_PATCHES; do
     START_MSG "Unpacking $P patch"
