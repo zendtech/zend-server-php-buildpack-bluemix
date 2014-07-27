@@ -34,7 +34,7 @@ if [[ $ZEND_DB2_DRIVER != 0 ]]; then
 fi
 
 if [[ $ZEND_DB2_DRIVER == 1 ]]; then
-    ZS_PATCHES="$ZS_PATCHES ZCLOUD-181"
+    ZS_PATCHES="$ZS_PATCHES ZCLOUD-196"
 fi
 
 START_MSG 'Initializing'
