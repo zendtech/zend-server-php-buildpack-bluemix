@@ -147,6 +147,12 @@ if [ $ZS_EDITION = "FREE" ] ; then
   $ZS_MANAGE extension-off -e 'Zend Session Clustering' -N $WEB_API_KEY -K $WEB_API_KEY_HASH
 fi
 
+#ZCLOUD-196 - Enable DB2 extensions if ZEND_DB2_DRIVER is set
+if [[ $ZEND_DB2_DRIVER == 1 ]]; then
+  $ZS_MANAGE extension-on -e 'pdo_ibm' -N $WEB_API_KEY -K $WEB_API_KEY_HASH
+  $ZS_MANAGE extension-on -e 'ibm_db2' -N $WEB_API_KEY -K $WEB_API_KEY_HASH
+fi
+
 # Setup default server name
 SERVER_NAME=`/app/bin/json-env-extract.php VCAP_APPLICATION application_uris 0`
 $ZS_MANAGE store-directive -d zend_gui.defaultServer -v $SERVER_NAME -N $WEB_API_KEY -K $WEB_API_KEY_HASH
