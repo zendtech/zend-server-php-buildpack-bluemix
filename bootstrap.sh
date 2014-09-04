@@ -148,6 +148,9 @@ function DEBUG_PRINT_FILE() {
     echo "--- End $BASENAME ---"
 }
 
+# Deploy ZPK
+for i in `find . -name "*.zpk"`; do $ZS_MANAGE app-deploy -p $i -b http://localhost/`basename $i .zpk` -d -a `basename $i .zpk` -N $WEB_API_KEY -K $WEB_API_KEY_HASH; done
+
 # Debug output
 if [[ -n $ZEND_CF_DEBUG ]]; then
     echo UID=$VALUE
