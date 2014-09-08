@@ -141,9 +141,6 @@ sed -i -e "s|/usr/sbin|/app/apache/sbin|g" $PHP_PATH/etc/zsd.ini
 # Update hard coded path in zs-manage
 sed -i -e "s|/etc/zce.rc|/app/etc/zce.rc|" $PHP_PATH/share/zs-cli-tools/library/ZServer/Cli/Tool/Command/Manage/Abstract.php
 
-# Update ZS UI cookie name
-sed -i -e 's|^[ \t]*zend_gui.sessionId[ \t]*=.*$|zend_gui.sessionId = JSESSIONID|' $PHP_PATH/gui/config/zs_ui.ini
-
 # Fix default library symlinks
 ln -sf /app/zend/var/libraries/Symfony_2.3/2.3.16 $PHP_PATH/var/libraries/Symfony_2.3/default
 ln -sf /app/zend/var/libraries/Zend_Framework_1/1.12.7 $PHP_PATH/var/libraries/Zend_Framework_1/default
