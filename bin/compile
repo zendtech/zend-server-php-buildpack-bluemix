@@ -20,7 +20,7 @@ PHP_PATH=$BUILD_DIR/zend
 APACHE_PATH=$BUILD_DIR/apache
 NGINX_PATH=$BUILD_DIR/nginx
 ZS_VERSION=7.0
-ZS_PATCHES="ZSRV-11843 ZCLOUD-131 ZCLOUD-168"
+ZS_PATCHES="ZCLOUD-131 ZCLOUD-168"
 
 # include .files when moving things around
 shopt -s dotglob
