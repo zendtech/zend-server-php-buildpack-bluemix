@@ -130,12 +130,23 @@ fi
 # Setup default server name
 SERVER_NAME=`/app/bin/json-env-extract.php VCAP_APPLICATION application_uris 0`
 $ZS_MANAGE store-directive -d zend_gui.defaultServer -v $SERVER_NAME -N $WEB_API_KEY -K $WEB_API_KEY_HASH
+echo
 
 # Setup Z-Ray URI
 $ZS_MANAGE store-directive -d 'zray.zendserver_ui_url' -v "http://$SERVER_NAME/ZendServer" -N $WEB_API_KEY -K $WEB_API_KEY_HASH
+echo
 
 # Setup correct session cookie name
 $ZS_MANAGE store-directive -d 'zend_gui.sessionId' -v 'JSESSIONID' -N $WEB_API_KEY -K $WEB_API_KEY_HASH
+echo
+
+# Setup ZS UI timezone
+$ZS_MANAGE store-directive -d 'zend_gui.timezone' -v 'UTC' -N $WEB_API_KEY -K $WEB_API_KEY_HASH
+echo
+
+# Setup ZS profile
+$ZS_MANAGE store-directive -d 'zend_gui.serverProfile' -v 'Production' -N $WEB_API_KEY -K $WEB_API_KEY_HASH
+echo
 
 echo "Restarting Zend Server (using WebAPI)"
 $ZS_MANAGE restart-php -p -N $WEB_API_KEY -K $WEB_API_KEY_HASH
