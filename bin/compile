@@ -16,12 +16,11 @@ BIN_DIR=$(dirname $0)
 BUILD_DIR=$1
 CACHE_DIR=$2
 LP_DIR=`cd $(dirname $0); cd ..; pwd`
-PHP_PATH=$BUILD_DIR/zend-server-6-php-5.4
+PHP_PATH=$BUILD_DIR/zend
 APACHE_PATH=$BUILD_DIR/apache
 NGINX_PATH=$BUILD_DIR/nginx
-# ZCLOUD-168 solves both ZCLOUD-104,ZCLOUD-164"
-# ZCLOUD-147 an ZSRV-11471 should not be needed with Zend Server 6.3
-ZS_PATCHES="ZSRV-11843 ZCLOUD-131 ZCLOUD-168 ZCLOUD-194"
+ZS_VERSION=7.0
+ZS_PATCHES="ZCLOUD-131 ZCLOUD-168"
 
 # include .files when moving things around
 shopt -s dotglob
@@ -57,12 +56,19 @@ fi
 
 DONE_MSG
 
+# clear cache if needed
+if [[ -n $ZEND_CLEAR_CACHE ]]; then
+    START_MSG 'Clearing cache'
+    rm -rf $CACHE_DIR/*.tar.gz
+    DONE_MSG
+fi
+
 # Populate cache if needed
 OLD_PWD=`pwd`
 cd $CACHE_DIR
-if [[ ! -f $CACHE_DIR/zend-server-6.3-php-5.4.tar.gz ]]; then
+if [[ ! -f $CACHE_DIR/zend-server-$ZS_VERSION-php-5.4.tar.gz ]]; then
     START_MSG 'Downloading Zend Server tarball'
-    curl -s -O http://repos.zend.com/cloudfoundry/zend-server-6.3-php-5.4.tar.gz
+    curl -s -O http://repos.zend.com/cloudfoundry/zend-server-$ZS_VERSION-php-5.4.tar.gz
     DONE_MSG
 fi
 
@@ -80,7 +86,7 @@ fi
 for P in $ZS_PATCHES; do
     if [[ ! -f $CACHE_DIR/$P.tar.gz ]]; then
         START_MSG "Downloading $P patch"
-        curl -s -O http://$REPOS_HOST/cloudfoundry/$P.tar.gz
+        curl -s -O http://$REPOS_HOST/cloudfoundry/$ZS_VERSION/$P.tar.gz
         DONE_MSG
     fi
 done
@@ -95,11 +101,15 @@ cd $OLD_PWD
 
 # Unpack Zend Server, patches and apache
 START_MSG 'Unpacking Zend Server'
-tar xzf $CACHE_DIR/zend-server-6.3-php-5.4.tar.gz
+tar xzf $CACHE_DIR/zend-server-$ZS_VERSION-php-5.4.tar.gz
 DONE_MSG
 for P in $ZS_PATCHES; do
     START_MSG "Unpacking $P patch"
     tar xzf $CACHE_DIR/$P.tar.gz
+    if [[ -d zend-server-6-php-5.4 ]]; then
+        cp -rf zend-server-6-php-5.4/* zend/
+        rm -rf zend-server-6-php-5.4
+    fi
     DONE_MSG
 done
 START_MSG "Unpacking $ZEND_WEB_SERVER"
@@ -118,6 +128,7 @@ START_MSG 'Cleaning up some files'
 # Remove DB files
 rm -f $PHP_PATH/var/db/codetracing.db
 rm -f $PHP_PATH/var/db/deployment.db
+rm -f $PHP_PATH/var/db/devbar.db
 rm -f $PHP_PATH/var/db/gui.db
 rm -f $PHP_PATH/var/db/jobqueue.db
 rm -f $PHP_PATH/var/db/monitor.db
@@ -134,7 +145,7 @@ DONE_MSG
 START_MSG 'Update configuration files'
 
 # Update file locations in SQL schema files
-sed -i -e 's|/usr/local/zend|/app/zend-server-6-php-5.4|g' $PHP_PATH/share/*.sql
+sed -i -e 's|/usr/local/zend|/app/zend|g' $PHP_PATH/share/*.sql
 
 # Determine document root
 if [[ -z $ZEND_DOCUMENT_ROOT ]]; then
@@ -144,21 +155,21 @@ else
 fi
 
 # Update file locations in ini files
-sed -i -e 's|/usr/local/zend|/app/zend-server-6-php-5.4|g' $PHP_PATH/etc/sites.d/zend-default-vhost-80.conf
-sed -i -e "s|/usr/local/zend|/app/zend-server-6-php-5.4|g" $PHP_PATH/etc/zdd.ini
+sed -i -e 's|/usr/local/zend|/app/zend|g' $PHP_PATH/etc/sites.d/zend-default-vhost-80.conf
+sed -i -e "s|/usr/local/zend|/app/zend|g" $PHP_PATH/etc/zdd.ini
 sed -i -e "s|/usr/sbin/apache2ctl|/app/apache/sbin/apache2ctl|g" $PHP_PATH/etc/zdd.ini
 sed -i -e "s|/etc/apache2|/app/apache/etc/apache2|g" $PHP_PATH/etc/zsd.ini
-sed -i -e "s|/usr/local|/app/zend-server-6-php-5.4|g" $PHP_PATH/etc/zsd.ini
+sed -i -e "s|/usr/local|/app/zend|g" $PHP_PATH/etc/zsd.ini
 sed -i -e "s|/usr/sbin|/app/apache/sbin|g" $PHP_PATH/etc/zsd.ini
 
 # Update hard coded path in zs-manage
 sed -i -e "s|/etc/zce.rc|/app/etc/zce.rc|" $PHP_PATH/share/zs-cli-tools/library/ZServer/Cli/Tool/Command/Manage/Abstract.php
 
 # Fix default library symlinks
-ln -sf /app/zend-server-6-php-5.4/var/libraries/Symfony_2.3/2.3.9 $PHP_PATH/var/libraries/Symfony_2.3/default
-ln -sf /app/zend-server-6-php-5.4/var/libraries/Zend_Framework_1/1.12.3 $PHP_PATH/var/libraries/Zend_Framework_1/default
-ln -sf /app/zend-server-6-php-5.4/var/libraries/Zend_Framework_2/2.2.5 $PHP_PATH/var/libraries/Zend_Framework_2/default
-ln -sf /app/zend-server-6-php-5.4/var/libraries/Zend_Server_Gateway/0.9.1 $PHP_PATH/var/libraries/Zend_Server_Gateway/default
+ln -sf /app/zend/var/libraries/Symfony_2.3/2.3.16 $PHP_PATH/var/libraries/Symfony_2.3/default
+ln -sf /app/zend/var/libraries/Zend_Framework_1/1.12.7 $PHP_PATH/var/libraries/Zend_Framework_1/default
+ln -sf /app/zend/var/libraries/Zend_Framework_2/2.3.1 $PHP_PATH/var/libraries/Zend_Framework_2/default
+#ln -sf /app/zend/var/libraries/Zend_Server_Gateway/0.9.1 $PHP_PATH/var/libraries/Zend_Server_Gateway/default
 
 # Update config files
 mkdir -p etc
@@ -169,7 +180,7 @@ DONE_MSG
 
 # make php available on bin
 mkdir -p bin
-ln -sf /app/zend-server-6-php-5.4/bin/php bin/php
+ln -sf /app/zend/bin/php bin/php
 
 # move json-env-extract.php into bin and make it executable
 START_MSG 'Installing json-env-extract.php'
@@ -179,6 +190,10 @@ DONE_MSG
 
 START_MSG 'Setting zs-manage timeout'
 sed -i -e "s/'timeout'[ \t]*=>[ \t]*60/'timeout' => 600/" $PHP_PATH/share/zs-cli-tools/library/ZendX/Service/ZendServer.php
+DONE_MSG
+
+START_MSG 'Downloading and installing composer'
+curl -s https://getcomposer.org/composer.phar -o $PHP_PATH/bin/composer.phar
 DONE_MSG
 
 # Install shell scripts and nothing
@@ -195,7 +210,7 @@ mv $LP_DIR/libmysqlclient.so.16 .
 if [[ $ZEND_WEB_SERVER == "apache" ]]; then
     START_MSG "Fixing symlinks"
     ln -sf /app/apache/sbin/apache2ctl $PHP_PATH/bin/apachectl
-    ln -sf /app/zend-server-6-php-5.4/lib/php/libphp5.so $APACHE_PATH/lib/apache2/modules/libphp5.so
+    ln -sf /app/zend/lib/php/libphp5.so $APACHE_PATH/lib/apache2/modules/libphp5.so
     ln -sf /app/apache/var/log/apache2/error.log $PHP_PATH/var/log/error.log
     ln -sf /app/apache/var/log/apache2/access.log $PHP_PATH/var/log/access.log
     ln -sf /app/apache/var/log/apache2/other_vhosts_access.log $PHP_PATH/var/log/other_vhosts_access.log
@@ -208,7 +223,7 @@ if [[ $ZEND_WEB_SERVER == "apache" ]]; then
     mv $LP_DIR/conf/apache/zendserver_gui.conf $APACHE_PATH/etc/apache2/sites-available
     mv $LP_DIR/conf/apache/default $APACHE_PATH/etc/apache2/sites-available
     sed -i -e "s|/var/www|$ZEND_DOCUMENT_ROOT|g" $APACHE_PATH/etc/apache2/sites-available/*
-    sed -i -e "s|/usr/local/zend|/app/zend-server-6-php-5.4|g" $APACHE_PATH/etc/apache2/sites-available/*
+    sed -i -e "s|/usr/local/zend|/app/zend|g" $APACHE_PATH/etc/apache2/sites-available/*
     sed -i -e 's|/usr|/app/apache|g' $APACHE_PATH/etc/apache2/mods-available/*
     sed -i -e 's|/var|/app/apache/var|g' $APACHE_PATH/etc/apache2/apache2.conf
     sed -i -e 's|/etc|/app/apache/etc|g' $APACHE_PATH/etc/apache2/apache2.conf
@@ -223,13 +238,15 @@ if [[ $ZEND_WEB_SERVER == "apache" ]]; then
     ln -sf ../mods-available/proxy_http.load $APACHE_PATH/etc/apache2/mods-enabled/proxy_http.load
     cp $LP_DIR/conf/nginx/conf/403.html $APACHE_PATH
     cp $LP_DIR/conf/nginx/conf/wait.html $APACHE_PATH
+    cp $LP_DIR/conf/nginx/conf/ZendServer6-Wait-page-block-image02.png $APACHE_PATH
+    cp $LP_DIR/conf/nginx/conf/ZendServer6-Wait-page-Zend-Server-logo.png $APACHE_PATH
     DONE_MSG
 fi
 
 if [[ $ZEND_WEB_SERVER == "nginx" ]]; then
     START_MSG "Customizing nginx configuration"
     mv $LP_DIR/conf/nginx/conf/zend-default-vhost-80.conf $PHP_PATH/etc/sites.d
-    sed -i -e 's|/usr/local/zend|/app/zend-server-6-php-5.4|g' $PHP_PATH/etc/sites.d/zend-default-vhost-80.conf
+    sed -i -e 's|/usr/local/zend|/app/zend|g' $PHP_PATH/etc/sites.d/zend-default-vhost-80.conf
     sed -i -e "s|/usr/share/nginx/html|$ZEND_DOCUMENT_ROOT|g" $PHP_PATH/etc/sites.d/zend-default-vhost-80.conf
     cp -rf $LP_DIR/conf/nginx/* $NGINX_PATH
 

@@ -19,6 +19,16 @@ server {
                  internal;
         }
 
+        location /ZendServer6-Wait-page-block-image02.png {
+                 alias /app/nginx/conf/ZendServer6-Wait-page-block-image02.png;
+                 internal;
+        }
+
+        location /ZendServer6-Wait-page-Zend-Server-logo.png {
+                 alias /app/apache/ZendServer6-Wait-page-Zend-Server-logo.png;
+                 internal;
+        }
+
         #ZCLOUD-131 - deny access to Zend Server configuration exports
         location /.zend_config {
                  deny all;
@@ -31,6 +41,6 @@ server {
 	}
 
 	#ZEND-{EAB6D9CE5B23B8A10D9C6C798DF9ECB0}
-	include "/app/zend-server-6-php-5.4/etc/sites.d/zend-default-vhost-80.conf";
+	include "/app/zend/etc/sites.d/zend-default-vhost-80.conf";
 	#ZEND-{EAB6D9CE5B23B8A10D9C6C798DF9ECB0}
 }

@@ -4,16 +4,16 @@
 shopt -s dotglob
 
 # Preserve Cloud Foundry information
-export LD_LIBRARY_PATH=/app/apache/lib:/app/zend-server-6-php-5.4/lib
-export PHP_INI_SCAN_DIR=/app/zend-server-6-php-5.4/etc/conf.d
-export PHPRC=/app/zend-server-6-php-5.4/etc
+export LD_LIBRARY_PATH=/app/apache/lib:/app/zend/lib
+export PHP_INI_SCAN_DIR=/app/zend/etc/conf.d
+export PHPRC=/app/zend/etc
 echo "Launching Zend Server..."
 export ZEND_UID=`id -u`
 export ZEND_GID=`id -g`
 export GROUP=`id -g -n`
 export ZS_EDITION=TRIAL
 export APACHE_ENVVARS=/app/apache/etc/apache2/envvars
-ZS_MANAGE=/app/zend-server-6-php-5.4/bin/zs-manage
+ZS_MANAGE=/app/zend/bin/zs-manage
 
 # If ZEND_DB2_DRIVER is not set to 0, then look for services which use db2 driver
 if [[ $ZEND_DB2_DRIVER != 0 ]]; then
@@ -46,17 +46,17 @@ mkdir -p /app/nginx/conf/sites-enabled
 ln -f -s /app/nginx/conf/sites-available/default /app/nginx/conf/sites-enabled
 
 echo "Creating/Upgrading Zend databases. This may take several minutes..."
-/app/zend-server-6-php-5.4/gui/lighttpd/sbin/php -c /app/zend-server-6-php-5.4/gui/lighttpd/etc/php-fcgi.ini /app/zend-server-6-php-5.4/share/scripts/zs_create_databases.php zsDir=/app/zend-server-6-php-5.4 toVersion=6.3.0
+/app/zend/gui/lighttpd/sbin/php -c /app/zend/gui/lighttpd/etc/php-fcgi.ini /app/zend/share/scripts/zs_create_databases.php zsDir=/app/zend toVersion=7.0.0
 
 # Generate default trial license
-/app/zend-server-6-php-5.4/bin/zsd /app/zend-server-6-php-5.4/etc/zsd.ini --generate-license
+/app/zend/bin/zsd /app/zend/etc/zsd.ini --generate-license
 
 # Setup log verbosity if needed
 if [[ -n $ZEND_LOG_VERBOSITY ]]; then
-    sed -i -e 's/zend_gui.logVerbosity = NOTICE/zend_gui.logVerbosity = DEBUG/' /app/zend-server-6-php-5.4/gui/config/zs_ui.ini
-    sed -i -e 's/zend_gui.debugModeEnabled = false/zend_gui.debugModeEnabled = true/' /app/zend-server-6-php-5.4/gui/config/zs_ui.ini
-    sed -i -e "s/zend_deployment.daemon.log_verbosity_level=2/zend_deployment.daemon.log_verbosity_level=$ZEND_LOG_VERBOSITY/" /app/zend-server-6-php-5.4/etc/zdd.ini
-    sed -i -e "s/zend_server_daemon.log_verbosity_level=2/zend_server_daemon.log_verbosity_level=$ZEND_LOG_VERBOSITY/" /app/zend-server-6-php-5.4/etc/zsd.ini
+    sed -i -e 's/zend_gui.logVerbosity = NOTICE/zend_gui.logVerbosity = DEBUG/' /app/zend/gui/config/zs_ui.ini
+    sed -i -e 's/zend_gui.debugModeEnabled = false/zend_gui.debugModeEnabled = true/' /app/zend/gui/config/zs_ui.ini
+    sed -i -e "s/zend_deployment.daemon.log_verbosity_level=2/zend_deployment.daemon.log_verbosity_level=$ZEND_LOG_VERBOSITY/" /app/zend/etc/zdd.ini
+    sed -i -e "s/zend_server_daemon.log_verbosity_level=2/zend_server_daemon.log_verbosity_level=$ZEND_LOG_VERBOSITY/" /app/zend/etc/zsd.ini
 fi
 
 # Detect MySQL settings
@@ -74,9 +74,9 @@ fi
 echo "Starting Zend Server"
 
 # Fix GID/UID until ZSRV-11165 is resolved
-sed -e "s|^\(zend.httpd_uid[ \t]*=[ \t]*\).*$|\1$ZEND_UID|" -i /app/zend-server-6-php-5.4/etc/conf.d/ZendGlobalDirectives.ini
-sed -e "s|^\(zend.httpd_gid[ \t]*=[ \t]*\).*$|\1$ZEND_GID|" -i /app/zend-server-6-php-5.4/etc/conf.d/ZendGlobalDirectives.ini
-/app/zend-server-6-php-5.4/bin/zendctl.sh start
+sed -e "s|^\(zend.httpd_uid[ \t]*=[ \t]*\).*$|\1$ZEND_UID|" -i /app/zend/etc/conf.d/ZendGlobalDirectives.ini
+sed -e "s|^\(zend.httpd_gid[ \t]*=[ \t]*\).*$|\1$ZEND_GID|" -i /app/zend/etc/conf.d/ZendGlobalDirectives.ini
+/app/zend/bin/zendctl.sh start
 
 # Bootstrap Zend Server
 echo "Bootstrap Zend Server"
@@ -88,18 +88,18 @@ if [ -z $ZS_ADMIN_PASSWORD ]; then
 fi
 if [[ -z $ZEND_LICENSE_ORDER || -z $ZEND_LICENSE_KEY ]]; then
     ZEND_LICENSE_ORDER=cloudfoundry
-    ZEND_LICENSE_KEY=AG12IG51401H51B08FD9C3A65E23D2CE
+    ZEND_LICENSE_KEY=1OVO7341801G21B08FD927480286D7CA
     export ZS_EDITION=FREE
 fi
 
-$ZS_MANAGE bootstrap-single-server -p $ZS_ADMIN_PASSWORD -a 'TRUE' -o $ZEND_LICENSE_ORDER -l $ZEND_LICENSE_KEY | head -1 > /app/zend-server-6-php-5.4/tmp/api_key
+$ZS_MANAGE bootstrap-single-server -p $ZS_ADMIN_PASSWORD -a 'TRUE' -o $ZEND_LICENSE_ORDER -l $ZEND_LICENSE_KEY | head -1 > /app/zend/tmp/api_key
 
 # Remove ZS_ADMIN_PASSWORD from env.log
 sed '/ZS_ADMIN_PASSWORD/d' -i /home/vcap/logs/env.log 
 
 # Get API key from bootstrap script output
-WEB_API_KEY=`cut -s -f 1 /app/zend-server-6-php-5.4/tmp/api_key`
-WEB_API_KEY_HASH=`cut -s -f 2 /app/zend-server-6-php-5.4/tmp/api_key`
+WEB_API_KEY=`cut -s -f 1 /app/zend/tmp/api_key`
+WEB_API_KEY_HASH=`cut -s -f 2 /app/zend/tmp/api_key`
 
 # echo "Restarting Zend Server (using WebAPI)"
 # $ZS_MANAGE restart-php -p -N $WEB_API_KEY -K $WEB_API_KEY_HASH
@@ -134,12 +134,12 @@ elif [ -f $ZEND_CONFIG_FILE ]; then
 fi
       
 # ZCLOUD-161 - create certain log files if they are missing
-touch /app/zend-server-6-php-5.4/var/log/codetracing.log
+touch /app/zend/var/log/codetracing.log
 
 # Fix GID/UID until ZSRV-11165 is resolved.
 VALUE=`id -u`
-sed -e "s|^\(zend.httpd_uid[ \t]*=[ \t]*\).*$|\1$VALUE|" -i /app/zend-server-6-php-5.4/etc/conf.d/ZendGlobalDirectives.ini
-sed -e "s|^\(zend.httpd_gid[ \t]*=[ \t]*\).*$|\1$VALUE|" -i /app/zend-server-6-php-5.4/etc/conf.d/ZendGlobalDirectives.ini
+sed -e "s|^\(zend.httpd_uid[ \t]*=[ \t]*\).*$|\1$VALUE|" -i /app/zend/etc/conf.d/ZendGlobalDirectives.ini
+sed -e "s|^\(zend.httpd_gid[ \t]*=[ \t]*\).*$|\1$VALUE|" -i /app/zend/etc/conf.d/ZendGlobalDirectives.ini
 
 #ZCLOUD-160 - disable unsupported extensions in Free Edition
 if [ $ZS_EDITION = "FREE" ] ; then
@@ -156,9 +156,31 @@ fi
 # Setup default server name
 SERVER_NAME=`/app/bin/json-env-extract.php VCAP_APPLICATION application_uris 0`
 $ZS_MANAGE store-directive -d zend_gui.defaultServer -v $SERVER_NAME -N $WEB_API_KEY -K $WEB_API_KEY_HASH
+echo
+
+# Setup Z-Ray URI
+$ZS_MANAGE store-directive -d 'zray.zendserver_ui_url' -v "http://$SERVER_NAME/ZendServer" -N $WEB_API_KEY -K $WEB_API_KEY_HASH
+echo
+
+# Setup correct session cookie name
+$ZS_MANAGE store-directive -d 'zend_gui.sessionId' -v 'JSESSIONID' -N $WEB_API_KEY -K $WEB_API_KEY_HASH
+echo
+
+# Setup ZS UI timezone
+$ZS_MANAGE store-directive -d 'zend_gui.timezone' -v 'UTC' -N $WEB_API_KEY -K $WEB_API_KEY_HASH
+echo
+
+# Setup ZS profile
+$ZS_MANAGE store-directive -d 'zend_gui.serverProfile' -v 'Production' -N $WEB_API_KEY -K $WEB_API_KEY_HASH
+echo
 
 echo "Restarting Zend Server (using WebAPI)"
 $ZS_MANAGE restart-php -p -N $WEB_API_KEY -K $WEB_API_KEY_HASH
+
+# Run composer if composer.json file is present
+if [[ -f /app/www/composer.json ]]; then
+    /app/zend/bin/php /app/zend/bin/composer.phar update -d /app/www -o --no-progress --no-ansi -n
+fi
 
 # Enable ZS UI
 if [ $ZEND_WEB_SERVER == "apache" ]; then
@@ -168,7 +190,7 @@ if [ $ZEND_WEB_SERVER == "apache" ]; then
 elif [ $ZEND_WEB_SERVER == "nginx" ]; then
     sed -i -e "s|alias /app/nginx/conf/wait.html||g" /app/nginx/conf/sites-available/default
     sed -i -e "s|#proxy|proxy|g" /app/nginx/conf/sites-available/default
-    /app/zend-server-6-php-5.4/bin/nginxctl.sh restart
+    /app/zend/bin/nginxctl.sh restart
 fi
 
 function DEBUG_PRINT_FILE() {
@@ -178,14 +200,18 @@ function DEBUG_PRINT_FILE() {
     echo "--- End $BASENAME ---"
 }
 
+# Deploy ZPK
+for i in `find . -name "*.zpk"`; do $ZS_MANAGE app-deploy -p $i -b http://localhost/`basename $i .zpk` -d -a `basename $i .zpk` -N $WEB_API_KEY -K $WEB_API_KEY_HASH; done
+for i in `find . -name "*.zpk"`; do $ZS_MANAGE library-deploy -p $i -N $WEB_API_KEY -K $WEB_API_KEY_HASH; done
+
 # Debug output
 if [[ -n $ZEND_CF_DEBUG ]]; then
     echo UID=$VALUE
-    grep 'zend\.httpd_[ug]id' /app/zend-server-6-php-5.4/etc/conf.d/ZendGlobalDirectives.ini
-    DEBUG_PRINT_FILE /app/zend-server-6-php-5.4/tmp/api_key
+    grep 'zend\.httpd_[ug]id' /app/zend/etc/conf.d/ZendGlobalDirectives.ini
+    DEBUG_PRINT_FILE /app/zend/tmp/api_key
     DEBUG_PRINT_FILE /app/zend_mysql.sh
     DEBUG_PRINT_FILE /app/zend_cluster.sh
-    DEBUG_PRINT_FILE /app/zend-server-6-php-5.4/etc/zend_database.ini
+    DEBUG_PRINT_FILE /app/zend/etc/zend_database.ini
     DEBUG_PRINT_FILE /app/apache/etc/apache2/envvars
     DEBUG_PRINT_FILE /app/apache/etc/apache2/sites-available/default
     echo WEB_API_KEY=\'$WEB_API_KEY\'

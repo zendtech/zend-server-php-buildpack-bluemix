@@ -1,13 +1,47 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title></title>
-		<meta charset="utf-8" />
-	</head>
-	<body>
-		<p style="text-align:center;">
-			<h1>Zend Server bootstrap is in progress...</h1>
-                        <h2>Please wait...</h2>
-		</p>
-	</body>
-</html>
+  <head>
+    <title></title>
+    <style>
+      body {
+      background-color: #074F6D;
+      }
+      
+      #mainBlock {
+      background: url('ZendServer6-Wait-page-block-image02.png');
+      width: 602px;
+      height: 360px;
+      margin: 0 auto;
+      margin-top: 70px;	
+      }
+      
+      #imgCont {
+      text-align: center;
+      width: 100%;
+      padding-top: 70px;
+      }
+      
+      #innerDiv {
+      width: 420px;
+      height: 180px;
+      background-color: #CEE1EA;
+      margin: 0 auto;
+      margin-top: 30px;
+      border: 1px solid gray;
+      box-shadow: 0 0 10px gray;
+      border-radius: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="mainBlock">
+      <div id="imgCont">
+	<img id="zsLogo" src="ZendServer6-Wait-page-Zend-Server-logo.png" />
+      </div>
+      <div id="innerDiv">
+	<center><h1>Bootstrapping Zend Server</h1></center>
+        <center><h2>Please wait...</h2></center>
+      </div>
+    </div>
+  </body>
+<html>

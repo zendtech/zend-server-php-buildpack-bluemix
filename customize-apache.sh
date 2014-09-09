@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export LD_LIBRARY_PATH=/app/apache/lib:/app/zend-server-6-php-5.4/lib
+export LD_LIBRARY_PATH=/app/apache/lib:/app/zend/lib
 export APACHE_ENVVARS=/app/apache/etc/apache2/envvars
 
 GROUP=`id -g -n`
@@ -23,4 +23,4 @@ SERVER_NAME=`/app/bin/json-env-extract.php VCAP_APPLICATION application_uris 0`
 sed -i -e "s/localhost.localdomain/$SERVER_NAME/g" /app/apache/etc/apache2/sites-available/default
 
 # Remove post_activate.php
-rm -f /app/zend-server-6-php-5.4/etc/conf.d/post_activate.php
+rm -f /app/zend/etc/conf.d/post_activate.php

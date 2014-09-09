@@ -10,12 +10,12 @@ if [[ -n $ZEND_DOCUMENT_ROOT ]]; then
 fi
 
 # Configure Zend Server to work with nginx instead of apache
-sed -i -e 's|zend_deployment.webserver.type=apache|zend_deployment.webserver.type=nginx|' /app/zend-server-6-php-5.4/etc/zdd.ini
-sed -i -e 's|zend_server_daemon.webserver_config_file=.*$|zend_server_daemon.webserver_config_file=/app/nginx/conf/nginx.conf|' /app/zend-server-6-php-5.4/etc/zsd.ini
-sed -i -e 's|zend_server_daemon.webserver.apache.ctl=.*$|zend_server_daemon.webserver.apache.ctl=/app/zend-server-6-php-5.4/bin/nginxctl.sh|' /app/zend-server-6-php-5.4/etc/zsd.ini
+sed -i -e 's|zend_deployment.webserver.type=apache|zend_deployment.webserver.type=nginx|' /app/zend/etc/zdd.ini
+sed -i -e 's|zend_server_daemon.webserver_config_file=.*$|zend_server_daemon.webserver_config_file=/app/nginx/conf/nginx.conf|' /app/zend/etc/zsd.ini
+sed -i -e 's|zend_server_daemon.webserver.apache.ctl=.*$|zend_server_daemon.webserver.apache.ctl=/app/zend/bin/nginxctl.sh|' /app/zend/etc/zsd.ini
 
-# Replace zend-server-6-php-5.4/share/alias-nginx.tpl with one compatible with ZF2
-cat /app/nginx/conf/alias-nginx.tpl > /app/zend-server-6-php-5.4/share/alias-nginx.tpl
+# Replace zend/share/alias-nginx.tpl with one compatible with ZF2
+cat /app/nginx/conf/alias-nginx.tpl > /app/zend/share/alias-nginx.tpl
 
 # Setup site that nginx must serve
 rm -rf /app/nginx/conf/sites-enabled
