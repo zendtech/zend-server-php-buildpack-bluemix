@@ -15,11 +15,6 @@ export ZS_EDITION=TRIAL
 export APACHE_ENVVARS=/app/apache/etc/apache2/envvars
 ZS_MANAGE=/app/zend/bin/zs-manage
 
-# Install composer and run composer if composer.json file is present
-if [[ -f /app/www/composer.json ]]; then
-    /app/zend/bin/php /app/zend/bin/composer.phar update -d /app/www -o --no-progress --no-ansi -n
-fi
-
 # Change UID in Zend Server configuration to the one used in the instance
 sed "s/vcap/${ZEND_UID}/" ${PHP_INI_SCAN_DIR}/ZendGlobalDirectives.ini.erb > ${PHP_INI_SCAN_DIR}/ZendGlobalDirectives.ini
 
@@ -148,6 +143,11 @@ echo
 
 echo "Restarting Zend Server (using WebAPI)"
 $ZS_MANAGE restart-php -p -N $WEB_API_KEY -K $WEB_API_KEY_HASH
+
+# Run composer if composer.json file is present
+if [[ -f /app/www/composer.json ]]; then
+    /app/zend/bin/php /app/zend/bin/composer.phar update -d /app/www -o --no-progress --no-ansi -n
+fi
 
 # Enable ZS UI
 if [ $ZEND_WEB_SERVER == "apache" ]; then
