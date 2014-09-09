@@ -169,6 +169,10 @@ START_MSG 'Setting zs-manage timeout'
 sed -i -e "s/'timeout'[ \t]*=>[ \t]*60/'timeout' => 600/" $PHP_PATH/share/zs-cli-tools/library/ZendX/Service/ZendServer.php
 DONE_MSG
 
+START_MSG 'Downloading and installing composer'
+curl -s https://getcomposer.org/composer.phar -o $PHP_PATH/bin/composer.phar
+DONE_MSG
+
 # Install shell scripts and nothing
 for SCRIPT in boot.sh bootstrap.sh customize-apache.sh customize-nginx.sh mysql_detect.sh nothing; do
     START_MSG "Installing $SCRIPT"

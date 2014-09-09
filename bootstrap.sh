@@ -17,8 +17,6 @@ ZS_MANAGE=/app/zend/bin/zs-manage
 
 # Install composer and run composer if composer.json file is present
 if [[ -f /app/www/composer.json ]]; then
-    curl -s http://getcomposer.org/installer | /app/zend/bin/php
-    mv composer.phar /app/zend/bin/
     /app/zend/bin/php /app/zend/bin/composer.phar update -d /app/www -o --no-progress --no-ansi -n
 fi
 
