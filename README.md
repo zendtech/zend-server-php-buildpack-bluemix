@@ -5,7 +5,7 @@ Zend Server's integration with Cloud Foundry allows you to quickly get your PHP 
 
 # Buildpack Components
 
-* Zend Server 7.0 Free edition
+* Zend Server 7.0 Enterprise edition
 * Zend Server 7.0 configuration files
 * PHP 5.4
 * Apache web server
@@ -26,7 +26,7 @@ Your application is deployed using the Zend Server buildpack. This may take a fe
 7. Once successfully initialized and deployed, a success message with the URL at which your application is available at is displayed.
 8. To access the application, enter the supplied URL in your Web browser. Deployed .zpks can be accessed at: http://<app name>.pivotal.io/<.zpk name>
 9. To access Zend Server, add 'ZendServer' to the supplied URL. For example:`http://<application URL>/ZendServer` The Zend Server Login page is displayed.
-10. Log in using the following credentials: Username - admin, Password - enter the following command in your CLI to retrieve an initial password: `cf file <application name> /app/zend-password` 
+10. Log in using the following credentials: Username - admin, Password - enter the following command in your CLI to retrieve an initial password: `cf files <application name> /app/zend-password` 
 11. To change the Zend Server UI password, or in case you misplace your password, enter the following command:
 `cf set-env <application name> ZS_ADMIN_PASSWORD <new password>`
 
