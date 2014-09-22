@@ -206,6 +206,9 @@ done
 
 mv $LP_DIR/libmysqlclient.so.16 .
 
+START_MSG 'Disabling Z-Ray'
+sed -i -e 's/^zray.enable\s*=.*$/zray.enable=0/' $PHP_PATH/share/zs-cli-tools/library/ZendX/Service/ZendServer.php
+DONE_MSG
 
 if [[ $ZEND_WEB_SERVER == "apache" ]]; then
     START_MSG "Fixing symlinks"
