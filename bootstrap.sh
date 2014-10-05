@@ -200,6 +200,7 @@ if [[ -n $ZEND_CF_DEBUG ]]; then
     DEBUG_PRINT_FILE /app/zend/etc/zend_database.ini
     DEBUG_PRINT_FILE /app/apache/etc/apache2/envvars
     DEBUG_PRINT_FILE /app/apache/etc/apache2/sites-available/default
+    echo LD_LIBRARY_PATH=\'$LD_LIBRARY_PATH\'
     echo WEB_API_KEY=\'$WEB_API_KEY\'
     echo WEB_API_KEY_HASH=\'$WEB_API_KEY_HASH\'
     echo NODE_ID=\'$NODE_ID\'
