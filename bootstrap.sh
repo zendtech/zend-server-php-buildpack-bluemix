@@ -30,20 +30,6 @@ fi
 
 # Change UID in Zend Server configuration to the one used in the gear
 sed "s/vcap/${ZEND_UID}/" ${PHP_INI_SCAN_DIR}/ZendGlobalDirectives.ini.erb > ${PHP_INI_SCAN_DIR}/ZendGlobalDirectives.ini
-sed "s/VCAP_PORT/${PORT}/" /app/nginx/conf/sites-available/default.erb > /app/nginx/conf/sites-available/default
-
-# Change document root if needed
-if [[ -n $ZEND_DOCUMENT_ROOT ]]; then
-    sed -i -e "s|root[ \t]*/app/www|root /app/www/$ZEND_DOCUMENT_ROOT|" /app/nginx/conf/sites-available/default
-    sed -i -e "s|root[ \t]*/app/www|root /app/www/$ZEND_DOCUMENT_ROOT|" /app/nginx/conf/alias-nginx.tpl
-fi
-
-#replace zend-server-6-php-5.4/share/alias-nginx.tpl with one compatible with ZF2
-cat /app/nginx/conf/alias-nginx.tpl > /app/zend-server-6-php-5.4/share/alias-nginx.tpl
-
-rm -rf /app/nginx/conf/sites-enabled
-mkdir -p /app/nginx/conf/sites-enabled
-ln -f -s /app/nginx/conf/sites-available/default /app/nginx/conf/sites-enabled
 
 echo "Creating/Upgrading Zend databases. This may take several minutes..."
 /app/zend/gui/lighttpd/sbin/php -c /app/zend/gui/lighttpd/etc/php-fcgi.ini /app/zend/share/scripts/zs_create_databases.php zsDir=/app/zend toVersion=7.0.0
