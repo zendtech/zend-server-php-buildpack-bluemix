@@ -10,6 +10,10 @@ Z-Ray gives developers unprecedented visibility into their code by tracking and 
 * Zend Server 7.0 configuration files
 * PHP 5.4
 * Apache web server
+
+# Concepts
+
+* .zpk - a .zpk or a Zend Application Package is basically a compressed file containing all your application data for the purpose of deployment on Zend Server, and can also be used to deploy libraries. For more information on .zpks, please visit the Zend Server Online Help at: http://files.zend.com/help/Zend-Server/zend-server.htm#application_package.htm
  
 
 # Usage
