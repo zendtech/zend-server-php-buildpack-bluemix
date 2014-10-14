@@ -15,13 +15,14 @@ Zend Server's integration with Cloud Foundry allows you to quickly get your PHP 
 1. Download and install Cloud Foundry's 'cf v6' CLI. For installation instructions, see http://docs.run.pivotal.io/devguide/installcf/install-go-cli.html.
 2. Create a new folder on your workstation, and access it.
 3. If you have an application package (.zpk) ready for deployment, place it anywhere in your application. If not, create a new 'index.php' file in the root folder of your application, and paste the following code:
-```
+
+ ```
 <?php
 echo "Hello world!;
 ?>
 ```
 7. Enter the following command:
-`cf push <application name> -m 512M -b https://github.com/zendtech/zend-server-php-buildpack.git` 
+`cf push <application name> -m 512M -b https://github.com/zendtech/zend-server-php-buildpack-bluemix.git` 
 Your application is deployed using the Zend Server buildpack. This may take a few minutes.
 7. Once successfully initialized and deployed, a success message with the URL at which your application is available at is displayed.
 8. To access the application, enter the supplied URL in your Web browser. Deployed .zpks can be accessed at: `http://<application URL>/<.zpk name>`
