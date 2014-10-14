@@ -25,6 +25,7 @@ echo "Hello world!;
 7. Enter the following command:
 `cf push <application name> -m 512M -b https://github.com/zendtech/zend-server-php-buildpack-bluemix.git` 
 Your application is deployed using the Zend Server buildpack. This may take a few minutes.
+Note: If you are using Composer to manage library dependencies, make sure the 'composer.json' file is located in the root folder of your application. Your dependecies will be installed together with your application.
 7. Once successfully initialized and deployed, a success message with the URL at which your application is available at is displayed.
 8. To access the application, enter the supplied URL in your Web browser. Deployed .zpks can be accessed at: `http://<application URL>/<.zpk name>`
 9. To access Zend Server, add 'ZendServer' to the supplied URL. For example:`http://<application URL>/ZendServer` The Zend Server Login page is displayed.
