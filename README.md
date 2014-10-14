@@ -1,7 +1,8 @@
 # Overview
 
 Welcome to the Zend Server PHP buildpack! This buildpack allows you to deploy your PHP apps on Cloud Foundry using Zend Server 7.0.
-Zend Server's integration with Cloud Foundry allows you to quickly get your PHP applications up and running on a highly available PHP production environment which includes, amongst other features, a highly reliable PHP stack, application monitoring, troubleshooting, and more.
+Zend Server's integration with Cloud Foundry allows you to quickly get your PHP applications up and running on a highly available PHP production environment which includes, amongst other features, a highly reliable PHP stack, application monitoring, troubleshooting, and the new and innovative new technology - Z-Ray. 
+Z-Ray gives developers unprecedented visibility into their code by tracking and displaying in a toolbar live and detailed info on how the various elements constructing their page are performing. 
 
 # Buildpack Components
 
@@ -9,6 +10,10 @@ Zend Server's integration with Cloud Foundry allows you to quickly get your PHP 
 * Zend Server 7.0 configuration files
 * PHP 5.4
 * Apache web server
+
+# Concepts
+
+* .zpk - a .zpk or a Zend Application Package is basically a compressed file containing all your application data for the purpose of deployment on Zend Server, and can also be used to deploy libraries. For more information on .zpks, please visit the Zend Server Online Help at: http://files.zend.com/help/Zend-Server/zend-server.htm#application_package.htm
  
 
 # Usage
@@ -24,6 +29,7 @@ echo "Hello world!;
 7. Enter the following command:
 `cf push <application name> -m 512M -b https://github.com/zendtech/zend-server-php-buildpack-bluemix.git` 
 Your application is deployed using the Zend Server buildpack. This may take a few minutes.
+Note: If you are using Composer to manage library dependencies, make sure the 'composer.json' file is located in the root folder of your application. Your dependecies will be installed together with your application.
 7. Once successfully initialized and deployed, a success message with the URL at which your application is available at is displayed.
 8. To access the application, enter the supplied URL in your Web browser. Deployed .zpks can be accessed at: `http://<application URL>/<.zpk name>`
 9. To access Zend Server, add 'ZendServer' to the supplied URL. For example:`http://<application URL>/ZendServer` The Zend Server Login page is displayed.
