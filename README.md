@@ -15,37 +15,37 @@ Zend Server's integration with Cloud Foundry allows you to quickly get your PHP 
 1. Download and install Cloud Foundry's 'cf v6' CLI. For installation instructions, see http://docs.run.pivotal.io/devguide/installcf/install-go-cli.html.
 2. Create a new folder on your workstation, and access it.
 3. If you have an application package (.zpk) ready for deployment, place it anywhere in your application. If not, create a new 'index.php' file in the root folder of your application, and paste the following code:
- ```
+```
 <?php
 echo "Hello world!;
 ?>
- ```
+```
 7. Enter the following command:
 `cf push <application name> -m 512M -b https://github.com/zendtech/zend-server-php-buildpack.git` 
 Your application is deployed using the Zend Server buildpack. This may take a few minutes.
 7. Once successfully initialized and deployed, a success message with the URL at which your application is available at is displayed.
-8. To access the application, enter the supplied URL in your Web browser. Deployed .zpks can be accessed at: http://<app name>.pivotal.io/<.zpk name>
+8. To access the application, enter the supplied URL in your Web browser. Deployed .zpks can be accessed at: `http://<application URL>/<.zpk name>`
 9. To access Zend Server, add 'ZendServer' to the supplied URL. For example:`http://<application URL>/ZendServer` The Zend Server Login page is displayed.
 10. Log in using the following credentials: Username - admin, Password - enter the following command in your CLI to retrieve an initial password: `cf files <application name> /app/zend-password` 
 11. To change the Zend Server UI password, or in case you misplace your password, enter the following command:
-`cf set-env <application name> ZS_ADMIN_PASSWORD <new password>`
+`cf set-env <application name> ZS_ADMIN_PASSWORD <new password>`. After this you may have to redeploy your application using `cf push` command.
 
 ## Automatically Importing PHP Configurations
 The Zend Server buildpack can optionally import PHP configurations from backup files. This allows you to easily deploy applications which require a change of directives.
 It also allows you to retain changes you made using the Zend Server GUI. To do so, follow these instructions:
 
-1. In your application's code (on your workstation) create a folder named .zend_config .
-2. Browse to: `http://<application URL>/ZendServer/ImportExport/` .
+1. In your application's code (on your workstation) create a folder named `.zend_config`.
+2. Browse to: `http://<application URL>/ZendServer/ImportExport/`.
 3. Click on the "Export Configuration" button.
 4. Move the saved file to the .zend_config folder in your app.
 5. Change directory into your app source code directory: `cd <app_source_directory_on_your_workstation>`
 6. Enter the following command to apply the changes: `cf push` 
 
-``` Tip: you can reuse this backup files for other applications that might require similar settings. ```
+``` Tip: you can reuse these backup files for other applications that might require similar settings. ```
 
 # Known Issues
 * Zend Server Code Tracing may not work properly in this version.
-* Several issues might be encountered if you do not bind MySQL providing service to the app (mysql/MaraiaDB):
+* Several issues might be encountered if you do not bind MySQL providing service to the app (mysql/MariaDB):
  * You can change settings using the Zend Server UI and apply them - but they will not survive application pushes and restarts, nor will they be propagated to new application instances.
  * Application packages deployed using Zend Server's deployment mechanism (.zpk packages) will not be propagated to new app instances.
  * Zend Server will not operate in cluster mode.
