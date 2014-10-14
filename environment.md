@@ -22,6 +22,8 @@
    it's parameters used.
 4. **ZEND\_WEB\_SERVER** - allows choosing between nginx and apache. By default
    apache is used. If this variable is set to "nginx", then nginx is used instead.
+5. **ZEND\_DB2\_DRIVER** - set to 1 to force installation of DB2 PHP
+   extensions or set to 0 to force disable of DB2 PHP extensions.
 
 ## License related
 1. **ZEND\_LICENSE\_ORDER** - override Zend Server license order
