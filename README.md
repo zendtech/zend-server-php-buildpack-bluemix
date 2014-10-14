@@ -23,7 +23,7 @@ Z-Ray gives developers unprecedented visibility into their code by tracking and 
 
  ```
 <?php
-echo "Hello world!;
+echo "Hello world!";
 ?>
 ```
 7. Enter the following command:
