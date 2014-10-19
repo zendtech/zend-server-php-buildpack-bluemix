@@ -2,7 +2,7 @@
 
 Welcome to the Zend Server PHP buildpack! This buildpack allows you to deploy your PHP apps on Cloud Foundry using Zend Server 7.0.
 Zend Server's integration with Cloud Foundry allows you to quickly get your PHP applications up and running on a highly available PHP production environment which includes, amongst other features, a highly reliable PHP stack, application monitoring, troubleshooting, and the new and innovative new technology - Z-Ray. 
-Z-Ray gives developers unprecedented visibility into their code by tracking and displaying in a toolbar live and detailed info on how the various elements constructing their page are performing. 
+Z-Ray gives developers unprecedented visibility into their code by tracking and displaying in a toolbar live and detailed info on how the various elements constructing their page are performing.
 
 # Buildpack Components
 
@@ -36,6 +36,7 @@ Note: If you are using Composer to manage library dependencies, make sure the 'c
 10. Log in using the following credentials: Username - admin, Password - enter the following command in your CLI to retrieve an initial password: `cf files <application name> /app/zend-password` 
 11. To change the Zend Server UI password, or in case you misplace your password, enter the following command:
 `cf set-env <application name> ZS_ADMIN_PASSWORD <new password>`. After this you may have to redeploy your application using `cf push` command.
+12. To use Z-Ray, enable it first. Go to the Configurations | Z-Ray page in the Zend Server UI, and select Enabled. Once enabled, simply open your app in a browser.
 
 ## Automatically Importing PHP Configurations
 The Zend Server buildpack can optionally import PHP configurations from backup files. This allows you to easily deploy applications which require a change of directives.
