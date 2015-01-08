@@ -70,3 +70,7 @@ The following resources will help you understand Cloud Foundry concepts and work
 * Zend Server edition comparison: http://www.zend.com/en/products/server/editions.
 * Local installation instructions for cloud providers: [localinstallation.md](localinstallation.md)
 * Cloud foundry environment variables that affect the buildpack: [environment.md](environment.md)
+
+# User Feedback
+
+Think we’ve missed something? Let us know at: http://www.zend.com/en/support-center
