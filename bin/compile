@@ -170,6 +170,22 @@ sed -i -e "s|/etc/zce.rc|/app/etc/zce.rc|" $PHP_PATH/share/zs-cli-tools/library/
 mkdir -p etc
 cp $LP_DIR/conf/etc/zce.rc.$ZEND_WEB_SERVER etc/zce.rc
 cp -rf $LP_DIR/conf/zend/* $PHP_PATH
+sed -i -e "s|/usr/local/zend|/app/zend|g" $PHP_PATH/etc/conf.d/url_insight.ini
+sed -i -e "s|/usr/local/zend|/app/zend|g" $PHP_PATH/etc/conf.d/sc.ini
+sed -i -e "s|/usr/local/zend|/app/zend|g" $PHP_PATH/etc/conf.d/zend_libraries.ini
+sed -i -e "s|/usr/local/zend|/app/zend|g" $PHP_PATH/etc/conf.d/monitor.ini
+sed -i -e "s|/usr/local/zend|/app/zend|g" $PHP_PATH/etc/conf.d/datacache.ini
+sed -i -e "s|/usr/local/zend|/app/zend|g" $PHP_PATH/etc/conf.d/ZendGlobalDirectives.ini
+sed -i -e "s|/usr/local/zend|/app/zend|g" $PHP_PATH/etc/conf.d/pagecache.ini
+sed -i -e "s|/usr/local/zend|/app/zend|g" $PHP_PATH/etc/conf.d/statistics.ini
+sed -i -e "s|/usr/local/zend|/app/zend|g" $PHP_PATH/etc/conf.d/jobqueue.ini
+sed -i -e "s|/usr/local/zend|/app/zend|g" $PHP_PATH/etc/conf.d/zray.ini
+sed -i -e "s|/usr/local/zend|/app/zend|g" $PHP_PATH/etc/conf.d/debugger.ini
+sed -i -e "s|/usr/local/zend|/app/zend|g" $PHP_PATH/etc/conf.d/codetracing.ini
+sed -i -e "s|/usr/local/zend|/app/zend|g" $PHP_PATH/etc/conf.d/statistics_ext.ini
+sed -i -e "s|/usr/local/zend|/app/zend|g" $PHP_PATH/etc/conf.d/opcache.ini
+sed -i -e "s|/usr/local/zend|/app/zend|g" $PHP_PATH/etc/conf.d/zend_extension_manager.ini
+sed -i -e "s|/usr/local/zend|/app/zend|g" $PHP_PATH/etc/conf.d/utils.ini
 
 DONE_MSG
 
