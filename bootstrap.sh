@@ -80,9 +80,6 @@ fi
 
 $ZS_MANAGE bootstrap-single-server -p $ZS_ADMIN_PASSWORD -a 'TRUE' -o $ZEND_LICENSE_ORDER -l $ZEND_LICENSE_KEY | head -1 > /app/zend/tmp/api_key
 
-# Remove ZS_ADMIN_PASSWORD from env.log
-sed '/ZS_ADMIN_PASSWORD/d' -i /home/vcap/logs/env.log
-
 # Get API key from bootstrap script output
 WEB_API_KEY=`cut -s -f 1 /app/zend/tmp/api_key`
 WEB_API_KEY_HASH=`cut -s -f 2 /app/zend/tmp/api_key`
