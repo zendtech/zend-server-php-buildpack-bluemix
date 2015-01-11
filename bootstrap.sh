@@ -167,7 +167,7 @@ fi
 
 # Enable ZS UI
 if [ $ZEND_WEB_SERVER == "apache" ]; then
-    sed -i -e "s|Alias /ZendServer /app/apache/wait.html||g" /app/apache/etc/apache2/sites-available/default
+    sed -i -e "s|AliasMatch /ZendServer.*$ /app/apache/wait.html||g" /app/apache/etc/apache2/sites-available/default
     sed -i -e "s|#Proxy|Proxy|g" /app/apache/etc/apache2/sites-available/default
     /app/apache/sbin/apache2ctl restart
 elif [ $ZEND_WEB_SERVER == "nginx" ]; then
