@@ -19,7 +19,8 @@ LP_DIR=`cd $(dirname $0); cd ..; pwd`
 PHP_PATH=$BUILD_DIR/zend
 APACHE_PATH=$BUILD_DIR/apache
 NGINX_PATH=$BUILD_DIR/nginx
-ZS_VERSION=7.0
+ZS_VERSION=8.0
+PHP_VERSION=5.6
 ZS_PATCHES="ZCLOUD-131 ZCLOUD-168"
 
 # include .files when moving things around
@@ -29,7 +30,7 @@ shopt -s dotglob
 if [[ $ZEND_DB2_DRIVER != 0 ]]; then
    if [[ "${VCAP_SERVICES}" == *BLUAcceleration* ]] || [[ "${VCAP_SERVICES}" == *SQLDB* ]]; then
       ZEND_DB2_DRIVER=1
-   fi 
+   fi
 fi
 
 if [[ $ZEND_DB2_DRIVER == 1 ]]; then
@@ -66,9 +67,9 @@ fi
 # Populate cache if needed
 OLD_PWD=`pwd`
 cd $CACHE_DIR
-if [[ ! -f $CACHE_DIR/zend-server-$ZS_VERSION-php-5.4.tar.gz ]]; then
+if [[ ! -f $CACHE_DIR/zend-server-$ZS_VERSION-php-$PHP_VERSION.tar.gz ]]; then
     START_MSG 'Downloading Zend Server tarball'
-    curl -s -O http://repos.zend.com/cloudfoundry/zend-server-$ZS_VERSION-php-5.4.tar.gz
+    curl -s -O http://repos.zend.com/cloudfoundry/zend-server-$ZS_VERSION-php-$PHP_VERSION.tar.gz
     DONE_MSG
 fi
 
@@ -101,7 +102,7 @@ cd $OLD_PWD
 
 # Unpack Zend Server, patches and apache
 START_MSG 'Unpacking Zend Server'
-tar xzf $CACHE_DIR/zend-server-$ZS_VERSION-php-5.4.tar.gz
+tar xzf $CACHE_DIR/zend-server-$ZS_VERSION-php-$PHP_VERSION.tar.gz
 DONE_MSG
 for P in $ZS_PATCHES; do
     START_MSG "Unpacking $P patch"
@@ -221,7 +222,7 @@ if [[ $ZEND_WEB_SERVER == "apache" ]]; then
     ln -sf /app/apache/etc/init.d/apache2 $PHP_PATH/etc/rc.d/K07apache
     mv $LP_DIR/conf/apache/apache2 $APACHE_PATH/etc/init.d/
     DONE_MSG
-    
+
     START_MSG "Customizing apache configuration"
     mv $LP_DIR/conf/apache/zendserver_gui.conf $APACHE_PATH/etc/apache2/sites-available
     mv $LP_DIR/conf/apache/default $APACHE_PATH/etc/apache2/sites-available

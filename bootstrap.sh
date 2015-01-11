@@ -19,7 +19,7 @@ ZS_MANAGE=/app/zend/bin/zs-manage
 if [[ $ZEND_DB2_DRIVER != 0 ]]; then
    if [[ "${VCAP_SERVICES}" == *BLUAcceleration* ]] || [[ "${VCAP_SERVICES}" == *SQLDB* ]]; then
       ZEND_DB2_DRIVER=1
-   fi 
+   fi
 fi
 
 # Set env. variables for DB2 if needed
@@ -32,7 +32,7 @@ fi
 sed "s/vcap/${ZEND_UID}/" ${PHP_INI_SCAN_DIR}/ZendGlobalDirectives.ini.erb > ${PHP_INI_SCAN_DIR}/ZendGlobalDirectives.ini
 
 echo "Creating/Upgrading Zend databases. This may take several minutes..."
-/app/zend/gui/lighttpd/sbin/php -c /app/zend/gui/lighttpd/etc/php-fcgi.ini /app/zend/share/scripts/zs_create_databases.php zsDir=/app/zend toVersion=7.0.0
+/app/zend/gui/lighttpd/sbin/php -c /app/zend/gui/lighttpd/etc/php-fcgi.ini /app/zend/share/scripts/zs_create_databases.php zsDir=/app/zend toVersion=8.0.1
 
 # Generate default trial license
 /app/zend/bin/zsd /app/zend/etc/zsd.ini --generate-license
@@ -81,7 +81,7 @@ fi
 $ZS_MANAGE bootstrap-single-server -p $ZS_ADMIN_PASSWORD -a 'TRUE' -o $ZEND_LICENSE_ORDER -l $ZEND_LICENSE_KEY | head -1 > /app/zend/tmp/api_key
 
 # Remove ZS_ADMIN_PASSWORD from env.log
-sed '/ZS_ADMIN_PASSWORD/d' -i /home/vcap/logs/env.log 
+sed '/ZS_ADMIN_PASSWORD/d' -i /home/vcap/logs/env.log
 
 # Get API key from bootstrap script output
 WEB_API_KEY=`cut -s -f 1 /app/zend/tmp/api_key`
@@ -115,10 +115,10 @@ if [[ -z $ZEND_CONFIG_FILE ]]; then
   do
     $ZS_MANAGE config-import $ZEND_CONFIG_FILE -N $WEB_API_KEY -K $WEB_API_KEY_HASH
   done
-elif [ -f $ZEND_CONFIG_FILE ]; then 
+elif [ -f $ZEND_CONFIG_FILE ]; then
   $ZS_MANAGE config-import $ZEND_CONFIG_FILE -N $WEB_API_KEY -K $WEB_API_KEY_HASH
 fi
-      
+
 # ZCLOUD-161 - create certain log files if they are missing
 touch /app/zend/var/log/codetracing.log
 
