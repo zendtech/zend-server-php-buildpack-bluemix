@@ -128,7 +128,6 @@ START_MSG 'Cleaning up some files'
 
 # Remove DB files
 rm -f $PHP_PATH/var/db/codetracing.db
-rm -f $PHP_PATH/var/db/deployment.db
 rm -f $PHP_PATH/var/db/devbar.db
 rm -f $PHP_PATH/var/db/gui.db
 rm -f $PHP_PATH/var/db/jobqueue.db
