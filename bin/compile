@@ -19,8 +19,9 @@ LP_DIR=`cd $(dirname $0); cd ..; pwd`
 PHP_PATH=$BUILD_DIR/zend
 APACHE_PATH=$BUILD_DIR/apache
 NGINX_PATH=$BUILD_DIR/nginx
-ZS_VERSION=7.0
-ZS_PATCHES="ZCLOUD-131 ZCLOUD-168"
+ZS_VERSION=8.0
+PHP_VERSION=5.6
+ZS_PATCHES="ZCLOUD-131 ZCLOUD-168 ZCLOUD-200"
 
 # include .files when moving things around
 shopt -s dotglob
@@ -29,7 +30,7 @@ shopt -s dotglob
 if [[ $ZEND_DB2_DRIVER != 0 ]]; then
    if [[ "${VCAP_SERVICES}" == *BLUAcceleration* ]] || [[ "${VCAP_SERVICES}" == *SQLDB* ]]; then
       ZEND_DB2_DRIVER=1
-   fi 
+   fi
 fi
 
 if [[ $ZEND_DB2_DRIVER == 1 ]]; then
@@ -66,9 +67,9 @@ fi
 # Populate cache if needed
 OLD_PWD=`pwd`
 cd $CACHE_DIR
-if [[ ! -f $CACHE_DIR/zend-server-$ZS_VERSION-php-5.4.tar.gz ]]; then
+if [[ ! -f $CACHE_DIR/zend-server-$ZS_VERSION-php-$PHP_VERSION.tar.gz ]]; then
     START_MSG 'Downloading Zend Server tarball'
-    curl -s -O http://repos.zend.com/cloudfoundry/zend-server-$ZS_VERSION-php-5.4.tar.gz
+    curl -s -O http://repos.zend.com/cloudfoundry/zend-server-$ZS_VERSION-php-$PHP_VERSION.tar.gz
     DONE_MSG
 fi
 
@@ -101,7 +102,7 @@ cd $OLD_PWD
 
 # Unpack Zend Server, patches and apache
 START_MSG 'Unpacking Zend Server'
-tar xzf $CACHE_DIR/zend-server-$ZS_VERSION-php-5.4.tar.gz
+tar xzf $CACHE_DIR/zend-server-$ZS_VERSION-php-$PHP_VERSION.tar.gz
 DONE_MSG
 for P in $ZS_PATCHES; do
     START_MSG "Unpacking $P patch"
@@ -127,7 +128,6 @@ START_MSG 'Cleaning up some files'
 
 # Remove DB files
 rm -f $PHP_PATH/var/db/codetracing.db
-rm -f $PHP_PATH/var/db/deployment.db
 rm -f $PHP_PATH/var/db/devbar.db
 rm -f $PHP_PATH/var/db/gui.db
 rm -f $PHP_PATH/var/db/jobqueue.db
@@ -166,15 +166,31 @@ sed -i -e "s|/usr/sbin|/app/apache/sbin|g" $PHP_PATH/etc/zsd.ini
 sed -i -e "s|/etc/zce.rc|/app/etc/zce.rc|" $PHP_PATH/share/zs-cli-tools/library/ZServer/Cli/Tool/Command/Manage/Abstract.php
 
 # Fix default library symlinks
-ln -sf /app/zend/var/libraries/Symfony_2.3/2.3.16 $PHP_PATH/var/libraries/Symfony_2.3/default
-ln -sf /app/zend/var/libraries/Zend_Framework_1/1.12.7 $PHP_PATH/var/libraries/Zend_Framework_1/default
-ln -sf /app/zend/var/libraries/Zend_Framework_2/2.3.1 $PHP_PATH/var/libraries/Zend_Framework_2/default
-#ln -sf /app/zend/var/libraries/Zend_Server_Gateway/0.9.1 $PHP_PATH/var/libraries/Zend_Server_Gateway/default
+ln -sf /app/zend/var/libraries/Symfony_2.3/2.3.23 $PHP_PATH/var/libraries/Symfony_2.3/default
+ln -sf /app/zend/var/libraries/Zend_Framework_1/1.12.9 $PHP_PATH/var/libraries/Zend_Framework_1/default
+ln -sf /app/zend/var/libraries/Zend_Framework_2/2.3.3 $PHP_PATH/var/libraries/Zend_Framework_2/default
+ln -sf /app/zend/var/libraries/ZendServerSDK/1.0 $PHP_PATH/var/libraries/ZendServerSDK/default
 
 # Update config files
 mkdir -p etc
 cp $LP_DIR/conf/etc/zce.rc.$ZEND_WEB_SERVER etc/zce.rc
 cp -rf $LP_DIR/conf/zend/* $PHP_PATH
+sed -i -e "s|/usr/local/zend|/app/zend|g" $PHP_PATH/etc/conf.d/url_insight.ini
+sed -i -e "s|/usr/local/zend|/app/zend|g" $PHP_PATH/etc/conf.d/sc.ini
+sed -i -e "s|/usr/local/zend|/app/zend|g" $PHP_PATH/etc/conf.d/zend_libraries.ini
+sed -i -e "s|/usr/local/zend|/app/zend|g" $PHP_PATH/etc/conf.d/monitor.ini
+sed -i -e "s|/usr/local/zend|/app/zend|g" $PHP_PATH/etc/conf.d/datacache.ini
+sed -i -e "s|/usr/local/zend|/app/zend|g" $PHP_PATH/etc/conf.d/ZendGlobalDirectives.ini
+sed -i -e "s|/usr/local/zend|/app/zend|g" $PHP_PATH/etc/conf.d/pagecache.ini
+sed -i -e "s|/usr/local/zend|/app/zend|g" $PHP_PATH/etc/conf.d/statistics.ini
+sed -i -e "s|/usr/local/zend|/app/zend|g" $PHP_PATH/etc/conf.d/jobqueue.ini
+sed -i -e "s|/usr/local/zend|/app/zend|g" $PHP_PATH/etc/conf.d/zray.ini
+sed -i -e "s|/usr/local/zend|/app/zend|g" $PHP_PATH/etc/conf.d/debugger.ini
+sed -i -e "s|/usr/local/zend|/app/zend|g" $PHP_PATH/etc/conf.d/codetracing.ini
+sed -i -e "s|/usr/local/zend|/app/zend|g" $PHP_PATH/etc/conf.d/statistics_ext.ini
+sed -i -e "s|/usr/local/zend|/app/zend|g" $PHP_PATH/etc/conf.d/opcache.ini
+sed -i -e "s|/usr/local/zend|/app/zend|g" $PHP_PATH/etc/conf.d/zend_extension_manager.ini
+sed -i -e "s|/usr/local/zend|/app/zend|g" $PHP_PATH/etc/conf.d/utils.ini
 
 DONE_MSG
 
@@ -221,7 +237,7 @@ if [[ $ZEND_WEB_SERVER == "apache" ]]; then
     ln -sf /app/apache/etc/init.d/apache2 $PHP_PATH/etc/rc.d/K07apache
     mv $LP_DIR/conf/apache/apache2 $APACHE_PATH/etc/init.d/
     DONE_MSG
-    
+
     START_MSG "Customizing apache configuration"
     mv $LP_DIR/conf/apache/zendserver_gui.conf $APACHE_PATH/etc/apache2/sites-available
     mv $LP_DIR/conf/apache/default $APACHE_PATH/etc/apache2/sites-available
