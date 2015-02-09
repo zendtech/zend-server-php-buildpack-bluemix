@@ -74,7 +74,7 @@ fi
 
 if [[ ! -f $CACHE_DIR/clidriver.tar.gz && $ZEND_DB2_DRIVER == 1 ]]; then
     START_MSG 'Downloading IBM DB2 Runtime Client'
-    curl -s -O https://public.dhe.ibm.com/ibmdl/export/pub/software/data/db2/drivers/odbc_cli/linuxx64_odbc_cli.tar.gz
+    curl -s -O http://repos.zend.com/cloudfoundry/clidriver.tar.gz
     DONE_MSG
 fi
 
@@ -118,7 +118,7 @@ DONE_MSG
 
 if [[ $ZEND_DB2_DRIVER == 1 ]]; then
     START_MSG "Unpacking IBM DB2 Runtime Client"
-    tar xzf $CACHE_DIR/ibmdl/export/pub/software/data/db2/drivers/odbc_cli/linuxx64_odbc_cli.tar.gz
+    tar xzf $CACHE_DIR/clidriver.tar.gz
     DONE_MSG
 fi
 
