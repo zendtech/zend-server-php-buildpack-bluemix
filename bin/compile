@@ -118,7 +118,7 @@ DONE_MSG
 
 if [[ $ZEND_DB2_DRIVER == 1 ]]; then
     START_MSG "Unpacking IBM DB2 Runtime Client"
-    tar xzf $CACHE_DIR/linuxx64_odbc_cli.tar.gz
+    tar xzf $CACHE_DIR/ibmdl/export/pub/software/data/db2/drivers/odbc_cli/linuxx64_odbc_cli.tar.gz
     DONE_MSG
 fi
 
