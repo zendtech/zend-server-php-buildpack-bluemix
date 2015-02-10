@@ -11,7 +11,6 @@ echo "Launching Zend Server..."
 export ZEND_UID=`id -u`
 export ZEND_GID=`id -g`
 export GROUP=`id -g -n`
-export ZS_EDITION=TRIAL
 export APACHE_ENVVARS=/app/apache/etc/apache2/envvars
 ZS_MANAGE=/app/zend/bin/zs-manage
 
@@ -74,8 +73,7 @@ if [ -z $ZS_ADMIN_PASSWORD ]; then
 fi
 if [[ -z $ZEND_LICENSE_ORDER || -z $ZEND_LICENSE_KEY ]]; then
     ZEND_LICENSE_ORDER=cloudfoundry
-    ZEND_LICENSE_KEY=1OVO7341801G21B08FD927480286D7CA
-    export ZS_EDITION=FREE
+    ZEND_LICENSE_KEY=SA1E7M81C01II1B08FD9EFEAD5A55133
 fi
 
 $ZS_MANAGE bootstrap-single-server -p $ZS_ADMIN_PASSWORD -a 'TRUE' -o $ZEND_LICENSE_ORDER -l $ZEND_LICENSE_KEY | head -1 > /app/zend/tmp/api_key
@@ -123,12 +121,6 @@ touch /app/zend/var/log/codetracing.log
 VALUE=`id -u`
 sed -e "s|^\(zend.httpd_uid[ \t]*=[ \t]*\).*$|\1$VALUE|" -i /app/zend/etc/conf.d/ZendGlobalDirectives.ini
 sed -e "s|^\(zend.httpd_gid[ \t]*=[ \t]*\).*$|\1$VALUE|" -i /app/zend/etc/conf.d/ZendGlobalDirectives.ini
-
-#ZCLOUD-160 - disable unsupported extensions in Free Edition
-if [ $ZS_EDITION = "FREE" ] ; then
-  $ZS_MANAGE extension-off -e 'Zend Page Cache' -N $WEB_API_KEY -K $WEB_API_KEY_HASH
-  $ZS_MANAGE extension-off -e 'Zend Session Clustering' -N $WEB_API_KEY -K $WEB_API_KEY_HASH
-fi
 
 #ZCLOUD-196 - Enable DB2 extensions if ZEND_DB2_DRIVER is set
 if [[ $ZEND_DB2_DRIVER == 1 ]]; then
