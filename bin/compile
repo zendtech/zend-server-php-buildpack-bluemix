@@ -28,7 +28,7 @@ shopt -s dotglob
 
 # If ZEND_DB2_DRIVER is not set to 0, then look for services which use db2 driver
 if [[ $ZEND_DB2_DRIVER != 0 ]]; then
-   if [[ "${VCAP_SERVICES}" == *BLUAcceleration* ]] || [[ "${VCAP_SERVICES}" == *SQLDB* ]]; then
+   if [[ "${VCAP_SERVICES}" == *dashDB* ]] || [[ "${VCAP_SERVICES}" == *SQLDB* ]]; then
       ZEND_DB2_DRIVER=1
    fi
 fi
