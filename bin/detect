@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
-if [ -f $1/zend_server_php_app ] || [ -f $1/index.php ] || [ -f $1/public/index.php ] || [ -f $1/*.zpk ] || [ -f $1/$ZEND_DOCUMENT_ROOT/zend_server_php_app ] || [ -f $1/$ZEND_DOCUMENT_ROOT/index.php ] || [ -f $1/$ZEND_DOCUMENT_ROOT/public/index.php ] || [ -f $1/$ZEND_DOCUMENT_ROOT/*.zpk ]; then
+ZPK_COUNT=`ls -1 $1/*.zpk 2>/dev/null | wc -l`
+ZPK_COUNT_ZEND_DOCUMENT_ROOT=`ls -1 $1/$ZEND_DOCUMENT_ROOT/*.zpk 2>/dev/null | wc -l`
+
+if [ -f $1/zend_server_php_app ] || [ -f $1/index.php ] || [ -f $1/public/index.php ] || [ $ZPK_COUNT != 0 ] || [ -f $1/$ZEND_DOCUMENT_ROOT/zend_server_php_app ] || [ -f $1/$ZEND_DOCUMENT_ROOT/index.php ] || [ -f $1/$ZEND_DOCUMENT_ROOT/public/index.php ] || [ $ZPK_COUNT_ZEND_DOCUMENT_ROOT != 0 ]; then
   echo "PHP" && exit 0
 else
   echo "no" && exit 1
