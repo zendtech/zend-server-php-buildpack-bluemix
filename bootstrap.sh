@@ -154,7 +154,8 @@ $ZS_MANAGE restart-php -p -N $WEB_API_KEY -K $WEB_API_KEY_HASH
 
 # Run composer if composer.json file is present
 if [[ -f /app/www/composer.json ]]; then
-    /app/zend/bin/php /app/zend/bin/composer.phar update -d /app/www -o --no-progress --no-ansi -n
+    curl http://curl.haxx.se/ca/cacert.pem -o /app/ca-bundle.crt
+    /app/zend/bin/php -d curl.cainfo=/app/ca-bundle.crt -d openssl.cafile=/app/ca-bundle.crt /app/zend/bin/composer.phar update -d /app/www -o --no-progress --no-ansi -n
 fi
 
 # Enable ZS UI
