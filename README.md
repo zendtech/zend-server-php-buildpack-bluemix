@@ -67,7 +67,6 @@ The following resources will help you understand Cloud Foundry concepts and work
 * How to add a service in Cloud Foundry: http://docs.cloudfoundry.com/docs/dotcom/adding-a-service.html
 * How to design apps for the cloud: http://docs.cloudfoundry.com/docs/using/app-arch/index.html
 * Cloud Foundry documentation: http://docs.cloudfoundry.com/
-* Read more about Zend Server Free Edition: http://www.zend.com/en/products/server/free-edition
 * Zend Server edition comparison: http://www.zend.com/en/products/server/editions.
 * Local installation instructions for cloud providers: [localinstallation.md](localinstallation.md)
 * Cloud foundry environment variables that affect the buildpack: [environment.md](environment.md)
