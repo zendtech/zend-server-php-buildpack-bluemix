@@ -16,6 +16,8 @@ Z-Ray gives developers unprecedented visibility into their code by tracking and 
 * Zend Server 8.0
 * PHP 5.6
 * All Zend Server 8.0 extensions
+* Ability to work in cluster mode where all instances of application share their
+  Zend Server settings
 * Automatic composer dependecies installation during deployment
 * Zutomatic Zend Server ZPK deployment
 * Automatic inclusion of DB2 CLI and PHP DB2 extensions if DB2 services are linked
@@ -23,7 +25,11 @@ Z-Ray gives developers unprecedented visibility into their code by tracking and 
 # Concepts
 
 * .zpk - a .zpk or a Zend Application Package is basically a compressed file containing all your application data for the purpose of deployment on Zend Server, and can also be used to deploy libraries. For more information on .zpks, please visit the Zend Server Online Help at: http://files.zend.com/help/Zend-Server/zend-server.htm#application_package.htm
-
+* Zend Server Cluster - when deploying application that has MySQL service linked
+  to it, all instances of application will automatically form a cluster where
+  all settings (PHP settings, deployed ZPKs, Zend Server components settings,
+  etc.) are shared and automatically synced when they are changed using Zend
+  Server UI.
 
 # Usage
 1. Download and install Cloud Foundry's 'cf v6' CLI. For installation instructions, see http://docs.run.pivotal.io/devguide/installcf/install-go-cli.html.
@@ -49,7 +55,7 @@ Note: If you are using Composer to manage library dependencies, make sure the 'c
 
 ## Automatically Importing PHP Configurations
 The Zend Server buildpack can optionally import PHP configurations from backup files. This allows you to easily deploy applications which require a change of directives.
-It also allows you to retain changes you made using the Zend Server GUI. To do so, follow these instructions:
+It also allows you to retain changes you made using the Zend Server UI. To do so, follow these instructions:
 
 1. In your application's code (on your workstation) create a folder named `.zend_config`.
 2. Browse to: `http://<application URL>/ZendServer/ImportExport/`.
