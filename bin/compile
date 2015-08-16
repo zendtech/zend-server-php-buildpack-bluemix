@@ -19,7 +19,7 @@ LP_DIR=`cd $(dirname $0); cd ..; pwd`
 PHP_PATH=$BUILD_DIR/zend
 APACHE_PATH=$BUILD_DIR/apache
 NGINX_PATH=$BUILD_DIR/nginx
-ZS_VERSION=8.0
+ZS_VERSION=8.5
 PHP_VERSION=5.6
 ZS_PATCHES="ZCLOUD-131 ZCLOUD-168 ZCLOUD-200"
 
@@ -53,6 +53,14 @@ fi
 # default web server is apache
 if [[ -z $ZEND_WEB_SERVER ]]; then
     ZEND_WEB_SERVER="apache"
+fi
+
+if [[ $ZEND_WEB_SERVER == "apache" ]]; then
+    ZEND_WEB_SERVER="apache2.4"
+fi
+
+if [[ $ZEND_WEB_SERVER == "nginx" ]]; then
+    ZEND_WEB_SERVER="nginx1.8"
 fi
 
 DONE_MSG
@@ -226,7 +234,7 @@ START_MSG 'Disabling Z-Ray'
 sed -i -e 's/^zray.enable\s*=.*$/zray.enable=0/' $PHP_PATH/share/zs-cli-tools/library/ZendX/Service/ZendServer.php
 DONE_MSG
 
-if [[ $ZEND_WEB_SERVER == "apache" ]]; then
+if [[ $ZEND_WEB_SERVER == "apache2.4" ]]; then
     START_MSG "Fixing symlinks"
     ln -sf /app/apache/sbin/apache2ctl $PHP_PATH/bin/apachectl
     ln -sf /app/zend/lib/php/libphp5.so $APACHE_PATH/lib/apache2/modules/libphp5.so
@@ -262,7 +270,7 @@ if [[ $ZEND_WEB_SERVER == "apache" ]]; then
     DONE_MSG
 fi
 
-if [[ $ZEND_WEB_SERVER == "nginx" ]]; then
+if [[ $ZEND_WEB_SERVER == "nginx1.8" ]]; then
     START_MSG "Customizing nginx configuration"
     mv $LP_DIR/conf/nginx/conf/zend-default-vhost-80.conf $PHP_PATH/etc/sites.d
     sed -i -e 's|/usr/local/zend|/app/zend|g' $PHP_PATH/etc/sites.d/zend-default-vhost-80.conf
