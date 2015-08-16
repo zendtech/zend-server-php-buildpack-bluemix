@@ -254,6 +254,7 @@ if [[ $ZEND_WEB_SERVER == "apache2.4" ]]; then
     sed -i -e 's|/usr|/app/apache|g' $APACHE_PATH/etc/apache2/mods-available/*
     sed -i -e 's|/var|/app/apache/var|g' $APACHE_PATH/etc/apache2/apache2.conf
     sed -i -e 's|/etc|/app/apache/etc|g' $APACHE_PATH/etc/apache2/apache2.conf
+    sed -i -e 's|^#ServerRoot|ServerRoot|g' $APACHE_PATH/etc/apache2/apache2.conf
     sed -i -e 's|/var|/app/apache/var|g' $APACHE_PATH/etc/apache2/envvars
     sed -i -e 's|/etc/zce.rc|/app/etc/zce.rc|g' $APACHE_PATH/etc/apache2/envvars
     sed -i -e 's|/etc|/app/apache/etc|g' $APACHE_PATH/sbin/apache2ctl
@@ -261,6 +262,7 @@ if [[ $ZEND_WEB_SERVER == "apache2.4" ]]; then
     sed -i -e 's|/usr|/app/apache|g' $APACHE_PATH/sbin/apache2ctl
     sed -i -e "s|/var/www|$ZEND_DOCUMENT_ROOT|g" $APACHE_PATH/etc/apache2/sites-available/default
     sed -i -e 's|/var/log|/app/apache/var/log|g' $APACHE_PATH/etc/apache2/sites-available/default
+    sed -i -e 's|/etc|/app/apache/etc|g' $APACHE_PATH/etc/init.d/apache2
     ln -sf ../mods-available/proxy.load $APACHE_PATH/etc/apache2/mods-enabled/proxy.load
     ln -sf ../mods-available/proxy_http.load $APACHE_PATH/etc/apache2/mods-enabled/proxy_http.load
     cp $LP_DIR/conf/nginx/conf/403.html $APACHE_PATH
