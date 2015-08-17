@@ -10,6 +10,18 @@ Include "/usr/local/zend/etc/sites.d/zend-default-vhost-80.conf"
         ErrorLog ${APACHE_LOG_DIR}/apache2/error.log
         CustomLog ${APACHE_LOG_DIR}/apache2/access.log combined
 
+        <Directory /app/www/>
+                Options Indexes FollowSymLinks
+                AllowOverride None
+                Require all granted
+        </Directory>
+
+        <Files /app/apache/*>
+                Options Indexes FollowSymLinks
+                AllowOverride None
+                Require all granted
+        </Files>
+
         Alias /zend-custom-403.html /app/apache/403.html
         ErrorDocument 403 /zend-custom-403.html
 
