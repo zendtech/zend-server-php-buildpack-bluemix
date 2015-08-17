@@ -106,12 +106,14 @@ fi
 
 # ZCLOUD-131 - automatically import exported Zend Server config files
 if [[ -z $ZEND_CONFIG_FILE ]]; then
-  for ZEND_CONFIG_FILE in /app/www/.zend_config/zs_config*.zip
-  do
-    $ZS_MANAGE config-import $ZEND_CONFIG_FILE -N $WEB_API_KEY -K $WEB_API_KEY_HASH
-  done
+    if [[ -d /app/www/html/.zend_config ]]; then
+        for ZEND_CONFIG_FILE in /app/www/html/.zend_config/zs_config*.zip
+        do
+            $ZS_MANAGE config-import $ZEND_CONFIG_FILE -N $WEB_API_KEY -K $WEB_API_KEY_HASH
+        done
+    fi
 elif [ -f $ZEND_CONFIG_FILE ]; then
-  $ZS_MANAGE config-import $ZEND_CONFIG_FILE -N $WEB_API_KEY -K $WEB_API_KEY_HASH
+    $ZS_MANAGE config-import $ZEND_CONFIG_FILE -N $WEB_API_KEY -K $WEB_API_KEY_HASH
 fi
 
 # ZCLOUD-161 - create certain log files if they are missing
