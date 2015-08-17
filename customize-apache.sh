@@ -7,7 +7,7 @@ GROUP=`id -g -n`
 
 # Change Apache port to one used in the instance
 sed -i -e "s/80/${PORT}/" /app/apache/etc/apache2/ports.conf
-sed -i -e 's/:80/:*/' /app/apache/etc/apache2/sites-available/default
+sed -i -e 's/:80/:*/' /app/apache/etc/apache2/sites-available/000-default.conf
 
 # Change UID and GID in Apache configuration to the one used in instance
 sed -i -e "s/APACHE_RUN_USER=www-data/APACHE_RUN_USER=${USER}/" /app/apache/etc/apache2/envvars
