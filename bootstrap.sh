@@ -76,7 +76,7 @@ if [[ -z $ZEND_LICENSE_ORDER || -z $ZEND_LICENSE_KEY ]]; then
     ZEND_LICENSE_KEY=R21M7J40C01II1B08FD9B9D6804B4C82
 fi
 
-$ZS_MANAGE bootstrap-single-server -p $ZS_ADMIN_PASSWORD -a 'TRUE' -o $ZEND_LICENSE_ORDER -l $ZEND_LICENSE_KEY --retry 120 --wait 5 | head -1 > /app/zend/tmp/api_key
+$ZS_MANAGE bootstrap-single-server -p $ZS_ADMIN_PASSWORD -a 'TRUE' -o $ZEND_LICENSE_ORDER -l $ZEND_LICENSE_KEY --retry 60 --wait 5 | head -1 > /app/zend/tmp/api_key
 
 # Get API key from bootstrap script output
 WEB_API_KEY=`cut -s -f 1 /app/zend/tmp/api_key`
