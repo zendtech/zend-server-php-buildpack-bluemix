@@ -278,7 +278,7 @@ if [[ $ZEND_WEB_SERVER == "apache2.4" ]]; then
 
     START_MSG "Customizing apache configuration"
     mv $LP_DIR/conf/apache/zendserver_gui.conf $APACHE_PATH/etc/apache2/sites-available
-    mv $LP_DIR/conf/apache/default $APACHE_PATH/etc/apache2/sites-available
+    mv $LP_DIR/conf/apache/000-default.conf $APACHE_PATH/etc/apache2/sites-available
     sed -i -e "s|/var/www/html|$ZEND_DOCUMENT_ROOT|g" $APACHE_PATH/etc/apache2/sites-available/*
     sed -i -e "s|/usr/local/zend|/app/zend|g" $APACHE_PATH/etc/apache2/sites-available/*
     sed -i -e 's|/usr|/app/apache|g' $APACHE_PATH/etc/apache2/mods-available/*
@@ -290,8 +290,8 @@ if [[ $ZEND_WEB_SERVER == "apache2.4" ]]; then
     sed -i -e 's|/etc|/app/apache/etc|g' $APACHE_PATH/sbin/apache2ctl
     sed -i -e 's|/var|/app/apache/var|g' $APACHE_PATH/sbin/apache2ctl
     sed -i -e 's|/usr|/app/apache|g' $APACHE_PATH/sbin/apache2ctl
-    sed -i -e "s|/var/www/html|$ZEND_DOCUMENT_ROOT|g" $APACHE_PATH/etc/apache2/sites-available/default
-    sed -i -e 's|/var/log|/app/apache/var/log|g' $APACHE_PATH/etc/apache2/sites-available/default
+    sed -i -e "s|/var/www/html|$ZEND_DOCUMENT_ROOT|g" $APACHE_PATH/etc/apache2/sites-available/000-default.conf
+    sed -i -e 's|/var/log|/app/apache/var/log|g' $APACHE_PATH/etc/apache2/sites-available/000-default.conf
     sed -i -e 's|/etc|/app/apache/etc|g' $APACHE_PATH/etc/init.d/apache2
     ln -sf ../mods-available/proxy.load $APACHE_PATH/etc/apache2/mods-enabled/proxy.load
     ln -sf ../mods-available/proxy_http.load $APACHE_PATH/etc/apache2/mods-enabled/proxy_http.load
