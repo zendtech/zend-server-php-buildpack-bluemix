@@ -162,8 +162,8 @@ fi
 
 # Enable ZS UI
 if [ $ZEND_WEB_SERVER == "apache" ]; then
-    sed -i -e "s|AliasMatch /ZendServer.*$ /app/apache/wait.html||g" /app/apache/etc/apache2/sites-available/default
-    sed -i -e "s|#Proxy|Proxy|g" /app/apache/etc/apache2/sites-available/default
+    sed -i -e "s|AliasMatch /ZendServer.*$ /app/apache/wait.html||g" /app/apache/etc/apache2/sites-available/000-default.conf
+    sed -i -e "s|#Proxy|Proxy|g" /app/apache/etc/apache2/sites-available/000-default.conf
     /app/apache/sbin/apache2ctl restart
 elif [ $ZEND_WEB_SERVER == "nginx" ]; then
     sed -i -e "s|alias /app/nginx/conf/wait.html||g" /app/nginx/conf/sites-available/default
@@ -191,7 +191,7 @@ if [[ -n $ZEND_CF_DEBUG ]]; then
     DEBUG_PRINT_FILE /app/zend_cluster.sh
     DEBUG_PRINT_FILE /app/zend/etc/zend_database.ini
     DEBUG_PRINT_FILE /app/apache/etc/apache2/envvars
-    DEBUG_PRINT_FILE /app/apache/etc/apache2/sites-available/default
+    DEBUG_PRINT_FILE /app/apache/etc/apache2/sites-available/000-default.conf
     echo LD_LIBRARY_PATH=\'$LD_LIBRARY_PATH\'
     echo WEB_API_KEY=\'$WEB_API_KEY\'
     echo WEB_API_KEY_HASH=\'$WEB_API_KEY_HASH\'
