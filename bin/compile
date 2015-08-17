@@ -149,6 +149,32 @@ rm -f $PHP_PATH/gui/lighttpd/logs/*
 
 DONE_MSG
 
+# Update scripts
+START_MSG 'Update Zend Server scripts'
+
+sed -i -e 's|/etc/zce.rc|/app/etc/zce.rc|g' $PHP_PATH/bin/create_cert.sh
+sed -i -e 's|/etc/zce.rc|/app/etc/zce.rc|g' $PHP_PATH/bin/clean_semaphores.sh
+sed -i -e 's|/etc/zce.rc|/app/etc/zce.rc|g' $PHP_PATH/bin/jqd.sh
+sed -i -e 's|ID=zend|ID=vcap|g' $PHP_PATH/bin/jqd.sh
+sed -i -e 's|/etc/zce.rc|/app/etc/zce.rc|g' $PHP_PATH/bin/monitor-node.sh
+sed -i -e 's|/usr/local/zend|/app/zend|g' $PHP_PATH/bin/pear
+sed -i -e 's|/usr/local/zend|/app/zend|g' $PHP_PATH/bin/peardev
+sed -i -e 's|/usr/local/zend|/app/zend|g' $PHP_PATH/bin/pecl
+sed -i -e 's|/usr/local/zend|/app/zend|g' $PHP_PATH/bin/php-config
+sed -i -e 's|/usr/local/zend|/app/zend|g' $PHP_PATH/bin/php-fpm.sh
+sed -i -e 's|/usr/local/zend|/app/zend|g' $PHP_PATH/bin/phpize
+sed -i -e 's|/etc/zce.rc|/app/etc/zce.rc|g' $PHP_PATH/bin/scd.sh
+sed -i -e 's|ID=zend|ID=vcap|g' $PHP_PATH/bin/scd.sh
+sed -i -e 's|/etc/zce.rc|/app/etc/zce.rc|g' $PHP_PATH/bin/support_tool.sh
+sed -i -e 's|/etc/zce.rc|/app/etc/zce.rc|g' $PHP_PATH/bin/zdd.sh
+sed -i -e 's|ID=zend|ID=vcap|g' $PHP_PATH/bin/zdd.sh
+sed -i -e 's|/etc/zce.rc|/app/etc/zce.rc|g' $PHP_PATH/bin/zsd.sh
+sed -i -e 's|ID=zend|ID=vcap|g' $PHP_PATH/bin/zsd.sh
+sed -i -e 's|/etc/zce.rc|/app/etc/zce.rc|g' $PHP_PATH/bin/zendctl.sh
+sed -i -e 's|/etc/zce.rc|/app/etc/zce.rc|g' $PHP_PATH/bin/zs-manage
+
+DONE_MSG
+
 # Update configuration files
 START_MSG 'Update configuration files'
 
