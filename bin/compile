@@ -40,9 +40,9 @@ fi
 START_MSG 'Initializing'
 cd $BUILD_DIR
 
-# move app things to www
-mkdir -p $CACHE_DIR/www
-mv * $CACHE_DIR/www
+# move app things to www/html
+mkdir -p $CACHE_DIR/www/html
+mv * $CACHE_DIR/www/html
 mv $CACHE_DIR/www .
 
 # keep Procfile
@@ -157,9 +157,9 @@ sed -i -e 's|/usr/local/zend|/app/zend|g' $PHP_PATH/share/*.sql
 
 # Determine document root
 if [[ -z $ZEND_DOCUMENT_ROOT ]]; then
-    ZEND_DOCUMENT_ROOT='/app/www'
+    ZEND_DOCUMENT_ROOT='/app/www/html'
 else
-    ZEND_DOCUMENT_ROOT="/app/www/$ZEND_DOCUMENT_ROOT"
+    ZEND_DOCUMENT_ROOT="/app/www/html/$ZEND_DOCUMENT_ROOT"
 fi
 
 # Update file locations in ini files
@@ -249,7 +249,7 @@ if [[ $ZEND_WEB_SERVER == "apache2.4" ]]; then
     START_MSG "Customizing apache configuration"
     mv $LP_DIR/conf/apache/zendserver_gui.conf $APACHE_PATH/etc/apache2/sites-available
     mv $LP_DIR/conf/apache/default $APACHE_PATH/etc/apache2/sites-available
-    sed -i -e "s|/var/www|$ZEND_DOCUMENT_ROOT|g" $APACHE_PATH/etc/apache2/sites-available/*
+    sed -i -e "s|/var/www/html|$ZEND_DOCUMENT_ROOT|g" $APACHE_PATH/etc/apache2/sites-available/*
     sed -i -e "s|/usr/local/zend|/app/zend|g" $APACHE_PATH/etc/apache2/sites-available/*
     sed -i -e 's|/usr|/app/apache|g' $APACHE_PATH/etc/apache2/mods-available/*
     sed -i -e 's|/var|/app/apache/var|g' $APACHE_PATH/etc/apache2/apache2.conf
@@ -260,7 +260,7 @@ if [[ $ZEND_WEB_SERVER == "apache2.4" ]]; then
     sed -i -e 's|/etc|/app/apache/etc|g' $APACHE_PATH/sbin/apache2ctl
     sed -i -e 's|/var|/app/apache/var|g' $APACHE_PATH/sbin/apache2ctl
     sed -i -e 's|/usr|/app/apache|g' $APACHE_PATH/sbin/apache2ctl
-    sed -i -e "s|/var/www|$ZEND_DOCUMENT_ROOT|g" $APACHE_PATH/etc/apache2/sites-available/default
+    sed -i -e "s|/var/www/html|$ZEND_DOCUMENT_ROOT|g" $APACHE_PATH/etc/apache2/sites-available/default
     sed -i -e 's|/var/log|/app/apache/var/log|g' $APACHE_PATH/etc/apache2/sites-available/default
     sed -i -e 's|/etc|/app/apache/etc|g' $APACHE_PATH/etc/init.d/apache2
     ln -sf ../mods-available/proxy.load $APACHE_PATH/etc/apache2/mods-enabled/proxy.load

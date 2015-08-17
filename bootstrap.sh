@@ -153,9 +153,9 @@ echo "Restarting Zend Server (using WebAPI)"
 $ZS_MANAGE restart-php -p -N $WEB_API_KEY -K $WEB_API_KEY_HASH
 
 # Run composer if composer.json file is present
-if [[ -f /app/www/composer.json ]]; then
+if [[ -f /app/www/html/composer.json ]]; then
     curl http://curl.haxx.se/ca/cacert.pem -o /app/ca-bundle.crt
-    /app/zend/bin/php -d curl.cainfo=/app/ca-bundle.crt -d openssl.cafile=/app/ca-bundle.crt /app/zend/bin/composer.phar update -d /app/www -o --no-progress --no-ansi -n
+    /app/zend/bin/php -d curl.cainfo=/app/ca-bundle.crt -d openssl.cafile=/app/ca-bundle.crt /app/zend/bin/composer.phar update -d /app/www/html -o --no-progress --no-ansi -n
 fi
 
 # Enable ZS UI
@@ -177,8 +177,8 @@ function DEBUG_PRINT_FILE() {
 }
 
 # Deploy ZPK
-for i in `find /app/www -name "*.zpk"`; do $ZS_MANAGE app-deploy -p $i -b http://localhost/`basename $i .zpk` -d -a `basename $i .zpk` -N $WEB_API_KEY -K $WEB_API_KEY_HASH; done
-for i in `find /app/www -name "*.zpk"`; do $ZS_MANAGE library-deploy -p $i -N $WEB_API_KEY -K $WEB_API_KEY_HASH; done
+for i in `find /app/www/html -name "*.zpk"`; do $ZS_MANAGE app-deploy -p $i -b http://localhost/`basename $i .zpk` -d -a `basename $i .zpk` -N $WEB_API_KEY -K $WEB_API_KEY_HASH; done
+for i in `find /app/www/html -name "*.zpk"`; do $ZS_MANAGE library-deploy -p $i -N $WEB_API_KEY -K $WEB_API_KEY_HASH; done
 
 # Debug output
 if [[ -n $ZEND_CF_DEBUG ]]; then

@@ -15,7 +15,7 @@ sed -i -e "s/APACHE_RUN_GROUP=www-data/APACHE_RUN_GROUP=${GROUP}/" /app/apache/e
 
 # Change document root if needed
 if [[ -n $ZEND_DOCUMENT_ROOT ]]; then
-    sed -i -e "s|/var/www|$ZEND_DOCUMENT_ROOT|" /app/apache/etc/apache2/sites-available/default
+    sed -i -e "s|/var/www/html|$ZEND_DOCUMENT_ROOT|" /app/apache/etc/apache2/sites-available/default
 fi
 
 # Change ServerName
