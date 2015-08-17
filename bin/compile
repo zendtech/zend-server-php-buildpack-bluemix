@@ -282,6 +282,7 @@ if [[ $ZEND_WEB_SERVER == "apache2.4" ]]; then
     sed -i -e "s|/var/www/html|$ZEND_DOCUMENT_ROOT|g" $APACHE_PATH/etc/apache2/sites-available/*
     sed -i -e "s|/usr/local/zend|/app/zend|g" $APACHE_PATH/etc/apache2/sites-available/*
     sed -i -e 's|/usr|/app/apache|g' $APACHE_PATH/etc/apache2/mods-available/*
+    sed -i -e "s|/var/www|$ZEND_DOCUMENT_ROOT|g" $APACHE_PATH/etc/apache2/apache2.conf
     sed -i -e 's|/var|/app/apache/var|g' $APACHE_PATH/etc/apache2/apache2.conf
     sed -i -e 's|/etc|/app/apache/etc|g' $APACHE_PATH/etc/apache2/apache2.conf
     sed -i -e 's|^#ServerRoot|ServerRoot|g' $APACHE_PATH/etc/apache2/apache2.conf
