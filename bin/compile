@@ -170,8 +170,10 @@ sed -i -e 's|ID=zend|ID=vcap|g' $PHP_PATH/bin/scd.sh
 sed -i -e 's|/etc/zce.rc|/app/etc/zce.rc|g' $PHP_PATH/bin/support_tool.sh
 sed -i -e 's|/etc/zce.rc|/app/etc/zce.rc|g' $PHP_PATH/bin/zdd.sh
 sed -i -e 's|ID=zend|ID=vcap|g' $PHP_PATH/bin/zdd.sh
+sed -i -e 's|WEB_USER=zend|#WEB_USER=zend|g' $PHP_PATH/bin/zdd.sh
 sed -i -e 's|/etc/zce.rc|/app/etc/zce.rc|g' $PHP_PATH/bin/zsd.sh
 sed -i -e 's|ID=zend|ID=vcap|g' $PHP_PATH/bin/zsd.sh
+sed -i -e 's|WEB_USER=zend|#WEB_USER=zend|g' $PHP_PATH/bin/zsd.sh
 sed -i -e 's|/etc/zce.rc|/app/etc/zce.rc|g' $PHP_PATH/bin/zendctl.sh
 sed -i -e 's|/etc/zce.rc|/app/etc/zce.rc|g' $PHP_PATH/bin/zs-manage
 
