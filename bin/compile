@@ -161,7 +161,9 @@ sed -i -e 's|/usr/local/zend|/app/zend|g' $PHP_PATH/bin/pear
 sed -i -e 's|/usr/local/zend|/app/zend|g' $PHP_PATH/bin/peardev
 sed -i -e 's|/usr/local/zend|/app/zend|g' $PHP_PATH/bin/pecl
 sed -i -e 's|/usr/local/zend|/app/zend|g' $PHP_PATH/bin/php-config
-sed -i -e 's|/usr/local/zend|/app/zend|g' $PHP_PATH/bin/php-fpm.sh
+if [[ -f $PHP_PATH/bin/php-fpm.sh ]]; then
+    sed -i -e 's|/usr/local/zend|/app/zend|g' $PHP_PATH/bin/php-fpm.sh
+fi
 sed -i -e 's|/usr/local/zend|/app/zend|g' $PHP_PATH/bin/phpize
 sed -i -e 's|/etc/zce.rc|/app/etc/zce.rc|g' $PHP_PATH/bin/scd.sh
 sed -i -e 's|ID=zend|ID=vcap|g' $PHP_PATH/bin/scd.sh
