@@ -231,6 +231,11 @@ sed -i -e "s|/usr/local/zend|/app/zend|g" $PHP_PATH/etc/conf.d/opcache.ini
 sed -i -e "s|/usr/local/zend|/app/zend|g" $PHP_PATH/etc/conf.d/zend_extension_manager.ini
 sed -i -e "s|/usr/local/zend|/app/zend|g" $PHP_PATH/etc/conf.d/utils.ini
 
+sed -i -e "s|/usr/local/zend|/app/zend|g" $PHP_PATH/etc/jqd.ini
+sed -i -e "s|/usr/local/zend|/app/zend|g" $PHP_PATH/etc/monitor_node.ini
+sed -i -e "s|/usr/local/zend|/app/zend|g" $PHP_PATH/etc/scd.ini
+sed -i -e "s|/usr/local/zend|/app/zend|g" $PHP_PATH/etc/zdd.ini
+
 DONE_MSG
 
 # make php available on bin
