@@ -147,6 +147,7 @@ rm -f $PHP_PATH/var/db/zsd.db
 # Remove logs
 rm -f $PHP_PATH/var/log/*
 rm -f $PHP_PATH/gui/lighttpd/logs/*
+touch $PHP_PATH/var/log/php.log
 
 DONE_MSG
 
