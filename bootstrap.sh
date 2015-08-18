@@ -30,6 +30,14 @@ fi
 # Change UID in Zend Server configuration to the one used in the gear
 sed "s/vcap/${ZEND_UID}/" ${PHP_INI_SCAN_DIR}/ZendGlobalDirectives.ini.erb > ${PHP_INI_SCAN_DIR}/ZendGlobalDirectives.ini
 
+# Update license in ZendGlobalDirectives.ini
+if [[ -z $ZEND_LICENSE_ORDER || -z $ZEND_LICENSE_KEY ]]; then
+    ZEND_LICENSE_ORDER=cloudfoundry
+    ZEND_LICENSE_KEY=R21M7J40C01II1B08FD9B9D6804B4C82
+fi
+sed -i -e "s/zend.serial_number=/zend.serial_number=$ZEND_LICENSE_KEY/" ${PHP_INI_SCAN_DIR}/ZendGlobalDirectives.ini
+sed -i -e "s/zend.user_name=/zend.user_name=$ZEND_LICENSE_ORDER/" ${PHP_INI_SCAN_DIR}/ZendGlobalDirectives.ini
+
 echo "Creating/Upgrading Zend databases. This may take several minutes..."
 /app/zend/gui/lighttpd/sbin/php -c /app/zend/gui/lighttpd/etc/php-fcgi.ini /app/zend/share/scripts/zs_create_databases.php zsDir=/app/zend toVersion=8.0.1
 
@@ -70,10 +78,6 @@ if [ -z $ZS_ADMIN_PASSWORD ]; then
     ZS_ADMIN_PASSWORD=`date +%s | sha256sum | base64 | head -c 8`
     echo ZS_ADMIN_PASSWORD=$ZS_ADMIN_PASSWORD
     echo $ZS_ADMIN_PASSWORD > /app/zend-password
-fi
-if [[ -z $ZEND_LICENSE_ORDER || -z $ZEND_LICENSE_KEY ]]; then
-    ZEND_LICENSE_ORDER=cloudfoundry
-    ZEND_LICENSE_KEY=R21M7J40C01II1B08FD9B9D6804B4C82
 fi
 
 $ZS_MANAGE bootstrap-single-server -p $ZS_ADMIN_PASSWORD -a 'TRUE' -o $ZEND_LICENSE_ORDER -l $ZEND_LICENSE_KEY --retry 60 --wait 5 | head -1 > /app/zend/tmp/api_key
