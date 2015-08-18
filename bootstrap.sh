@@ -33,7 +33,7 @@ sed "s/vcap/${ZEND_UID}/" ${PHP_INI_SCAN_DIR}/ZendGlobalDirectives.ini.erb > ${P
 # Update license in ZendGlobalDirectives.ini
 if [[ -z $ZEND_LICENSE_ORDER || -z $ZEND_LICENSE_KEY ]]; then
     ZEND_LICENSE_ORDER=cloudfoundry
-    ZEND_LICENSE_KEY=R21M7J40C01II1B08FD9B9D6804B4C82
+    ZEND_LICENSE_KEY=AT1M7J41C01II1B08FD964C1E2BA0344
 fi
 sed -i -e "s/zend.serial_number=/zend.serial_number=$ZEND_LICENSE_KEY/" ${PHP_INI_SCAN_DIR}/ZendGlobalDirectives.ini
 sed -i -e "s/zend.user_name=/zend.user_name=$ZEND_LICENSE_ORDER/" ${PHP_INI_SCAN_DIR}/ZendGlobalDirectives.ini
