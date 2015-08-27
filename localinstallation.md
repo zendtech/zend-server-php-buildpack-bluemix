@@ -3,8 +3,8 @@ This file provides additional information relevant to cloud foundry service prov
 
 # Buildpack Components
 
-* Zend Server 8.0 Enterprise edition
-* Zend Server 8.0 configuration files
+* Zend Server 8.5 Enterprise edition
+* Zend Server 8.5 configuration files
 * PHP 5.6
 * Apache web server
 
@@ -22,7 +22,7 @@ Clone the git repo into the buildpack directory on your dea_ng node using the co
 `git clone https://github.com/zendtech/zend-server-php-buildpack-bluemix`
 
 Alternatively you can clone the repo into a Web server in your environment and specify the buildpack to the cf client.
-i.e.  `cf push --buildpack=http://url-to-cloned-repo`
+i.e.  `cf push -s cflinuxfs2 --buildpack=http://url-to-cloned-repo`
 
 # Additional Resources
 The following resources will help you understand Cloud Foundry concepts and workflows:

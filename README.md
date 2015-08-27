@@ -1,21 +1,26 @@
 # Overview
 
-Welcome to the Zend Server PHP buildpack! This buildpack allows you to deploy your PHP apps on Cloud Foundry using Zend Server 8.0.
+Welcome to the Zend Server PHP buildpack! This buildpack allows you to deploy your PHP apps on Cloud Foundry using Zend Server 8.5.
 Zend Server's integration with Cloud Foundry allows you to quickly get your PHP applications up and running on a highly available PHP production environment which includes, amongst other features, a highly reliable PHP stack, application monitoring, troubleshooting, and the new and innovative new technology - Z-Ray.
 Z-Ray gives developers unprecedented visibility into their code by tracking and displaying in a toolbar live and detailed info on how the various elements constructing their page are performing.
 
+# Requirements
+
+* New cflinuxfs2 stack - since Zend Server 8.5 release this buildpack requires
+  new Ubuntu 14.04 based stack.
+
 # Buildpack Components
 
-* Zend Server 8.0 Enterprise edition
-* Zend Server 8.0 configuration files
+* Zend Server 8.5 Enterprise edition
+* Zend Server 8.5 configuration files
 * PHP 5.6
 * Apache web server
 
 # Features
 
-* Zend Server 8.0
+* Zend Server 8.5
 * PHP 5.6
-* All Zend Server 8.0 extensions
+* All Zend Server 8.5 extensions
 * Ability to work in cluster mode where all instances of application share their
   Zend Server settings
 * Automatic composer dependecies installation during deployment
@@ -42,9 +47,10 @@ echo "Hello world!";
 ?>
 ```
 7. Enter the following command:
-`cf push <application name> -m 512M -b https://github.com/zendtech/zend-server-php-buildpack-bluemix.git`
+`cf push <application name> -m 512M -s cflinuxfs2 -b https://github.com/zendtech/zend-server-php-buildpack-bluemix.git`
 Your application is deployed using the Zend Server buildpack. This may take a few minutes.
 Note: If you are using Composer to manage library dependencies, make sure the 'composer.json' file is located in the root folder of your application. Your dependecies will be installed together with your application.
+Note 2: This buildpack uses new Ubuntu 14.04 based stack and won't run on older Ubuntu 10.04 based stack (lucid64).
 7. Once successfully initialized and deployed, a success message with the URL at which your application is available at is displayed.
 8. To access the application, enter the supplied URL in your Web browser. Deployed .zpks can be accessed at: `http://<application URL>/<.zpk name>`
 9. To access Zend Server, add 'ZendServer' to the supplied URL. For example:`http://<application URL>/ZendServer` The Zend Server Login page is displayed.
