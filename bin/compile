@@ -151,7 +151,7 @@ rm -f $PHP_PATH/gui/lighttpd/logs/*
 touch $PHP_PATH/var/log/php.log
 
 # Remove deployed libraries and rename deployment files
-find $PHP_PATH/var/plugins/ -maxdepth 1 -mindepth 1 -type d -exec rm -rf {} \;
+find $PHP_PATH/var/plugins/ -maxdepth 1 -mindepth 1 -type d -not -name CloudFoundry -exec rm -rf {} \;
 find $PHP_PATH/var/plugins/ -maxdepth 1 -mindepth 1 -type f -exec bash -c 'mv {} `dirname {}`/`basename {} .bak`' \;
 
 DONE_MSG
