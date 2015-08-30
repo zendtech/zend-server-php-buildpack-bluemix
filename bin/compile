@@ -137,6 +137,7 @@ START_MSG 'Cleaning up some files'
 # Remove DB files
 rm -f $PHP_PATH/var/db/codetracing.db
 rm -f $PHP_PATH/var/db/devbar.db
+rm -f $PHP_PATH/var/db/deployment.db
 rm -f $PHP_PATH/var/db/gui.db
 rm -f $PHP_PATH/var/db/jobqueue.db
 rm -f $PHP_PATH/var/db/monitor.db
@@ -148,6 +149,10 @@ rm -f $PHP_PATH/var/db/zsd.db
 rm -f $PHP_PATH/var/log/*
 rm -f $PHP_PATH/gui/lighttpd/logs/*
 touch $PHP_PATH/var/log/php.log
+
+# Remove deployed libraries and rename deployment files
+find $PHP_PATH/var/plugins/ -maxdepth 1 -mindepth 1 -type d -exec rm -rf {} \;
+find $PHP_PATH/var/plugins/ -maxdepth 1 -mindepth 1 -type f -exec bash -c 'mv {} `dirname {}`/`basename {} .bak`' \;
 
 DONE_MSG
 
