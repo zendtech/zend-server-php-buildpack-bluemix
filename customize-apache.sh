@@ -15,12 +15,12 @@ sed -i -e "s/APACHE_RUN_GROUP=www-data/APACHE_RUN_GROUP=${GROUP}/" /app/apache/e
 
 # Change document root if needed
 if [[ -n $ZEND_DOCUMENT_ROOT ]]; then
-    sed -i -e "s|/var/www/html|$ZEND_DOCUMENT_ROOT|" /app/apache/etc/apache2/sites-available/000-default.conf
+    sed -i -e "s|/app/www/html|/app/www/html/$ZEND_DOCUMENT_ROOT|g" /app/apache/etc/apache2/sites-available/000-default.conf
 fi
 
 # Change ServerName
 SERVER_NAME=`/app/bin/json-env-extract.php VCAP_APPLICATION application_uris 0`
-sed -i -e "s/localhost.localdomain/$SERVER_NAME/g" /app/apache/etc/apache2/sites-available/000-default.conf
+sed -i -e "s/#?ServerName .+\$/ServerName $SERVER_NAME/g" /app/apache/etc/apache2/sites-available/000-default.conf
 
 # Remove post_activate.php
 rm -f /app/zend/etc/conf.d/post_activate.php
